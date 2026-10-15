@@ -17,10 +17,10 @@ AI_TIPS = {
     "credentials": {
         "title": "💡 AI Setup Tip — Credentials",
         "body": (
-            "• If you're just getting started, <b>Gemini</b> is the easiest choice — "
-            "it has a generous free tier that works well for experimentation.\n\n"
-            "• <b>Ollama</b> is ideal if you have a GPU (8GB+ VRAM) and want "
-            "fully private, zero-cost operation. Run <code>ollama pull llama3</code> to get started.\n\n"
+            "• The full <b>Mindscape</b> composition uses local <b>Ollama</b> and native Habitus gestation. "
+            "No model API key is required.\n\n"
+            "• Choose your <b>main communication channel</b>. Dashboard needs no token; "
+            "Telegram and Discord need their bot tokens and must be enabled.\n\n"
             "• You can configure <b>multiple providers</b> — Helix can use a free provider "
             "for background tasks and a premium one for complex reasoning.\n\n"
             "• <b>Telegram/Discord</b> are optional but convenient for chatting with your "
@@ -33,14 +33,13 @@ AI_TIPS = {
             "• <b>Agent Name</b> is how your agent refers to itself. Pick something "
             "that feels like a real companion!\n\n"
             "• <b>Bootstrap Profile</b> defines what your agent knows from birth:\n"
-            "  — <b>Birth</b>: True blank slate. It will need to learn everything, "
-            "but develops its own unique perspective.\n"
-            "  — <b>Prepared</b> (recommended): Comes with tool knowledge and basic skills. "
-            "Ready to help immediately.\n"
-            "  — <b>Developed</b>: Advanced self-awareness and meta-cognition. Best for "
-            "power users who want autonomous operation from day one.\n\n"
-            "• <b>Personality</b> shapes communication style. 'Curious' agents explore more, "
-            "'Professional' agents are concise and efficient."
+            "  — <b>Basic</b>: Minimal identity, continuity and orientation material.\n"
+            "  — <b>Standard</b>: More starter beliefs and orientation memories.\n"
+            "  — <b>Predeveloped</b>: More reflective starter material; this does not prove competence.\n\n"
+            "• <b>Archetype</b> selects the native starting preference: Generalist, Explorer, "
+            "Careful analyst or Builder. These preferences can develop through experience.\n"
+            "• <b>Voice</b> changes the wording of starter material. "
+            "Your agent's home directory uses its name."
         ),
     },
     "tools": {

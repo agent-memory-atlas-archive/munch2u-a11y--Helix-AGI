@@ -88,7 +88,8 @@ def save_config(cfg: dict):
     """Save config to config/config.json."""
     CONFIG_DIR.mkdir(parents=True, exist_ok=True)
     with open(CONFIG_PATH, "w") as f:
-        json.dump(cfg, f, indent=2)
+        secret_fields = {"gemini_api_key", "anthropic_api_key", "openai_api_key", "alibaba_api_key", "telegram_token", "discord_token"}
+        json.dump({key: value for key, value in cfg.items() if key not in secret_fields}, f, indent=2)
 
 
 def config_exists() -> bool:
@@ -472,8 +473,8 @@ class HelixApp(QMainWindow):
         self.page_stack = QStackedWidget()
         self.pages = [
             WelcomePage(self),
-            CredentialsPage(self),
             AgentInfoPage(self),
+            CredentialsPage(self),
             ToolSelectionPage(self),
             SafetyPage(self),
             SchedulePage(self),
@@ -549,7 +550,15 @@ class HelixApp(QMainWindow):
     def finish_wizard(self):
         """Called when user clicks 'Create <Agent Name>' on summary page."""
         try:
-            resolve_mindscape(self.config)
+            from core.agent_creation import creation_settings, provision_creation
+            from core.agent_creation import validate_channel
+            validate_channel(self.config, {"HELIX_TELEGRAM_TOKEN": self.config.get("telegram_token", ""),
+                                           "HELIX_DISCORD_TOKEN": self.config.get("discord_token", "")})
+            self.config = creation_settings(self.config, root=BASE_DIR)
+            settings = resolve_mindscape(self.config)
+            if settings is not None:
+                provision_creation(settings)
+                self.config["mindscape"] = settings["mindscape"]
         except (ValueError, RuntimeError) as error:
             QMessageBox.critical(self, "Composition unavailable", str(error))
             return
@@ -764,9 +773,8 @@ class HelixApp(QMainWindow):
             channels.append("discord")
         creds["HELIX_COMMS_CHANNELS"] = ",".join(channels)
 
-        with open(CRED_PATH, "w") as f:
-            for k, v in sorted(creds.items()):
-                f.write(f"{k}={v}\n")
+        from setup import upsert_env_values
+        upsert_env_values(CRED_PATH, creds)
 
     def _run_bootstrap(self):
         """Run the belief bootstrap from setup.py logic."""
@@ -784,6 +792,9 @@ class HelixApp(QMainWindow):
             f"--profile={profile}",
             f"--personality={personality}",
             f"--composition={self.config.get('composition', 'mindscape')}",
+            f"--archetype={self.config.get('agent_archetype', 'balanced')}",
+            f"--primary-channel={self.config.get('primary_channel', 'dashboard')}",
+            f"--data-dir={self.config['data_dir']}",
         ]
         try:
             (BASE_DIR / "logs").mkdir(exist_ok=True)
@@ -802,7 +813,7 @@ class HelixApp(QMainWindow):
                 sys.executable, str(BASE_DIR / "scripts" / "import_agent_soul.py"),
                 "--apply",
                 "--overwrite-bootstrap",
-                f"--data-dir={BASE_DIR / 'data'}",
+                f"--data-dir={self.config['data_dir']}",
             ] + import_paths
             try:
                 with (BASE_DIR / "logs/bootstrap.log").open("a") as bootstrap_log:

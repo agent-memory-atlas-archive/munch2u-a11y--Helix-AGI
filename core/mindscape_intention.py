@@ -10,7 +10,9 @@ ABILITY_DESCRIPTIONS = {
     "open": "open(path): reads existing UTF-8 text or extracts a PDF's text, returning complete content and its file hash. It does not OCR images or change my position.",
     "write": "write(path, content): creates a new text file and verifies its bytes by read-back. A missing file can be created; its parent folder must exist. Replacing an existing file also requires expected_sha256 from its actual open/write return.",
     "mkdir": "mkdir(path): creates a directory under an existing parent; it does not move my current position.",
-    "run": "run(path, expected_sha256): executes an existing Python script using its actual observed hash, returning stdout, stderr and exit status. It does not create the script. A missing-file run error does not establish that writing is unavailable.",
+    "run": "run(path, expected_sha256): executes an existing /workshop Python script using its observed hash, automatically activating the sandbox from any room. Only workshop files are writable; network and host/mind files are inaccessible. Returns complete stdout, stderr and exit status.",
+    "activate": "activate(module, parameters): reach a remembered module directly from any room: web_search(query), web_read(url), terminal(command), or sleep with empty parameters. Terminal writes only in /workshop. Sleep uses the production dream engine. Returns actual output; module focus ends when its result is consumed or I move, reply, or disengage.",
+    "disengage": "disengage(): releases module focus and returns to my surroundings; does not move or undo an action.",
 }
 ACTIONS = set(ABILITY_DESCRIPTIONS)
 
@@ -38,6 +40,12 @@ def foreground_schema(*, intention_required=False):
             required.append("content")
         if action in {"write", "run"}:
             properties["expected_sha256"] = {"type": "string"}
+        if action == "activate":
+            properties = {"module": {"enum": ["web_search", "web_read", "terminal", "sleep"]},
+                          "parameters": {"type": "object", "additionalProperties": {"type": "string"}}}
+            required = ["module", "parameters"]
+        elif action == "disengage":
+            properties, required = {}, []
         variants.append({"type": "object", "properties": {
             "action": {"const": action},
             "arguments": {"type": "object", "properties": properties,
@@ -49,18 +57,71 @@ def foreground_schema(*, intention_required=False):
     return {"oneOf": variants}
 
 
+def extract_contemplation_and_actualization(raw: str) -> tuple[str, str]:
+    """Extracts internal <think>...</think> contemplation and the actualized foreground text."""
+    text = (raw or "").strip()
+    think_pattern = re.compile(r"<think>(.*?)</think>", re.DOTALL | re.IGNORECASE)
+    match = think_pattern.search(text)
+    if match:
+        contemplation = match.group(1).strip()
+        actualized = think_pattern.sub("", text).strip()
+    else:
+        if text.startswith("<think>"):
+            contemplation = text[len("<think>"):].strip()
+            actualized = ""
+        else:
+            contemplation = ""
+            actualized = text
+
+    # Strip any residual role prefixes like Assistant: or Helix: from actualized
+    actualized = re.sub(r"^(?:Assistant|Helix|AI):\s*", "", actualized, flags=re.IGNORECASE).strip()
+    return contemplation, actualized
+
+
 def decode_foreground(raw):
     """Decode only a completed foreground generation; never inspect input data."""
-    value = json.loads(raw)
-    if isinstance(value, dict) and set(value) == {"message"}:
-        if not isinstance(value["message"], str) or not value["message"].strip():
-            raise ValueError("foreground message is empty or invalid")
-        # Message content is not an intention, even when it quotes the wire
-        # format. The caller records the channel separately from its content.
-        return value["message"], "message"
-    wire = "<intention>" + json.dumps(value, ensure_ascii=False) + "</intention>"
-    parse_intention(wire)
-    return wire, "intention"
+    contemplation, text = extract_contemplation_and_actualization(raw)
+
+    if not text and contemplation:
+        return "", "contemplation"
+
+    try:
+        value = json.loads(text)
+        if isinstance(value, dict) and set(value) == {"message"}:
+            if not isinstance(value["message"], str) or not value["message"].strip():
+                raise ValueError("foreground message is empty or invalid")
+            return value["message"], "message"
+        if isinstance(value, dict) and "action" in value:
+            if value.get("action") == "read":
+                value["action"] = "open"
+            wire = "<intention>" + json.dumps(value, ensure_ascii=False) + "</intention>"
+            parse_intention(wire)
+            return wire, "intention"
+    except (json.JSONDecodeError, ValueError):
+        pass
+
+    # Check for embedded JSON block with action
+    start = text.find("{")
+    while start != -1:
+        end = text.rfind("}")
+        while end > start:
+            try:
+                candidate = json.loads(text[start:end+1])
+                if isinstance(candidate, dict) and "action" in candidate:
+                    if candidate.get("action") == "read":
+                        candidate["action"] = "open"
+                    if candidate.get("action") in ACTIONS:
+                        wire = "<intention>" + json.dumps(candidate, ensure_ascii=False) + "</intention>"
+                        parse_intention(wire)
+                        return wire, "intention"
+            except (json.JSONDecodeError, ValueError):
+                pass
+            end = text.rfind("}", start, end)
+        start = text.find("{", start + 1)
+
+    if text:
+        return text, "message"
+    raise ValueError("foreground message is empty or invalid")
 
 
 def observation_text(result):
@@ -201,7 +262,7 @@ def step_guidance_for_pending(obligations, observations, current_position="."):
     norm_pos = str(current_position or ".").strip("/").lower()
     target_dirs = [p for p in obligations.get("target_paths", ()) if "." not in Path(p).name]
     target_files = [p for p in obligations.get("target_paths", ()) if "." in Path(p).name]
-    target_file = target_files[0] if target_files else "tools/workspace_search.py"
+    target_file = target_files[0] if target_files else "/workshop/experiment.py"
 
     known_hashes = {}
     for obs in (observations or []):
@@ -223,7 +284,7 @@ def step_guidance_for_pending(obligations, observations, current_position="."):
 
     if "open" in required and "open" not in settled_actions:
         if "sense" in settled_actions:
-            guidance_parts.append("Step 2: Inspect existing test scripts. Use action 'open' on an existing test script (e.g. tests/test_context_focus.py) to inspect structure.")
+            guidance_parts.append("Use action 'open' on the requested file or a relevant existing file from the actual sense return. My source checkout is outside my home.")
         else:
             guidance_parts.append("Use action 'open' to read file contents and extract information.")
 
@@ -231,13 +292,13 @@ def step_guidance_for_pending(obligations, observations, current_position="."):
         if sha_val:
             guidance_parts.append(f"Step 3: Update the module with action 'write'. Pass path '{target_file}', content, and expected_sha256 '{sha_val}'.")
         else:
-            guidance_parts.append(f"Step 3: Create the module with action 'write'. Use exact relative path '{target_file}' (relative to workspace root, do not use /home paths).")
+            guidance_parts.append(f"Step 3: Create the script with action 'write' at '{target_file}'. Its parent must exist; executable experiments belong in /workshop.")
 
     if "run" in required and "run" not in completed_actions:
         if "write" in required and "write" not in completed_actions:
             guidance_parts.append("Write the script first before running it.")
         else:
-            sha_arg = f" and expected_sha256 '{sha_val}'" if sha_val else " and expected_sha256 from the write return"
+            sha_arg = f" and expected_sha256 '{sha_val}'" if sha_val else " and expected_sha256 from its actual open or write return"
             guidance_parts.append(f"Step 4: Execute the script with action 'run' path '{target_file}'{sha_arg}.")
 
     if guidance_parts:
@@ -262,6 +323,16 @@ def parse_intention(text):
     if payload["action"] not in ACTIONS or not isinstance(payload["arguments"], dict):
         raise ValueError("unknown action or invalid arguments")
     arguments = payload["arguments"]
+    if payload["action"] == "activate":
+        if (set(arguments) != {"module", "parameters"} or not isinstance(arguments["module"], str)
+                or not isinstance(arguments["parameters"], dict)
+                or not all(isinstance(v, str) for v in arguments["parameters"].values())):
+            raise ValueError("activate requires a module name and text parameters object")
+        return payload
+    if payload["action"] == "disengage":
+        if arguments:
+            raise ValueError("disengage accepts no arguments")
+        return payload
     required = {"path"} | ({"content"} if payload["action"] == "write" else set())
     allowed = required | ({"expected_sha256"} if payload["action"] in {"write", "run"} else set())
     if not required <= set(arguments) or not set(arguments) <= allowed:
@@ -282,7 +353,9 @@ def ability_awareness(root, position):
         "My foreground output uses the message field for prose, or action and arguments for a needed intention. "
         "An intention contains no predicted result or accompanying message: its real return arrives next pulse. "
         "The native controller must select the ability before it executes. Relative paths follow my position; "
-        "leading / means the workspace root. Python runs there with isolated network and host filesystem access. "
+        "leading / means my home root. /thinking is quiet; /modules holds operational scripts; "
+        "/bedroom holds sleep; /bedroom/closet holds my files; /workshop holds experiments. "
+        "Python and terminal execution write only inside /workshop; the host and my mind are outside that sandbox. "
         "After each return I compare its actual effect with the whole unfinished request and take the next needed action. "
         "An error describes that attempted action; I can use another available ability to resolve a missing prerequisite. "
         "My outward reply reports only supported results and any remaining work or actual blocker. "

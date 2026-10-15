@@ -141,6 +141,40 @@ def on_delivery(recipient: str, message: str):
     print(f"\n  📤 → {recipient}: {message}")
 
 
+def resolve_main_provider(mindscape_settings: dict | None, cfg: dict | None = None) -> ProviderConfig | None:
+    """Resolve the conscious LLM ProviderConfig across all three modes:
+    1. Full RWKV Experimental: local_provider in ("rwkv", "bicameral_rwkv")
+    2. Local Ollama: local_provider == "ollama"
+    3. Hosted API: fallback via detect_available_provider()
+    """
+    cfg = cfg or {}
+    if mindscape_settings is not None:
+        local_prov = mindscape_settings.get("local_provider", "ollama")
+        if local_prov in ("rwkv", "bicameral_rwkv"):
+            rwkv_path = (
+                mindscape_settings.get("mindscape", {}).get("rwkv_model")
+                or mindscape_settings.get("local_model")
+                or "/home/nemo/habitus-ai-experiments/habitus-mind/models/rwkv7-g1j-1.5b-20260831-2c18b29"
+            )
+            return ProviderConfig(
+                provider_type="rwkv",
+                model=str(rwkv_path),
+                context_window=int(mindscape_settings.get("local_context_window", 8192)),
+                temperature=0.7,
+                max_output_tokens=512,
+            )
+        else:
+            context = int(mindscape_settings.get("local_context_window", 32768))
+            model = mindscape_settings.get("local_model", "granite4.1:8b")
+            return ProviderConfig(
+                provider_type="ollama",
+                model=model,
+                context_window=context,
+                options={"num_ctx": context, "url": cfg.get("ollama_url", "http://localhost:11434")},
+            )
+    return detect_available_provider()
+
+
 def setup_helix(data_dir: str = "data", *, start_sensors: bool = True):
     """Initialize the complete Helix cognitive architecture."""
     print("Initializing Helix Architecture...")
@@ -278,13 +312,7 @@ def setup_helix(data_dir: str = "data", *, start_sensors: bool = True):
     # _cfg is already loaded at the start of setup_helix()
     pulse_mode = _cfg.get("pulse_mode", "standard")
 
-    if _mindscape_settings is not None:
-        context = int(_mindscape_settings["local_context_window"])
-        provider_config = ProviderConfig(provider_type="ollama",
-            model=_mindscape_settings["local_model"], context_window=context,
-            options={"num_ctx": context, "url": _cfg.get("ollama_url", "http://localhost:11434")})
-    else:
-        provider_config = detect_available_provider()
+    provider_config = resolve_main_provider(_mindscape_settings, _cfg)
     if provider_config:
         print(f"  Provider: {provider_config.provider_type} ({provider_config.model})")
     else:
@@ -509,6 +537,8 @@ def setup_helix(data_dir: str = "data", *, start_sensors: bool = True):
 
     # Wire dream engine to pulse loop for rollover snapshots
     pulse_loop.set_dream_engine(daemon)
+    if getattr(pulse_loop, "mindscape", None) is not None:
+        pulse_loop.mindscape.body.workspace.dream_engine = daemon
 
     # ── 7b. GGUF Manager (Micro-Models) ──────────────────────────────
     from core.gguf_manager import GGUFManager

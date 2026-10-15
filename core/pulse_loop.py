@@ -118,7 +118,7 @@ class PulseLoop:
 
         # Legacy local-text schema catalog. Native providers use ToolRegistry;
         # active task cognition keeps schemas off the main session entirely.
-        self._tool_modes_path = Path(os.path.join("data", "tool_modes.json"))
+        self._tool_modes_path = Path(self._data_dir) / "tool_modes.json"
 
         # LLM provider
         self._provider_config = provider_config or detect_available_provider()
@@ -1099,6 +1099,18 @@ class PulseLoop:
             if office_capsule is not None
             else self._send_pulse(pulse_message)
         )
+
+        if self.mindscape is not None:
+            provider_receipt = getattr(self._chat, "last_context_receipt", None)
+            if not provider_receipt:
+                raise RuntimeError("Mindscape foreground returned without a provider context receipt")
+            self.mindscape._receipt(
+                "foreground_model", helix_pulse=self._pulse_count,
+                model=getattr(self._chat, "model", None),
+                provider_options=getattr(self._chat, "options", {}),
+                request_messages=self._chat.context_messages(pulse_message),
+                provider_receipt=provider_receipt,
+            )
 
         # Record tool usage in the registry for this turn
         try:

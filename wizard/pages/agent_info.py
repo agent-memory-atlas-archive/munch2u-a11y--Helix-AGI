@@ -11,7 +11,7 @@ from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
     QLineEdit, QGroupBox, QFormLayout, QScrollArea,
     QSpacerItem, QSizePolicy, QGraphicsDropShadowEffect,
-    QFileDialog,
+    QFileDialog, QComboBox, QMessageBox,
 )
 from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve, QSize, QTimer
 from PyQt6.QtGui import QColor
@@ -22,6 +22,8 @@ from bootstrap import (
     canonicalize_personality,
 )
 from wizard.ai_helper import AiHelperBanner
+from core.agent_creation import ARCHETYPES, creation_settings
+from core.mindscape_config import ROOT
 
 
 CARD_NORMAL = """
@@ -111,8 +113,8 @@ class AgentInfoPage(QWidget):
         layout.addWidget(heading)
 
         sub = QLabel(
-            "Give your agent a name and choose its initial bootstrap depth and wording style.\n"
-            "These shape the first beliefs it starts from. The name and bootstrap profile cannot be changed after creation."
+            "Name your agent and choose its starting preferences. Its home folder will use that name.\n"
+            "Archetype seeds its initial Habitus preferences; voice and starter memory depth are separate choices."
         )
         sub.setProperty("class", "subheading")
         sub.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -147,6 +149,20 @@ class AgentInfoPage(QWidget):
         name_form.addRow("Your Name:", self.creator_name)
 
         inner.addWidget(name_group)
+        archetype_group = QGroupBox("Agent Archetype")
+        archetype_form = QFormLayout(archetype_group)
+        self.archetype_combo = QComboBox()
+        for key, (title, description) in ARCHETYPES.items():
+            self.archetype_combo.addItem(title, key)
+        self.archetype_combo.setCurrentIndex(max(0, self.archetype_combo.findData(self.wizard.config.get("agent_archetype", "balanced"))))
+        self.archetype_desc = QLabel()
+        self.archetype_desc.setWordWrap(True)
+        self.archetype_combo.currentIndexChanged.connect(self._update_archetype)
+        self._update_archetype()
+        archetype_form.addRow("Starting preference:", self.archetype_combo)
+        archetype_form.addRow(self.archetype_desc)
+        archetype_form.addRow(QLabel("A gentle initial seed that can develop through experience. It does not grant skills or tool permissions."))
+        inner.addWidget(archetype_group)
 
         # ── Bootstrap Profile ─────────────────────────────────────────
         profile_group = QGroupBox("Cognitive Bootstrap Profile")
@@ -260,6 +276,9 @@ class AgentInfoPage(QWidget):
         self._animate_card(self._profile_buttons[value])
         self._import_section.setVisible(value == "import")
 
+    def _update_archetype(self, *args):
+        self.archetype_desc.setText(ARCHETYPES[self.archetype_combo.currentData()][1])
+
     def _select_personality(self, value):
         self._selected_personality = value
         self._update_personality_styles()
@@ -336,10 +355,17 @@ class AgentInfoPage(QWidget):
 
     def _save_and_next(self):
         cfg = self.wizard.config
-        cfg["agent_name"] = self.agent_name.text().strip() or "Helix"
+        cfg["agent_name"] = self.agent_name.text().strip()
         cfg["creator_name"] = self.creator_name.text().strip() or "User"
         cfg["bootstrap_profile"] = canonicalize_bootstrap_profile(self._selected_profile)
         cfg["personality"] = canonicalize_personality(self._selected_personality)
+        cfg["agent_archetype"] = self.archetype_combo.currentData()
+        try:
+            settings = creation_settings(cfg, root=ROOT)
+        except ValueError as error:
+            QMessageBox.warning(self, "Check agent identity", str(error))
+            return
+        cfg.update(settings)
         if cfg["bootstrap_profile"] == "import":
             cfg["import_soul_paths"] = self._import_paths
         self.wizard.next_page()

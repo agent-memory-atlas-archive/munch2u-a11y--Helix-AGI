@@ -38,6 +38,11 @@ LOG_PATH = BASE_DIR / "logs" / "helix.log"
 BELIEFS_DIR = BASE_DIR / "data" / "beliefs"
 SPATIAL_DIR = BASE_DIR / "data" / "spatial"
 CONFIG_PATH = BASE_DIR / "config" / "config.json"
+_startup = json.loads(CONFIG_PATH.read_text()) if CONFIG_PATH.exists() else {}
+_data = Path(_startup.get("data_dir", "data"))
+DATA_DIR = _data if _data.is_absolute() else BASE_DIR / _data
+BELIEFS_DIR = DATA_DIR / "beliefs"
+SPATIAL_DIR = DATA_DIR / "spatial"
 WIDGET_WEB_DIR = BASE_DIR / "desktop_widget" / "web"
 NUMPY_AVAILABLE = np is not None
 

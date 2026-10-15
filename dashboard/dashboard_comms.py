@@ -34,7 +34,13 @@ class DashboardComms:
     """
 
     def __init__(self, path: Path = None):
-        self._path = path or _DEFAULT_PATH
+        if path is None:
+            root = Path(__file__).resolve().parent.parent
+            config_path = root / "config/config.json"
+            config = json.loads(config_path.read_text()) if config_path.exists() else {}
+            data = Path(config.get("data_dir", "data"))
+            path = (data if data.is_absolute() else root / data) / "dashboard_messages.json"
+        self._path = Path(path)
         self._lock = threading.Lock()
         self._ensure_file()
 
@@ -112,11 +118,6 @@ class DashboardComms:
         with self._lock:
             state = self._read_state()
             state["outbound"].append(msg)
-            # Keep max 200 outbound messages
-            if len(state["outbound"]) > 200:
-                trimmed = len(state["outbound"]) - 200
-                state["outbound"] = state["outbound"][-200:]
-                state["outbound_base"] = int(state.get("outbound_base", 0)) + trimmed
             self._write_state(state)
         logger.info(f"Dashboard outbound → {recipient}: {message[:80]}")
 

@@ -12,6 +12,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt
 from bootstrap import personality_label, profile_label
 from wizard.ai_helper import AiHelperBanner
+from core.agent_creation import ARCHETYPES
 
 
 class SummaryPage(QWidget):
@@ -120,10 +121,13 @@ class SummaryPage(QWidget):
                 ("Foreground model", cfg.get("local_model", "granite4.1:3b")),
                 ("Memory", "MightyMem / Habitus + Context Loom + mRAG" if cfg.get("composition") == "mindscape" else "Helix"),
                 ("Startup", cfg.get("mindscape", {}).get("gestation", "if_missing")),
+                ("Agent home", cfg.get("mindscape", {}).get("home") or "Created from the agent name"),
+                ("Memory directory", cfg.get("data_dir", "data")),
             ]),
             ("🤖  Identity", [
                 ("Agent Name", agent_name),
                 ("Creator", cfg.get("creator_name", "")),
+                ("Archetype", ARCHETYPES[cfg.get("agent_archetype", "balanced")][0]),
                 ("Profile", profile_label(cfg.get("bootstrap_profile", "standard"))),
                 ("Voice", personality_label(cfg.get("personality", "curious"))),
             ]),
@@ -141,6 +145,7 @@ class SummaryPage(QWidget):
                 ("Resting Pulse", f"Every {cfg.get('resting_pulse_minutes', 15)} min"),
             ]),
             ("💬  Communication", [
+                ("Main channel", cfg.get("primary_channel", "dashboard").title()),
                 ("Dashboard", "Always enabled ✅"),
                 ("Telegram", "Enabled ✅" if cfg.get("telegram_enabled") else "Disabled"),
                 ("Discord", "Enabled ✅" if cfg.get("discord_enabled") else "Disabled"),

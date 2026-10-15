@@ -43,7 +43,7 @@ class HelixVectorStore:
         if not text or not text.strip():
             return np.zeros(self.dim, dtype=np.float32)
 
-        key = text[:500]
+        key = text
         cached = self._query_cache.get(key)
         if cached is not None:
             return cached
@@ -55,6 +55,8 @@ class HelixVectorStore:
             ).ravel()
         except Exception as e:
             logger.warning("Embedding failed: %s", e)
+            if getattr(self, "complete_nominations", False):
+                raise
             return np.zeros(self.dim, dtype=np.float32)
 
         norm = float(np.linalg.norm(emb))
@@ -65,9 +67,6 @@ class HelixVectorStore:
             # the same head must be allowed to recover on its next query.
             return np.zeros(self.dim, dtype=np.float32)
 
-        # Bounded so a long session can't grow this without limit.
-        if len(self._query_cache) > 512:
-            self._query_cache.clear()
         self._query_cache[key] = emb
         return emb
 
@@ -80,7 +79,7 @@ class HelixVectorStore:
         missing_texts = []
         missing_indices = []
         for index, text in enumerate(texts):
-            key = (text or "")[:500]
+            key = text or ""
             cached = self._query_cache.get(key)
             if cached is not None:
                 vectors[index] = cached
@@ -96,6 +95,8 @@ class HelixVectorStore:
                 )
             except Exception as exc:
                 logger.warning("Batch semantic embedding failed: %s", exc)
+                if getattr(self, "complete_nominations", False):
+                    raise
                 encoded = np.zeros((len(missing_texts), self.dim), dtype=np.float32)
             for target, key, vector in zip(missing_indices, missing_texts, encoded):
                 vector = np.asarray(vector, dtype=np.float32).ravel()
@@ -109,8 +110,6 @@ class HelixVectorStore:
                 if len(vector) == self.dim and float(np.linalg.norm(vector)) > 1e-8:
                     self._query_cache[key] = vector
 
-        if len(self._query_cache) > 512:
-            self._query_cache.clear()
         return np.vstack([
             vector if vector is not None else np.zeros(self.dim, dtype=np.float32)
             for vector in vectors
@@ -125,6 +124,8 @@ class HelixVectorStore:
             results = index.search(query_embedding, k=k)
         except Exception as e:
             logger.warning("SemanticIndex search failed: %s", e)
+            if getattr(self, "complete_nominations", False):
+                raise
             return []
         return [(r["id"], r["similarity"]) for r in results]
 

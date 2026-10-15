@@ -504,11 +504,11 @@ class SemanticLane:
             sentence = " ".join(piece.split()).strip()
             if not sentence or sentence.lower() == normalized_full:
                 continue
-            if not getattr(self, "contextual_sentence_heads", False) and len(re.findall(r"\w+", sentence)) < 3:
+            if len(re.findall(r"\w+", sentence)) < 3:
                 continue
             if sentence not in sentences:
                 sentences.append(sentence)
-            if not getattr(self, "contextual_sentence_heads", False) and len(sentences) >= self.max_sentence_heads:
+            if len(sentences) >= self.max_sentence_heads:
                 break
         return sentences
 
@@ -519,7 +519,7 @@ class SemanticLane:
             + extraction.get("concepts", [])
         ))[:self.max_rake_heads]
 
-    def _generate_search_heads(self, text: str, *, passage_text: Optional[str] = None) -> List[str]:
+    def _generate_search_heads(self, text: str, passage_text: Optional[str] = None) -> List[str]:
         """Build the set of parallel embedding queries (multi-head retrieval).
 
         The full trigger is always searched. Compound inputs additionally get
@@ -536,7 +536,8 @@ class SemanticLane:
                 candidates.append((value, weight, kind))
 
         add(text, 1.0, "full")
-        for sentence in self._sentence_heads(text if passage_text is None else passage_text):
+        sentences_src = passage_text if (getattr(self, "contextual_sentence_heads", False) and passage_text) else text
+        for sentence in self._sentence_heads(sentences_src):
             add(sentence, SENTENCE_HEAD_SIMILARITY_WEIGHT, "sentence")
         for phrase in self._rake_phrases(text):
             add(phrase, RAKE_HEAD_SIMILARITY_WEIGHT, "rake")
@@ -625,12 +626,9 @@ class SemanticLane:
             key = head.lower()
             if key in seen:
                 continue
-            if (getattr(self, "contextual_sentence_heads", False)
-                    and kind not in {"full", "sentence"} and len(selected) >= self.max_search_heads):
-                continue
             seen.add(key)
             selected.append((head, weight, kind))
-            if not getattr(self, "contextual_sentence_heads", False) and len(selected) >= self.max_search_heads:
+            if len(selected) >= self.max_search_heads:
                 break
 
         self._head_weights = {head: weight for head, weight, _ in selected}
@@ -737,7 +735,7 @@ class SemanticLane:
 
     # ── Retrieval ────────────────────────────────────────────────────
 
-    def retrieve(self, text: str, limit: Optional[int] = None, *, passage_text: Optional[str] = None) -> List[Dict[str, Any]]:
+    def retrieve(self, text: str, limit: Optional[int] = None, passage_text: Optional[str] = None, **kwargs) -> List[Dict[str, Any]]:
         """Rank corpus items against the trigger text.
 
         Hybrid union candidate selection (keyword top-k ∪ vector top-k)
@@ -751,7 +749,6 @@ class SemanticLane:
         """
         self.sync()
         self.last_lexicon_matches = set()
-        self.last_anchor_hits = {}
 
         text = (text or "").strip()
         if not text:
@@ -843,7 +840,6 @@ class SemanticLane:
             ]
 
         multi_head_similarities: Dict[str, float] = {}
-        head_kinds = {item["text"]: item["kind"] for item in self.last_search_heads}
         for head, results in zip(heads, head_results):
             head_weight = self._head_weights.get(
                 head,
@@ -853,13 +849,6 @@ class SemanticLane:
                 item = by_id.get(bid)
                 if item is not None:
                     union[bid] = item
-                    # Keep the passage that actually retrieved this source.
-                    # Placement is not inferred later from coincidental words
-                    # in the memory, nor is this a contradiction classifier.
-                    if (head_kinds.get(head) in {"sentence", "full"}
-                            and float(similarity) >= self.min_semantic_similarity):
-                        self.last_anchor_hits.setdefault(bid, []).append({
-                            "text": head, "kind": head_kinds[head], "similarity": float(similarity)})
                     weighted_similarity = float(similarity) * head_weight
                     if weighted_similarity > multi_head_similarities.get(bid, -1.0):
                         multi_head_similarities[bid] = weighted_similarity
@@ -902,17 +891,43 @@ class SemanticLane:
                 multi_head_similarities.get(item["id"], 0.0),
             )
 
-        cos_sims = list(cosine_similarities.values())
-        sim_std = float(np.std(cos_sims)) if cos_sims else 0.05
-        nudge_weight = max(0.01, min(0.10, sim_std * 1.5))
+        # 5. MemPalace-style Hybrid Score Fusion: Okapi-BM25 + Dense Cosine Vector Similarity
+        doc_contents = [strip_timestamp_prefix(item.get("content", "")) for item in candidates]
+        q_tokens = set(re.findall(r"\w{2,}", text.lower()))
+        n_docs = len(doc_contents)
+        bm25_raw = []
+        if q_tokens and n_docs > 0:
+            tokenized_docs = [re.findall(r"\w{2,}", d.lower()) for d in doc_contents]
+            doc_lens = [len(t) for t in tokenized_docs]
+            avgdl = sum(doc_lens) / n_docs or 1.0
+            k1, b_param = 1.5, 0.75
+            df_map = {term: sum(1 for tset in [set(t) for t in tokenized_docs] if term in tset) for term in q_tokens}
+            idf_map = {term: math.log((n_docs - df_map[term] + 0.5) / (df_map[term] + 0.5) + 1.0) for term in q_tokens}
+            for t_list, dl in zip(tokenized_docs, doc_lens):
+                if dl == 0:
+                    bm25_raw.append(0.0)
+                    continue
+                tf = {}
+                for w in t_list:
+                    if w in q_tokens:
+                        tf[w] = tf.get(w, 0) + 1
+                score = sum(idf_map[term] * (freq * (k1 + 1.0)) / (freq + k1 * (1.0 - b_param + b_param * dl / avgdl)) for term, freq in tf.items())
+                bm25_raw.append(score)
+        else:
+            bm25_raw = [0.0] * n_docs
+
+        max_bm25 = max(bm25_raw) if bm25_raw and max(bm25_raw) > 0 else 1.0
+        bm25_norm = {item["id"]: raw / max_bm25 for item, raw in zip(candidates, bm25_raw)}
 
         fused: List[Tuple[Dict[str, Any], float]] = []
         for item in candidates:
             bid = item["id"]
             cos_sim = cosine_similarities[bid]
-            kw_boost = nudge_weight * math.log(1 + keyword_scores.get(bid, 0.0))
-            tag_boost = nudge_weight * 0.5 * math.log(1 + tag_scores.get(bid, 0.0))
-            fused.append((item, cos_sim + kw_boost + tag_boost))
+            b_norm = bm25_norm.get(bid, 0.0)
+            tag_boost = 0.05 * math.log(1 + tag_scores.get(bid, 0.0))
+            # Hybrid convex combination: 60% Vector Cosine + 40% Candidate-Relative Okapi-BM25
+            fused_score = 0.60 * cos_sim + 0.40 * b_norm + tag_boost
+            fused.append((item, fused_score))
 
         # 6. Repetition demotion, then rank.
         fused.sort(key=lambda x: (

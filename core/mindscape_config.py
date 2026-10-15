@@ -27,6 +27,8 @@ def defaults(root=ROOT):
             "package_path": str(root.parent / "MightyMem"),
             "rwkv_model": str(root.parent / "habitus-ai-experiments/habitus-mind/models/rwkv7-g1j-1.5b-20260831-2c18b29"),
             "workspace": str(root),
+            "home": str(root / "data/agent_home"),
+            "modules_require_room": False,
             "device": "cpu",
             "gestation": "if_missing",
             "context_focus_profiles": {},
@@ -46,21 +48,23 @@ def resolve(config, root=ROOT):
     result["mindscape"] = {**defaults(root)["mindscape"], **config.get("mindscape", {})}
     if result.get("pulse_mode") != "standard":
         raise ValueError("Mindscape requires the standard Helix PulseLoop; dual mode is a different composition")
-    if result.get("local_provider") != "ollama":
-        raise ValueError("Mindscape currently requires the configured local Ollama foreground")
-    if result.get("llm_provider", "ollama") != "ollama":
-        raise ValueError("Mindscape uses Ollama; select composition=helix for a different foreground provider")
+    if result.get("local_provider") not in {"ollama", "rwkv", "bicameral_rwkv"}:
+        raise ValueError("Mindscape requires local Ollama or RWKV foreground")
+    if result.get("llm_provider", "ollama") not in {"ollama", "rwkv", "bicameral_rwkv"}:
+        raise ValueError("Mindscape uses Ollama or RWKV; select composition=helix for a different foreground provider")
     if result["mindscape"]["device"] != "cpu":
         raise ValueError("The native ContinualRwkv joint bridge is CPU-only; select device=cpu")
     if result["mindscape"]["gestation"] not in {"if_missing", "resume_only"}:
         raise ValueError("gestation must be if_missing or resume_only")
-    if result["mindscape"]["action_intent_source"] != "granite_private":
-        raise ValueError("Only the explicit granite_private bootstrap is installed; no trained RWKV intent decoder is available")
+    if result["mindscape"]["action_intent_source"] not in {"granite_private", "rwkv_bicameral", "bicameral_rwkv"}:
+        raise ValueError("action_intent_source must be granite_private or bicameral_rwkv")
+    if not isinstance(result["mindscape"]["modules_require_room"], bool):
+        raise ValueError("modules_require_room must be a boolean")
     if int(result["local_context_window"]) <= 0:
         raise ValueError("local_context_window must be positive")
     from core.context_focus import resolve_profiles
     resolve_profiles(result["mindscape"]["context_focus_profiles"])
-    for key in ("package_path", "rwkv_model", "workspace"):
+    for key in ("package_path", "rwkv_model", "workspace", "home"):
         path = Path(result["mindscape"][key]).expanduser()
         if not path.is_absolute():
             path = Path(root) / path

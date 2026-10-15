@@ -484,7 +484,7 @@ class Preconscious:
         # meant a known entity's name in an email header triggered no
         # recognition at all — recognition only fired one pulse later
         # IF the agent happened to repeat the name in its own thought.
-        tool_text = " ".join(tool_events)[:6000] if tool_events else ""
+        tool_text = " ".join(tool_events)[:None if structured_context else 6000] if tool_events else ""
 
         # ── 0. Layer 2 Anchor Match (PRIORITY) ────────────────────────
         #    Fast string match for Layer 2 terms in the trigger text
@@ -675,7 +675,7 @@ class Preconscious:
                 continue
 
             # Inject the top facets of this entity, not just one
-            chosen = candidates[:self.LEXICON_FACETS_PER_TERM]
+            chosen = candidates[:None if getattr(self, "complete_nominations", False) else self.LEXICON_FACETS_PER_TERM]
             term = chosen[0].get("term", term_key)
             cat = chosen[0].get("category", "")
             joined = " | ".join(
@@ -1110,8 +1110,8 @@ class Preconscious:
 
         try:
             neighbors = self.physics.query_neighborhood(
-                focus_text=content[:400],
-                k=2,
+                focus_text=content[:None if getattr(self, "complete_nominations", False) else 400],
+                k=len(self._unified.corpus.all_items()) if getattr(self, "complete_nominations", False) else 2,
                 exclude_trails=True,
             )
         except Exception:
@@ -1130,7 +1130,7 @@ class Preconscious:
             if last is not None and (self._pulse_number - last) < self._memory_cooldown:
                 continue
             self._memory_blacklist[m_key] = self._pulse_number
-            return f"*(this is familiar — {self._condense(mem, max_len=180)})*"
+            return f"*(this is familiar — {mem if getattr(self, 'complete_nominations', False) else self._condense(mem, max_len=180)})*"
 
         return ""
 
@@ -1591,7 +1591,7 @@ class Preconscious:
 
         # Embed seed into 8D
         try:
-            query_pos = self.physics.embed_and_project(seed[:500])
+            query_pos = self.physics.embed_and_project(seed[:None if getattr(self, "complete_nominations", False) else 500])
         except Exception:
             return [], []
 
@@ -1648,7 +1648,7 @@ class Preconscious:
         scored.sort(key=lambda x: x["gravity"], reverse=True)
 
         # Pull top 2 tool beliefs
-        selected = scored[:2]
+        selected = scored[:None if getattr(self, "complete_nominations", False) else 2]
 
         annotations = []
         injected_ids = []
@@ -1887,6 +1887,8 @@ class Preconscious:
 
     def _unified_item_limit(self) -> int:
         """Injection item ceiling for the selected mRAG runtime profile."""
+        if getattr(self, "complete_nominations", False):
+            return len(self._unified.corpus.all_items())
         profile = os.environ.get("HELIX_MRAG_PROFILE", "local").strip().lower()
         default = 32 if profile in ("frontier", "gpt") else self.UNIFIED_MAX_ITEMS
         try:
@@ -1921,6 +1923,9 @@ class Preconscious:
 
         complement_quota = max(0, min(self.UNIFIED_COMPLEMENT_CAP, total_budget))
         associative_quota = max(0, min(self.UNIFIED_ASSOCIATIVE_CAP, total_budget))
+        if getattr(self, "complete_nominations", False):
+            complement_quota = len(self._unified.corpus.all_items())
+            associative_quota = len(self._associative.edges) if self._associative is not None else 0
 
         raw_spatial = self._raw_spatial_candidates(trigger_text)
         if not raw_spatial:
@@ -1944,10 +1949,12 @@ class Preconscious:
                     spatial_candidates=raw_spatial,
                     complement_quota=complement_quota,
                     max_items=self._unified_item_limit(),
-                    token_budget=self._unified.effective_token_budget(),
+                    token_budget=None if getattr(self, "complete_nominations", False) else self._unified.effective_token_budget(),
                     exclude=exclude,
                 )
         except Exception as e:
+            if getattr(self, "complete_nominations", False):
+                raise RuntimeError("A declared production retrieval lane failed; no reduced gravity fallback") from e
             logger.warning("Unified retrieval failed, using gravity ranking: %s", e)
             return sorted(
                 gravity_candidates, key=lambda x: x.get("gravity", 0.0), reverse=True
@@ -2086,8 +2093,8 @@ class Preconscious:
             return []
         try:
             results = self.physics.query_neighborhood(
-                focus_text=trigger_text[:500],
-                k=self.RAW_SPATIAL_K,
+                focus_text=trigger_text[:None if getattr(self, "complete_nominations", False) else 500],
+                k=len(self._unified.corpus.all_items()) if getattr(self, "complete_nominations", False) else self.RAW_SPATIAL_K,
                 exclude_trails=True,
                 # The carried 8D attention trajectory is the base frame;
                 # current text is only a perturbation. This keeps Lane B
@@ -2098,6 +2105,8 @@ class Preconscious:
             )
         except Exception as e:
             logger.debug("Raw 8D candidate query failed: %s", e)
+            if getattr(self, "complete_nominations", False):
+                raise RuntimeError("Production spatial retrieval failed") from e
             return []
 
         candidates = []
@@ -2551,8 +2560,8 @@ class Preconscious:
         so the model can distinguish present from past.
         """
         recent = self.memory.get_recent(
-            limit=self.CHAIN_WINDOW,
-            pulses_back=self.CHAIN_WINDOW,
+            limit=len(self._unified.corpus.all_items()) if structured and getattr(self, "complete_nominations", False) else self.CHAIN_WINDOW,
+            pulses_back=None if structured and getattr(self, "complete_nominations", False) else self.CHAIN_WINDOW,
         )
         if not recent:
             return ""
@@ -2669,7 +2678,7 @@ class Preconscious:
         import json
         from datetime import datetime
         
-        status_path = os.path.join("data", "spatial", "spatial_injection.json")
+        status_path = os.path.join(str(self.physics.data_dir), "spatial_injection.json")
         os.makedirs(os.path.dirname(status_path), exist_ok=True)
         
         concepts = getattr(self, "_last_concepts", [])
@@ -2752,7 +2761,7 @@ class Preconscious:
             logger.error(f"Failed to write spatial_injection.json: {e}")
 
         # Append to rolling injection history
-        history_path = os.path.join("data", "spatial", "spatial_injection_history.json")
+        history_path = os.path.join(str(self.physics.data_dir), "spatial_injection_history.json")
         try:
             history = []
             if os.path.exists(history_path):
@@ -2761,7 +2770,8 @@ class Preconscious:
                     if isinstance(loaded, list):
                         history = loaded
             history.append(data)
-            history = history[-self.INJECTION_HISTORY_LIMIT:]
+            if not getattr(self, "complete_nominations", False):
+                history = history[-self.INJECTION_HISTORY_LIMIT:]
             with open(history_path, "w") as f:
                 json.dump(history, f, indent=2)
         except Exception as e:

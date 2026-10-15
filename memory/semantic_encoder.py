@@ -108,11 +108,13 @@ class SemanticEncoder:
                             model=self.model,
                             input=batch,
                             dimensions=self.dim,
-                            truncate=True,
+                            truncate=not self.strict,
                             keep_alive=self.keep_alive,
                         )
                         break
                     except Exception as exc:
+                        if self.strict:
+                            raise
                         if attempt >= self.max_attempts:
                             raise
                         delay = 2 ** attempt

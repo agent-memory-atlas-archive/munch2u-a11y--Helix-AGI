@@ -32,6 +32,7 @@ class MindscapeContextCompiler(ContextCompiler):
         return item.section in {
             "recalled_thought", "personal", "associations", "recalled", "prior_user",
             "prior_assistant", "observations", "procedures", "summary", "topical",
+            "environment", "module",
         }
 
     def _merge_nominations(self, nominations):
@@ -256,19 +257,27 @@ class MindscapeContextCompiler(ContextCompiler):
 
     SECTION_TITLES = {
         **ContextCompiler.SECTION_TITLES,
-        "work": "What I am working on",
-        "evidence": "What I recalled — evidence and its source labels",
-        "multi_hop": "Related memories and associations — recalled",
-        "topical": "My recalled topic orientation",
-        "summary": "My recalled summary",
-        "personal": "My recalled preferences and personal context",
-        "procedures": "Procedures I recalled — verification labels apply",
-        "observations": "Observations I recalled — source and verification labels apply",
-        "continuity": "Earlier conversation I recalled",
-        "prior_assistant": "What I previously thought or said — recalled, unverified",
-        "prior_user": "What was said to me before — recalled",
+        "environment": "In my digital workspace (filesystem):",
+        "module": "The operational module in my focus:",
+        "work": "What I am working on:",
+        "evidence": "I remember (direct evidence):",
+        "multi_hop": "I associate (related memories):",
+        "topical": "My topic orientation:",
+        "summary": "A summary I recall:",
+        "personal": "I prefer / value:",
+        "procedures": "Procedures I recall:",
+        "observations": "I observed / read:",
+        "continuity": "What was previously discussed:",
+        "prior_assistant": "I previously said:",
+        "prior_user": "What was said to me before:",
+        "recalled": "I remember:",
+        "recalled_thought": "I was thinking:",
+        "thinking": "What I am thinking now:",
+        "state": "I feel:",
+        "senses": "I sense now (live hardware):",
+        "task": "I want to:",
     }
-    SECTION_ORDER = ContextCompiler.SECTION_ORDER + ("observations", "prior_user", "prior_assistant")
+    SECTION_ORDER = ContextCompiler.SECTION_ORDER + ("observations", "prior_user", "prior_assistant", "environment", "module")
 
     def _render(self, *, mode, sections, capabilities, current_input):
         if self._pulse_context is not None:

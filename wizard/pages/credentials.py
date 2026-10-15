@@ -11,10 +11,11 @@ from pathlib import Path
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
     QLineEdit, QGroupBox, QFormLayout, QComboBox, QCheckBox,
-    QSpacerItem, QSizePolicy, QScrollArea,
+    QSpacerItem, QSizePolicy, QScrollArea, QMessageBox,
 )
 from PyQt6.QtCore import Qt
 from wizard.ai_helper import AiHelperBanner
+from core.agent_creation import validate_channel
 
 
 CRED_PATH = Path(os.path.expanduser("~/.config/helix/credentials.env"))
@@ -78,9 +79,9 @@ class CredentialsPage(QWidget):
         llm_form.setSpacing(10)
 
         desc = QLabel(
-            "⚠️ Helix runs continuously, which can accumulate API costs.\n"
-            "A Gemini API key (free tier) is recommended for subconscious systems.\n"
-            "Use Ollama for fully local, free operation (requires Ollama installed)."
+            "The full Mindscape agent uses local Ollama for its foreground model.\n"
+            "It needs no model API key. Channel tokens are entered below.\n"
+            "API providers belong to the separate Helix composition."
         )
         desc.setWordWrap(True)
         desc.setStyleSheet("color: #fbbf24; font-size: 11px; padding: 4px 0;")
@@ -260,6 +261,11 @@ class CredentialsPage(QWidget):
         comms_desc.setWordWrap(True)
         comms_desc.setStyleSheet("color: #8888aa; font-size: 11px; background: transparent; border: none;")
         comms_form.addRow(comms_desc)
+        self.primary_channel = QComboBox()
+        for value in ("dashboard", "telegram", "discord"):
+            self.primary_channel.addItem(value.title(), value)
+        self.primary_channel.setCurrentIndex(max(0, self.primary_channel.findData(self.wizard.config.get("primary_channel", "dashboard"))))
+        comms_form.addRow("Main communication channel:", self.primary_channel)
 
         self.telegram_check = QCheckBox("  Enable Telegram")
         self.telegram_check.setChecked(self.wizard.config.get("telegram_enabled", False))
@@ -415,15 +421,15 @@ class CredentialsPage(QWidget):
             self.ollama_model.setText(creds["OLLAMA_MODEL"])
         if creds.get("HELIX_TELEGRAM_TOKEN"):
             self.telegram_token.setText(creds["HELIX_TELEGRAM_TOKEN"])
-            self.telegram_check.setChecked(True)
+            self.telegram_check.setChecked(self.wizard.config.get("telegram_enabled", True))
         if creds.get("TELEGRAM_OWNER_ID"):
             self.telegram_owner.setText(creds["TELEGRAM_OWNER_ID"])
         if creds.get("HELIX_DISCORD_TOKEN"):
             self.discord_token.setText(creds["HELIX_DISCORD_TOKEN"])
-            self.discord_check.setChecked(True)
+            self.discord_check.setChecked(self.wizard.config.get("discord_enabled", True))
         if creds.get("HELIX_VISION_PROVIDER"):
             self.vision_combo.setCurrentText(creds["HELIX_VISION_PROVIDER"])
-        if creds.get("HELIX_PROVIDER"):
+        if creds.get("HELIX_PROVIDER") and not self.wizard.config.get("llm_provider"):
             display = self._provider_reverse.get(
                 creds["HELIX_PROVIDER"],
                 "Gemini (Google)"
@@ -436,6 +442,9 @@ class CredentialsPage(QWidget):
     def _save_and_next(self):
         """Save credential values to config and advance."""
         cfg = self.wizard.config
+        if cfg.get("composition") == "mindscape" and self._get_provider() != "ollama":
+            QMessageBox.warning(self, "Choose the configured runtime", "This agent's full Mindscape gestation uses Ollama. Select Ollama and its local model to continue.")
+            return
         cfg["gemini_api_key"] = self.gemini_key.text().strip()
         cfg["anthropic_api_key"] = self.anthropic_key.text().strip()
         cfg["openai_api_key"] = self.openai_key.text().strip()
@@ -458,4 +467,11 @@ class CredentialsPage(QWidget):
         cfg["telegram_owner_id"] = self.telegram_owner.text().strip()
         cfg["discord_enabled"] = self.discord_check.isChecked()
         cfg["discord_token"] = self.discord_token.text().strip()
+        cfg["primary_channel"] = self.primary_channel.currentData()
+        try:
+            validate_channel(cfg, {"HELIX_TELEGRAM_TOKEN": cfg["telegram_token"],
+                                   "HELIX_DISCORD_TOKEN": cfg["discord_token"]})
+        except ValueError as error:
+            QMessageBox.warning(self, "Check communication setup", str(error))
+            return
         self.wizard.next_page()

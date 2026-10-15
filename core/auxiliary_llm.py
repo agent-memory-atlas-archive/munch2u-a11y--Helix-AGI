@@ -111,6 +111,8 @@ class AuxiliaryLLM:
         For direct providers: creates a one-shot isolated provider session.
         For API providers: calls Gemini Flash Lite directly.
         """
+        if self._uses_direct_session and self._provider_config.max_output_tokens is None:
+            return self._generate_direct(prompt, system_instruction, temperature, None)
         attempts = max(1, MAX_RETRIES + 1)
         last_error = None
 

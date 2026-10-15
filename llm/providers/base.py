@@ -164,6 +164,16 @@ def create_session(
             options=config.options,
         )
 
+    elif config.provider_type in ("rwkv", "bicameral_rwkv"):
+        from llm.providers.rwkv_provider import BicameralRWKVSession
+        return BicameralRWKVSession(
+            model_path=config.model,
+            system_instruction=system_instruction,
+            temperature=config.temperature,
+            max_output_tokens=config.max_output_tokens,
+            options=config.options,
+        )
+
     else:
         raise ValueError(
             f"Unknown provider type: {config.provider_type}. "
@@ -216,6 +226,17 @@ def detect_available_provider() -> Optional[ProviderConfig]:
             )
         else:
             logger.warning("HELIX_PROVIDER=anthropic but ANTHROPIC_API_KEY is missing.")
+
+    elif provider_pref in ("rwkv", "bicameral_rwkv"):
+        model = model_pref or "/home/nemo/habitus-ai-experiments/habitus-mind/models/rwkv7-g1j-1.5b-20260831-2c18b29"
+        logger.info(f"Using explicitly configured RWKV provider with model: {model}")
+        return ProviderConfig(
+            provider_type="rwkv",
+            model=model,
+            context_window=8192,
+            temperature=0.7,
+            max_output_tokens=512,
+        )
 
     elif provider_pref == "ollama":
         url = os.environ.get("OLLAMA_URL", "http://localhost:11434")

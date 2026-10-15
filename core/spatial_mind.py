@@ -570,8 +570,8 @@ class SpatialMind:
         mean_pos = np.mean(positions, axis=0)
 
         # Query nearby candidates in memory and belief spaces
-        mem_near = self.memory_space.gravity_ranked_query(mean_pos, k=15)
-        bel_near = self.belief_space.gravity_ranked_query(mean_pos, k=15)
+        mem_near = self.memory_space.gravity_ranked_query(mean_pos, k=self.memory_space.point_count if max_terms is None else 15)
+        bel_near = self.belief_space.gravity_ranked_query(mean_pos, k=self.belief_space.point_count if max_terms is None else 15)
 
         basin_points = []
         for pid, grav, dist in mem_near + bel_near:
@@ -585,14 +585,14 @@ class SpatialMind:
         # Extract words/terms from top basin contents
         terms = []
         stop_words = {"the", "a", "an", "in", "on", "of", "and", "or", "to", "is", "was", "for", "with", "that", "this", "it", "at", "by", "from"}
-        for _, text in basin_points[:5]:
+        for _, text in basin_points[:None if max_terms is None else 5]:
             words = re.findall(r"\b[A-Za-z]{3,}\b", text.lower())
             for w in words:
                 if w not in stop_words and w not in terms:
                     terms.append(w)
-                if len(terms) >= max_terms:
+                if max_terms is not None and len(terms) >= max_terms:
                     break
-            if len(terms) >= max_terms:
+            if max_terms is not None and len(terms) >= max_terms:
                 break
 
         return terms

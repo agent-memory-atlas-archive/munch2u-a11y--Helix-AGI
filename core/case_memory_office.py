@@ -194,7 +194,7 @@ class CaseMemoryOffice:
                                 linked += 1
                             else:
                                 weak_linked += 1
-                        role_refs[role] = refs[-20_000:]
+                        role_refs[role] = refs
                     case["role_refs"] = role_refs
 
                     factual = bool(roles & {"speaker", "subject"})
@@ -202,33 +202,33 @@ class CaseMemoryOffice:
                         refs = list(case.get("memory_refs") or [])
                         if item_id not in refs:
                             refs.append(item_id)
-                        case["memory_refs"] = refs[-20_000:]
+                        case["memory_refs"] = refs
                     if session_id:
                         sessions = list(case.get("sessions") or [])
                         if session_id not in sessions:
                             sessions.append(session_id)
-                        case["sessions"] = sessions[-2_000:]
+                        case["sessions"] = sessions
                         session_roles = dict(case.get("session_role_refs") or {})
                         scoped_roles = dict(session_roles.get(session_id) or {})
                         for role in roles:
                             scoped = list(scoped_roles.get(role) or [])
                             if item_id not in scoped:
                                 scoped.append(item_id)
-                            scoped_roles[role] = scoped[-5_000:]
+                            scoped_roles[role] = scoped
                         session_roles[session_id] = scoped_roles
                         case["session_role_refs"] = {
                             scoped_id: session_roles[scoped_id]
-                            for scoped_id in list(session_roles)[-2_000:]
+                            for scoped_id in session_roles
                         }
                         if factual:
                             session_refs = dict(case.get("session_refs") or {})
                             scoped_refs = list(session_refs.get(session_id) or [])
                             if item_id not in scoped_refs:
                                 scoped_refs.append(item_id)
-                            session_refs[session_id] = scoped_refs[-5_000:]
+                            session_refs[session_id] = scoped_refs
                             case["session_refs"] = {
                                 scoped_id: session_refs[scoped_id]
-                                for scoped_id in list(session_refs)[-2_000:]
+                                for scoped_id in session_refs
                             }
                     case["updated_at"] = _now_iso()
                     touched.add(key)
@@ -254,7 +254,7 @@ class CaseMemoryOffice:
                 value = str(belief_id or "")
                 if value and value not in refs:
                     refs.append(value)
-            case["belief_refs"] = refs[-5_000:]
+            case["belief_refs"] = refs
             case["updated_at"] = _now_iso()
             self._save(board)
 

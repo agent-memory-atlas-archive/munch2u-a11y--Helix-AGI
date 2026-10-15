@@ -205,6 +205,10 @@ class UnifiedRetrieval:
             return []
 
         exclude = exclude or set()
+        if getattr(self, "complete_nominations", False):
+            max_items = len(self.corpus.all_items())
+            complement_quota = max_items
+            token_budget = None
 
         known_entities = (
             self.context_office.cases.known_names()
@@ -240,14 +244,14 @@ class UnifiedRetrieval:
             office_stats = brief.diagnostics
         else:
             lane_a = semantic_lane_a
-        lane_a = self._apply_record_policy(lane_a, work_order)
+        lane_a = self._apply_record_policy(lane_a, work_order, complete_nominations=getattr(self, "complete_nominations", False))
         lane_b_ranked = self._prepare_spatial(spatial_candidates or [], exclude)
-        lane_b_ranked = self._apply_record_policy(lane_b_ranked, work_order)
+        lane_b_ranked = self._apply_record_policy(lane_b_ranked, work_order, complete_nominations=getattr(self, "complete_nominations", False))
         self.last_lane_a_ids = {item["id"] for item in lane_a}
 
         merged = self._semantic_primary_merge(lane_a, lane_b_ranked, complement_quota)
         merged.extend(self._episode_additions(
-            merged, work_order, limit=EPISODE_COMPLEMENT_LIMIT,
+            merged, work_order, limit=len(self.corpus.all_items()) if getattr(self, "complete_nominations", False) else EPISODE_COMPLEMENT_LIMIT,
         ))
         merged, suppressed_ids = self._suppress_by_provenance(merged)
         merged, duplicate_ids = self._purge_near_duplicates(merged)
@@ -294,6 +298,9 @@ class UnifiedRetrieval:
             "retrieval_profile": self.profile,
             "memory_work_order": work_order.to_dict(),
             "context_office": office_stats,
+            "candidate_boundary": {"policy": "all eligible nominations; physical context admission in production compiler" if getattr(self, "complete_nominations", False) else "legacy shortlist",
+                                   "corpus_records": len(self.corpus.all_items()), "item_cap": None if getattr(self, "complete_nominations", False) else max_items,
+                                   "token_cap": token_budget},
         }
 
         logger.debug(
@@ -339,7 +346,7 @@ class UnifiedRetrieval:
         """
         targets = set(getattr(work_order, "target_record_kinds", ()) or ())
         if not targets:
-            return self._apply_record_policy(semantic_items, work_order)
+            return self._apply_record_policy(semantic_items, work_order, complete_nominations=getattr(self, "complete_nominations", False))
 
         typed: List[Dict[str, Any]] = []
         seen: Set[str] = set()
@@ -359,11 +366,11 @@ class UnifiedRetrieval:
             admit(item)
 
         filtered_search = getattr(self.vector_store, "query_top_k_filtered", None)
-        if callable(filtered_search) and len(typed) < TYPED_RESERVE_LIMIT:
+        if callable(filtered_search) and (getattr(self, "complete_nominations", False) or len(typed) < TYPED_RESERVE_LIMIT):
             query_embedding = self.vector_store.embed_text(query)
             results = filtered_search(
                 query_embedding,
-                k=max(TYPED_RESERVE_LIMIT * 3, TYPED_RESERVE_LIMIT),
+                k=len(self.corpus.all_items()) if getattr(self, "complete_nominations", False) else max(TYPED_RESERVE_LIMIT * 3, TYPED_RESERVE_LIMIT),
                 filter_fn=lambda _item_id, metadata: (
                     record_kind_from_index_metadata(metadata) in targets
                 ),
@@ -379,16 +386,17 @@ class UnifiedRetrieval:
                 if float(similarity) < minimum and not literal:
                     continue
                 admit(item, similarity=similarity)
-                if len(typed) >= TYPED_RESERVE_LIMIT:
+                if not getattr(self, "complete_nominations", False) and len(typed) >= TYPED_RESERVE_LIMIT:
                     break
 
         remaining = [item for item in semantic_items if item.get("id") not in seen]
-        return self._apply_record_policy(typed + remaining, work_order)
+        return self._apply_record_policy(typed + remaining, work_order, complete_nominations=getattr(self, "complete_nominations", False))
 
     @staticmethod
     def _apply_record_policy(
         items: List[Dict[str, Any]],
         work_order,
+        *, complete_nominations=False,
     ) -> List[Dict[str, Any]]:
         policy = str(getattr(work_order, "thought_policy", "bounded") or "bounded")
         targets = set(getattr(work_order, "target_record_kinds", ()) or ())
@@ -404,7 +412,7 @@ class UnifiedRetrieval:
                 continue
             if policy == "exclude":
                 continue
-            if thought_count < DEFAULT_THOUGHT_LIMIT:
+            if complete_nominations or thought_count < DEFAULT_THOUGHT_LIMIT:
                 result.append(item)
                 thought_count += 1
         return result
@@ -500,6 +508,32 @@ class UnifiedRetrieval:
 
         spatial_mind = self._get_spatial_mind()
         basin_terms = []
+        if getattr(self, "complete_nominations", False):
+            combined = list(hop1_selected)
+            seen = {item["id"] for item in combined}
+            searched_terms = set()
+            trace = [dict(self.last_stats)]
+            frontier = hop1_selected
+            while spatial_mind and frontier:
+                terms = spatial_mind.get_gravity_basin_keywords(frontier, max_terms=None)
+                new_terms = [term for term in terms if term not in searched_terms]
+                if not new_terms:
+                    break
+                searched_terms.update(new_terms)
+                frontier = self.retrieve(
+                    trigger_text=f"{trigger_text} {' '.join(new_terms)}",
+                    spatial_candidates=spatial_candidates,
+                    exclude=exclude | seen,
+                )
+                trace.append(dict(self.last_stats))
+                frontier = [item for item in frontier if item["id"] not in seen]
+                for item in frontier:
+                    item["lane"] = "multihop"
+                    seen.add(item["id"])
+                    combined.append(item)
+            self.last_stats = {**self.last_stats, "multihop_trace": trace,
+                               "multihop_completion": "no new eligible sources or search terms", "selected": len(combined)}
+            return combined
         if spatial_mind:
             basin_terms = spatial_mind.get_gravity_basin_keywords(hop1_selected, max_terms=4)
 

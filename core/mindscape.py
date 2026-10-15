@@ -206,7 +206,11 @@ class Mindscape:
                 "loom_context": {"value": self.config["local_context_window"], "reason": "selected foreground context"},
                 "loom_adaptive_shortlist": "disabled; compiler uses selected context",
                 "private_evidence": "typed cognitive context only; not factual or action evidence",
-                "inherited_helix_limits": "unchanged; preconscious selection, provider retries, tool orchestration and context lifecycle require a separate audit before behavioral scoring",
+                "retrieval_nominations": "all eligible heads and sources; no count/token shortlist before production context admission",
+                "foreground_output": "no generation ceiling; complete request checked against selected physical context; incomplete output fails explicitly",
+                "embedding_boundary": "declared embedding model context; truncate=false; input too large fails explicitly",
+                "provider_failures": "explicit boundary failure; no capped retries or reduced-system fallback on the native route",
+                "excluded_legacy_paths": "legacy orchestrated tools, gravity fallback, dual pulse and office-first loops are not part of native Mindscape",
             },
             "capability_status": {
                 "rwkv_role": "native recurrent input/cortex coupling; Granite retains foreground language",
@@ -245,15 +249,34 @@ class Mindscape:
         # All sentence heads participate; existing derived-head and candidate
         # policies remain visible inherited boundaries, not coverage claims.
         self.preconscious._unified.lane_a.contextual_sentence_heads = True
+        # All production lanes nominate their eligible sources. The compiler
+        # owns whole-item admission at the selected physical model boundary.
+        self.preconscious.complete_nominations = True
+        self.preconscious._unified.complete_nominations = True
+        self.preconscious._unified.lane_a.complete_nominations = True
+        self.preconscious._unified.vector_store.complete_nominations = True
+        if self.preconscious._associative is not None:
+            self.preconscious._associative.complete_nominations = True
+        office = self.preconscious._unified.context_office
+        if office is not None:
+            office.complete_nominations = True
+            office.MAX_SCOPE_ITEMS = None
         joint = self.directory / "joint"
         resumed = (joint / "LATEST.json").exists()
         if not resumed and self.config["mindscape"]["gestation"] == "resume_only":
             raise RuntimeError(f"Resume required but no joint checkpoint exists: {joint}")
+        from core.agent_home import prepare_home
+        from core.agent_creation import native_seed, verify_native_profile
+        self.home = prepare_home(self.config, state_directory=self.directory)
+        requested_seed = native_seed(self.config) if not resumed or self.config.get("creation") else None
         self.native = ContinualMind(model=Path(self.config["mindscape"]["rwkv_model"]),
-                                    directory=joint, workspace=Path(self.config["mindscape"]["workspace"]))
+                                    directory=joint, workspace=Path(self.home["root"]),
+                                    gestation_seed=requested_seed)
+        self.gestation_receipt = (verify_native_profile(self.native.profile, self.config) if requested_seed else
+                                  {"actual": asdict(self.native.profile), "legacy_profile_preserved": True})
         self.native.backend.training_enabled = False
         from core.mindscape_workspace import NativeWorkspaceBody
-        self.body = NativeWorkspaceBody(self.native, self.config["mindscape"]["workspace"])
+        self.body = NativeWorkspaceBody(self.native, self.home["root"], home=self.home)
         self.continuation = json.loads(self.native.mind.store.get_metadata("helix_pulse_continuation", "{}"))
         self._admitted_foreground = None
         self._observed_return_id = None
@@ -304,6 +327,11 @@ class Mindscape:
             "action_intent_source": self.config["mindscape"]["action_intent_source"],
             "action_route": "private Granite intention -> native SELF selected affordance -> workspace actuator -> native sensory return -> next Helix pulse",
             "native_abilities": self.body.abilities,
+            "agent_home": self.home,
+            "gestation_seed": self.gestation_receipt,
+            "primary_channel": self.config["primary_channel"],
+            "sensory_route": "fresh home attributes -> LOOK/coupled RWKV -> focus-weighted whole-item context -> persisted intake and receipt",
+            "module_route": "native authorization -> installed script or production dream engine -> return focus -> consumption/disengage",
             "context_queries": "fresh events; last complete private thought only on idle continuation",
             "context_receipt": "pulse_context.context_assembly plus native loom_packet manifest",
             "inline_annotations": "exact unique passage anchors from actual mRAG sentence-head returns; no truth or permission inference",
@@ -313,9 +341,33 @@ class Mindscape:
         }
         self._receipt("initialized", **self.manifest["runtime"])
         if not resumed:
+            sensory, _, _, _ = self._sense_home("gestation")
+            self.native.latest_pulse = self.native.runtime.advance((sensory,))
+            self._receipt("home_sensory_admission", helix_pulse="gestation",
+                          native_pulse=asdict(self.native.latest_pulse))
             # Preserve the actual gestation before slow historical indexing.
             # A later sync failure must not strand an uncheckpointed mind.
             self._checkpoint("helix-gestation")
+        if self.config.get("creation"):
+            from core.agent_creation import record_native_gestation
+            self._receipt("agent_creation_gestation", manifest=record_native_gestation(
+                self.config, self.native.profile, data_dir=self.directory.parent,
+                generation=self.native.generation, resumed=resumed))
+
+    def _sense_home(self, pulse):
+        from habitus_ai.developmental_runtime import DevelopmentalInput
+        from habitus_ai.types import InputTrunk
+        scene, text = self.body.workspace.observe_environment(pulse)
+        ids = self.native.backend.encode(text)
+        if ids:
+            self.native.backend.consume(ids)
+        sensory = DevelopmentalInput(content=text, lane=InputTrunk.SEE,
+            source_id=scene["observation_id"], motor_eligible=False,
+            embedding=tuple(self.native.runtime.embedder.embed(text)),
+            metadata={"helix_pulse": pulse, "sensor": "home_filesystem", "content_opened": False})
+        self._receipt("home_sensory_intake", helix_pulse=pulse, observation=scene,
+                      content_sha256=hashlib.sha256(text.encode()).hexdigest(), rwkv_tokens=len(ids))
+        return sensory, scene, text, len(ids)
 
     def sync(self):
         # Read the actual Helix corpus on its calling thread. Nothing is sampled
@@ -390,6 +442,20 @@ class Mindscape:
         before = hashlib.sha256(self.native.backend.dump_state()).hexdigest()
         inputs = []
         token_count = 0
+        if hasattr(self.body.workspace, "observe_environment"):
+            if any(item.section == "messages" and item.producer == "pulse_event" for item in context.contributions):
+                self.body.workspace.disengage()
+            sensory, scene, scene_text, scene_tokens = self._sense_home(pulse)
+            inputs.append(sensory)
+            token_count += scene_tokens
+            context = context.extend(ContextContribution(
+                "environment", scene_text, "home_filesystem", (scene["observation_id"],),
+                kind="sensory_observation", evidence="current filesystem attributes; contents not opened"))
+            active = scene["active_module"]
+            if active:
+                context = context.extend(ContextContribution(
+                    "module", json.dumps(active, ensure_ascii=False), "home_module",
+                    kind="interface_state", evidence="controller state; actual output is in the action return"))
         for event in events:
             returned = self.continuation.get("return")
             if returned and event == f"Native action [{returned['id']}] returned: " + returned["content"]:
@@ -408,6 +474,9 @@ class Mindscape:
                 embedding=tuple(self.native.runtime.embedder.embed(event)),
                 metadata={"helix_pulse": pulse, "unverified_event": True}))
         sensed = self.native.runtime.advance(tuple(inputs), allow_idle=not inputs)
+        if hasattr(self.body.workspace, "observe_environment"):
+            self._receipt("home_sensory_admission", helix_pulse=pulse,
+                          observation_id=scene["observation_id"], native_pulse=asdict(sensed))
         self.native.backend.begin_slice()
         self.native.latest_pulse = sensed
         self._current_topic_frame = None
@@ -452,7 +521,7 @@ class Mindscape:
                 "task", "This is my unfinished request, not a newly received message:\n" + "\n".join(pending["messages"]),
                 "pending_interaction", kind="unresolved_request", evidence="actual received messages"))
             if pending.get("thoughts"):
-                last_thoughts = pending["thoughts"][-3:]
+                last_thoughts = pending["thoughts"]
                 context = context.extend(ContextContribution(
                     "thinking", "My thoughts on this unresolved task so far:\n" + "\n".join(last_thoughts),
                     "pending_thinking", kind="internal_monologue", evidence="prior conscious thoughts"))
@@ -462,9 +531,9 @@ class Mindscape:
             context = context.extend(ContextContribution(
                 "work", self.continuation["interface_feedback"], "native_interface",
                 kind="interface_feedback", evidence="actual dispatch status"))
-        # Rolling working memory: keep at most the last 2 recent observations
-        # to prevent bloating the Context Loom fixed packet allowance.
-        for observation in pending.get("observations", [])[-2:]:
+        # Keep all unresolved work. The real model-context boundary must fail
+        # explicitly rather than silently discarding an unfinished observation.
+        for observation in pending.get("observations", []):
             if observation["id"] != self._observed_return_id:
                 context = context.extend(ContextContribution(
                     "work", "An earlier actual return in this unfinished task:\n" + observation["content"],
@@ -513,6 +582,13 @@ class Mindscape:
                 has_pending_obligations=self.needs_native_observation,
             )
             context = replace(context, focus=ContextFocus(focus_state["weights"], "sentinel_thermodynamic"))
+        if hasattr(self.body.workspace, "active_module"):
+            from core.context_focus import ContextFocus, infer_focus
+            from dataclasses import replace
+            focus = context.focus or infer_focus(context.query, context.query_source)
+            weights = dict(focus.weights)
+            weights["module" if self.body.workspace.active_module() else "environment"] = 1.0
+            context = replace(context, focus=ContextFocus(weights, focus.source + "+home_interface"))
         packet = self.loom.compiler.compile_pulse(context, scope="helix", input_allowance=input_allowance,
                                                  covered_source_hashes=covered_source_hashes)
         frame = self._current_topic_frame
@@ -624,8 +700,9 @@ class Mindscape:
                 "path": intention.get("arguments", {}).get("path") if intention else None,
                 "status": result.get("status") or result.get("receipt", {}).get("status"),
                 "verified": bool(result.get("receipt", {}).get("verified")),
-                "sha256": (result.get("receipt", {}).get("sha256")
-                           or result.get("output", {}).get("sha256")),
+                "receipt": result.get("receipt", {}),
+                "sha256": ((result.get("receipt", {}).get("output") or {}).get("sha256")
+                           if isinstance(result.get("receipt", {}).get("output"), dict) else None),
                 "content": observed_text,
             }
             self.continuation["pending"]["observations"].append(obs_item)
@@ -637,9 +714,16 @@ class Mindscape:
 
     def _finish(self, thought, pulse, delivered_external=False):
         self._admit_foreground(thought, pulse, delivered_external)
+        workspace = getattr(getattr(self, "body", None), "workspace", None)
         returned = self.continuation.get("return")
         if returned and returned["id"] == self._observed_return_id:
             returned["consumed"] = True
+            if hasattr(workspace, "consume_module"):
+                released = workspace.consume_module(returned["id"])
+                if released:
+                    self._receipt("module_disengaged", reason="result consumed", **released)
+        if delivered_external and hasattr(workspace, "disengage"):
+            workspace.disengage()
         if delivered_external and not self.needs_native_observation:
             self.continuation.pop("pending", None)
         elif not delivered_external and thought.strip().startswith("[thought]") and self.continuation.get("pending"):

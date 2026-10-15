@@ -121,7 +121,7 @@ class AssociativeTransitionMemory:
         self._previous_position = pos.copy()
         self._observations_since_persist += 1
 
-        if len(self.edges) > MAX_EDGES:
+        if not getattr(self, "complete_nominations", False) and len(self.edges) > MAX_EDGES:
             self._prune_edges()
         # Do not leave the first usable association only in RAM. Subsequent
         # refinements batch normally to avoid a filesystem write every pulse.
@@ -156,6 +156,40 @@ class AssociativeTransitionMemory:
             return []
 
         self._maybe_decay()
+        if getattr(self, "complete_nominations", False):
+            import heapq
+            adjacency = {}
+            for (start, end), weight in self.edges.items():
+                if weight >= ACTIVATION_THRESHOLD:
+                    adjacency.setdefault(start, []).append((end, weight))
+            best = {}
+            frontier = []
+            for destination, weight in adjacency.get(source, ()):
+                if destination == source:
+                    continue
+                item = {"cluster_id": destination, "score": 1.0 + self._confidence(weight),
+                        "edge_weight": weight, "hops": 1,
+                        "distance_8d": self._overlay_distance(source, destination)}
+                best[destination] = item
+                heapq.heappush(frontier, (-item["score"], destination))
+            while frontier:
+                negative_score, middle = heapq.heappop(frontier)
+                current = best[middle]
+                if -negative_score != current["score"]:
+                    continue
+                for destination, weight in adjacency.get(middle, ()):
+                    if destination == source:
+                        continue
+                    confidence = self._confidence(current["edge_weight"]) if current["hops"] == 1 else current["score"]
+                    score = 0.45 * confidence * self._confidence(weight)
+                    if destination in best and best[destination]["score"] >= score:
+                        continue
+                    item = {"cluster_id": destination, "score": score,
+                            "edge_weight": min(current["edge_weight"], weight), "hops": current["hops"] + 1,
+                            "via": middle, "distance_8d": self._overlay_distance(source, destination)}
+                    best[destination] = item
+                    heapq.heappush(frontier, (-score, destination))
+            return sorted(best.values(), key=lambda item: (-item["score"], item["distance_8d"], item["cluster_id"]))
         direct: Dict[str, float] = {}
         for (edge_source, destination), weight in self.edges.items():
             if edge_source == source and weight >= ACTIVATION_THRESHOLD:

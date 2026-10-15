@@ -127,7 +127,7 @@ class OllamaSession(ChatSession):
         if self.context_counter is None:
             raise RuntimeError("Mindscape requires the installed model's exact token counter")
         overhead = self.context_counter.count_messages(self.context_messages(""))
-        headroom = int(self.max_output_tokens or 1024)
+        headroom = 1 if self.max_output_tokens is None else int(self.max_output_tokens)
         remaining = int(self.options["num_ctx"]) - overhead - headroom
         if remaining <= 0:
             from llm.ollama_tokens import ProviderContextExceeded
@@ -213,6 +213,8 @@ class OllamaSession(ChatSession):
                     )
                     break
                 except Exception as exc:
+                    if self._context_in_flight:
+                        raise
                     if attempt >= self.max_attempts:
                         raise
                     delay = 2 ** attempt
@@ -238,6 +240,8 @@ class OllamaSession(ChatSession):
             return thought
 
         except Exception as e:
+            if self._context_in_flight:
+                raise
             logger.error(f"Ollama package call failed: {e}")
             self._last_token_count = self.get_history_size() // 4
             return f"[internal error: LLM call failed — {str(e)[:100]}]"
@@ -266,6 +270,8 @@ class OllamaSession(ChatSession):
                     response.raise_for_status()
                     break
                 except Exception as exc:
+                    if self._context_in_flight:
+                        raise
                     if attempt >= self.max_attempts:
                         raise
                     delay = 2 ** attempt
@@ -293,6 +299,8 @@ class OllamaSession(ChatSession):
             return thought
 
         except Exception as e:
+            if self._context_in_flight:
+                raise
             logger.error(f"Ollama REST call failed: {e}")
             self._last_token_count = self.get_history_size() // 4
             return f"[internal error: LLM call failed — {str(e)[:100]}]"

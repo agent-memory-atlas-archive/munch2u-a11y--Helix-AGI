@@ -344,7 +344,7 @@ class ContextOffice:
                     evidence = self._episode_brief(scope, plan, score_map)
                     binding = "lexical_episode"
         else:
-            for item_id, score in direct_scores[:3]:
+            for item_id, score in direct_scores[:None if getattr(self, "complete_nominations", False) else 3]:
                 matched, item_coverage = self._coverage(plan.terms, {item_id})
                 if matched and item_coverage >= 0.999:
                     item = dict(self._by_id[item_id])
@@ -455,7 +455,7 @@ class ContextOffice:
         case_result = (
             self.cases.route(
                 query,
-                max_items=min(10, max_items),
+                max_items=max_items if getattr(self, "complete_nominations", False) else min(10, max_items),
                 subjects=work_order.subjects if work_order is not None else (),
                 include_relations=(
                     work_order.relation_requested if work_order is not None else False

@@ -1,0 +1,29 @@
+{
+  "auto_disengage_turns": 2,
+  "camera_enabled": true,
+  "ptz_enabled": true,
+  "scratchpad_char_limit": 2000,
+  "faiss_duplicate_threshold": 0.8,
+  "faiss_verification_threshold": 0.9,
+  "pulse_mode": "standard",
+  "tool_format": "api",
+  "task_cognition_mode": "observe",
+  "task_focus_workers": 2,
+  "task_focus_max_depth": 4,
+  "local_provider": "ollama",
+  "local_model": "granite4.1:3b",
+  "local_context_window": 8192,
+  "dual_summary_max_words": 300,
+  "dual_max_thinking_pulses": 3,
+  "memory_module": "mightymem",
+  "composition": "mindscape",
+  "llm_provider": "ollama",
+  "llm_model": "granite4.1:3b",
+  "mindscape": {
+    "package_path": "/home/nemo/MightyMem",
+    "rwkv_model": "/home/nemo/habitus-ai-experiments/habitus-mind/models/rwkv7-g1j-1.5b-20260831-2c18b29",
+    "workspace": "/home/nemo/Helix_AGI (GitHub Repo) (Public)",
+    "device": "cpu",
+    "gestation": "if_missing"
+  }
+}

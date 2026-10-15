@@ -1,0 +1,35 @@
+diff --git a/habitus_ai/continual_mind.py b/habitus_ai/continual_mind.py
+index f9d268b..ca65f13 100644
+--- a/habitus_ai/continual_mind.py
++++ b/habitus_ai/continual_mind.py
+@@ -51,7 +51,16 @@ class _NoExternalRenderer:
+ 
+ class ContinualMind(IntegratedMind):
+     def __init__(self, *, model, directory, workspace, corpus_graph=None,
+-                 trainable_blocks=1, chunk_tokens=128, mode="private"):
++                 trainable_blocks=1, chunk_tokens=128, mode="private", gestation_seed=None):
++        if gestation_seed is not None:
++            from .gestation import TASTE_SCHEMAS, _clean_name
++            if set(gestation_seed) != {"human_name", "agent_name", "taste_schema"}:
++                raise ValueError("gestation_seed requires human_name, agent_name and taste_schema")
++            gestation_seed = dict(gestation_seed)
++            for key in ("human_name", "agent_name"):
++                gestation_seed[key] = _clean_name(gestation_seed[key], key)
++            if gestation_seed["taste_schema"] not in TASTE_SCHEMAS:
++                raise ValueError("unknown gestation taste schema")
+         self.directory = Path(directory).resolve()
+         self.directory.mkdir(parents=True, exist_ok=True)
+         self.lock = (self.directory / "writer.lock").open("a")
+@@ -109,8 +118,11 @@ class ContinualMind(IntegratedMind):
+         runtime.mind.graph.recency_strength = 0.0
+         profile = load_profile(runtime.mind)
+         if profile is None:
+-            profile = gestate(runtime.mind, human_name="Human", agent_name="Habitus", taste_schema="builder",
++            seed = gestation_seed or {"human_name": "Human", "agent_name": "Habitus", "taste_schema": "builder"}
++            profile = gestate(runtime.mind, **seed,
+                               model_backend="integrated-rwkv", model_name=self.backend.identity)
++        elif gestation_seed is not None and any(getattr(profile, key) != value for key, value in gestation_seed.items()):
++            raise ValueError("existing native gestation differs from the requested identity or taste schema; use a fresh directory")
+         super().__init__(runtime, _NoExternalRenderer(), workspace=workspace, profile=profile)
+         self.backend.attach(runtime)
+         self.backend.receipt_sink = self._record_learning

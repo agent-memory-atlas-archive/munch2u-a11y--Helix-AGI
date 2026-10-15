@@ -1,6 +1,6 @@
 import logging
 import re
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 try:
     import spacy
@@ -132,7 +132,7 @@ def get_tag_counts(text: str) -> Dict[str, int]:
         counts[t] = counts.get(t, 0) + 1
     return counts
 
-def extract_keywords_and_phrases(text: str, limit: int = 4) -> List[str]:
+def extract_keywords_and_phrases(text: str, limit: Optional[int] = 4) -> List[str]:
     nlp = get_nlp()
     if nlp is None:
         return _fallback_keywords(text, limit)
@@ -158,7 +158,7 @@ def extract_keywords_and_phrases(text: str, limit: int = 4) -> List[str]:
         if p.lower() not in [r.lower() for r in results]:
             results.append(p)
     for s in singles:
-        if s.lower() not in [r.lower() for r in results] and len(results) < limit:
+        if s.lower() not in [r.lower() for r in results] and (limit is None or len(results) < limit):
             results.append(s)
 
     return results[:limit]
@@ -175,7 +175,7 @@ _FALLBACK_STOPWORDS = {
 }
 
 
-def _fallback_keywords(text: str, limit: int) -> List[str]:
+def _fallback_keywords(text: str, limit: Optional[int]) -> List[str]:
     """Deterministic keyword heads when the optional spaCy model is absent."""
     words = re.findall(r"[A-Za-z][A-Za-z0-9_'-]{2,}", text or "")
     results = []
@@ -184,7 +184,7 @@ def _fallback_keywords(text: str, limit: int) -> List[str]:
         if lowered in _FALLBACK_STOPWORDS or lowered in {r.lower() for r in results}:
             continue
         results.append(word)
-        if len(results) >= limit:
+        if limit is not None and len(results) >= limit:
             break
     return results
 

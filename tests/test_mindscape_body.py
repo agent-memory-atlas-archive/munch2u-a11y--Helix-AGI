@@ -172,6 +172,16 @@ class NativeActuatorDiagnostics(unittest.TestCase):
         obl_write_run = extract_workspace_obligations([msg_write_run])
         self.assertIn("write", obl_write_run["required_abilities"])
         self.assertIn("run", obl_write_run["required_abilities"])
+        self.assertEqual(obl_write_run["target_paths"], {"/output/calc.py"})
+
+        # The live workshop trial previously instructed /calc.py after
+        # splitting a multi-part path. Guidance must retain the full target.
+        from core.mindscape_intention import step_guidance_for_pending
+        observations = [{"action": "write", "path": "/output/calc.py",
+                         "sha256": "observed-hash", "status": "success", "verified": True}]
+        guidance = step_guidance_for_pending(obl_write_run, observations)
+        self.assertIn("path '/output/calc.py'", guidance)
+        self.assertNotIn("path '/calc.py'", guidance)
 
         # 2. Sensing does not satisfy open or move
         # Case A: Request to move to /inbox and feel files

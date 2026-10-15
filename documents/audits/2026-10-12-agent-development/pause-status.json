@@ -1,0 +1,31 @@
+{
+  "status": "paused_at_user_request",
+  "time": 1791865069.9786177,
+  "reason": "user switching to planned full dual RWKV buildout",
+  "last_checkpoint": {
+    "time": 1791864886.5368285,
+    "kind": "joint_checkpoint",
+    "label": "helix-pulse-2",
+    "generation": 23,
+    "numeric_state_sha256": "9fe5523fc937ac145a2b616149e8c3f020217ab507c6266bf9981f30758d2165",
+    "files": {
+      "neural.pt": "f416a89b186477355deb10c029ef768e4aa789bc5365d1256f9935fcaaf87c8c",
+      "mind.sqlite": "9fe672915ff304775375b97d8ba5ff108f08bb794cd7e7ee25c156ae6a3529bb"
+    }
+  },
+  "motor_learning_hook": "not implemented; native updates remain zero",
+  "completed_action_outcomes": [
+    "sense thinking",
+    "move thinking -> workshop",
+    "write workshop/addition.py",
+    "run workshop/addition.py: stdout 5"
+  ],
+  "limitations": [
+    "initial conversational sensing requests dispatched no actions",
+    "path parser supplied wrong target before repair",
+    "coherent independent autonomy and learned motor skills not established"
+  ],
+  "in_flight_work": "pulse 3 did not finish; no delivered final report for the Python recovery case; last completed joint checkpoint retained",
+  "runtime": "agent and trial dashboard stopped",
+  "stopped_at": 1791865114.2152653
+}

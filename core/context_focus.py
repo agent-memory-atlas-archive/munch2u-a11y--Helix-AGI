@@ -17,6 +17,8 @@ DEFAULT_PROFILES = {
     "writing": {"procedures": 2.0, "recalled": 2.0, "personal": 1.5},
     "inquiry": {"recalled": 3.0, "observations": 2.0, "associations": 1.5, "work": 2.0},
     "reflection": {"thinking": 2.5, "recalled_thought": 2.5, "work": 2.0, "task": 2.0, "personal": 1.5},
+    "environment": {"environment": 2.5},
+    "module": {"module": 4.0, "work": 2.5, "environment": 0.25},
 }
 
 

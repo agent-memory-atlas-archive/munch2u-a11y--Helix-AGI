@@ -129,9 +129,12 @@ UI_CANVAS_SCHEMA = {
 }
 
 
-registry.register(
-    name="render_ui_canvas",
-    toolset="ui_canvas",
-    schema=UI_CANVAS_SCHEMA,
-    handler=lambda args: render_ui_canvas(**args),
-)
+def register_ui_canvas_tool(tool_registry):
+    """Register in the executor's selected registry, including after reload."""
+    tool_registry.register(
+        name="render_ui_canvas", toolset="ui_canvas", schema=UI_CANVAS_SCHEMA,
+        handler=lambda args: render_ui_canvas(**args),
+    )
+
+
+register_ui_canvas_tool(registry)

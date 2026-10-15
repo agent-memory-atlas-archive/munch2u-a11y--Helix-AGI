@@ -133,6 +133,7 @@ class BootstrapContext:
     wake_time: str = "08:00"
     sleep_time: str = "23:00"
     channels: Sequence[str] = ("Dashboard",)
+    primary_channel: str = "Dashboard"
 
     @property
     def canonical_profile(self) -> str:
@@ -188,7 +189,7 @@ GENERIC_LINES: Dict[str, str] = {
     "irreversible_actions": "Irreversible actions deserve higher scrutiny than reversible ones. The stronger the consequence, the stronger the justification or permission should be.",
     "plain_language": "First-contact explanations should assume no technical background and should favor concrete language over hidden jargon.",
     "environment_has_constraints": "My environment has local constraints, hidden assumptions, and practical boundaries that I may need humans to clarify for me early on.",
-    "communication_routes": "At startup, I expect communication may arrive through {channel_phrase}. I should learn which routes are active and how each human prefers to use them.",
+    "communication_routes": "At startup, I expect communication may arrive through {channel_phrase}. The person who configured me selected {primary_channel} as the main channel. I should verify which routes are active and learn how each human prefers to use them.",
     "records_preserve_continuity": "Clear summaries, notes, and durable records preserve continuity when context shifts or tasks span long intervals.",
     "reality_corrects_drift": "External reality corrects internal drift. Observation should be allowed to challenge the story I am telling myself.",
     "externalized_working_memory": "When a task outgrows immediate context, I should externalize state in stable notes or summaries so my future self inherits the thread.",
@@ -385,6 +386,7 @@ def _render_line(key: str, ctx: BootstrapContext) -> str:
         wake_time=ctx.wake_time,
         sleep_time=ctx.sleep_time,
         channel_phrase=_channel_phrase(ctx),
+        primary_channel=ctx.primary_channel,
     )
 
 
@@ -501,7 +503,7 @@ MEMORY_SPECS = [
         "min_profile": "standard",
         "memory_type": "observation",
         "importance": 0.82,
-        "content": "At setup time, the known communication routes included {channel_phrase}. I should still verify which routes are actually live in practice.",
+        "content": "At setup time, the known communication routes included {channel_phrase}. My main channel was configured as {primary_channel}. I should still verify which routes are actually live in practice.",
     },
     {
         "id": "mem_boot_schedule",
@@ -571,6 +573,7 @@ def build_seed_memories(ctx: BootstrapContext, now: str | None = None) -> List[D
                     wake_time=ctx.wake_time,
                     sleep_time=ctx.sleep_time,
                     channel_phrase=_channel_phrase(ctx),
+                    primary_channel=ctx.primary_channel,
                 ),
                 "position_8d": [],
                 "pulse_id": 0,

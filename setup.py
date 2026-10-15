@@ -27,6 +27,7 @@ from bootstrap import (
 )
 
 DEFAULT_LOCAL_MODEL = "granite4.1:3b"
+DEFAULT_RWKV_MODEL = "/home/nemo/habitus-ai-experiments/habitus-mind/models/rwkv7-g1j-1.5b-20260831-2c18b29"
 
 
 def upsert_env_values(path: Path, updates: dict) -> None:
@@ -72,13 +73,22 @@ def apply_config_updates(base_dir: Path, updates: dict) -> bool:
 
 
 def local_mode_config(provider: str, model: str, context_window: int) -> dict:
-    """Config for fully-local operation with orchestrated tool use.
-
-    A local model cannot hold 80 tool schemas in an 8K window, and Ollama has
-    no native tool channel at all. `tool_format: orchestrated` gives the main
-    window one line per toolset and runs the actual tool work in directed
-    passes, so local mode gets the full toolset without the full manifest.
-    """
+    """Config for fully-local operation with orchestrated tool use or bicameral RWKV."""
+    if provider in ("rwkv", "bicameral_rwkv"):
+        chosen_model = model or DEFAULT_RWKV_MODEL
+        return {
+            "composition": "mindscape",
+            "provider": "rwkv",
+            "local_provider": "rwkv",
+            "llm_provider": "rwkv",
+            "local_model": chosen_model,
+            "llm_model": chosen_model,
+            "local_context_window": context_window or 8192,
+            "mindscape": {
+                "rwkv_model": chosen_model,
+                "action_intent_source": "bicameral_rwkv",
+            },
+        }
     return {
         "tool_format": "orchestrated",
         "local_provider": provider,
@@ -124,6 +134,7 @@ def main():
     parser.add_argument("--mightymem-path", type=Path)
     parser.add_argument("--rwkv-model", type=Path)
     parser.add_argument("--workspace", type=Path)
+    parser.add_argument("--agent-home", type=Path, help="Agent rooms and personal files, separate from source and mind state")
     parser.add_argument("--resume-only", action="store_true")
     parser.add_argument("--agent-name", default="Helix", help="Name of your agent")
     parser.add_argument("--creator-name", default="<name>", help="Your name")
@@ -132,7 +143,7 @@ def main():
     parser.add_argument("--openai-key", default="", help="OpenAI API Key")
     parser.add_argument(
         "--provider",
-        choices=["codex_cli", "claude_cli", "gemini", "anthropic", "ollama", "llama_cpp"],
+        choices=["codex_cli", "claude_cli", "gemini", "anthropic", "ollama", "llama_cpp", "rwkv", "bicameral_rwkv"],
         default="gemini",
         help="Primary conscious LLM provider",
     )
@@ -192,19 +203,34 @@ def main():
         if args.composition == "mindscape":
             updates = {**defaults(base_dir), **existing, **updates}
             updates["mindscape"] = {**defaults(base_dir)["mindscape"], **existing.get("mindscape", {})}
-            for key, value in (("package_path", args.mightymem_path), ("rwkv_model", args.rwkv_model), ("workspace", args.workspace)):
+            for key, value in (("package_path", args.mightymem_path), ("rwkv_model", args.rwkv_model), ("workspace", args.workspace), ("home", args.agent_home)):
                 if value is not None:
                     updates["mindscape"][key] = str(value.resolve())
             if args.resume_only:
                 updates["mindscape"]["gestation"] = "resume_only"
-            updates.update(pulse_mode="standard", local_provider="ollama", llm_provider="ollama")
-            if args.model:
+            chosen_prov = (args.provider or existing.get("local_provider") or "ollama").lower()
+            if chosen_prov in ("rwkv", "bicameral_rwkv"):
+                updates.update(pulse_mode="standard", local_provider="rwkv", llm_provider="rwkv")
+                updates["mindscape"]["action_intent_source"] = "bicameral_rwkv"
+                if not args.model:
+                    args.model = updates["mindscape"]["rwkv_model"]
                 updates["local_model"] = args.model
-            updates["llm_model"] = updates["local_model"]
-            if not args.model:
-                args.model = updates["local_model"]
-            activate(updates)
-            args.local_mode, args.provider = True, "ollama"
+                updates["llm_model"] = args.model
+                updates = activate(updates)
+                from core.agent_home import prepare_home
+                prepare_home(updates)
+                args.local_mode, args.provider = True, "rwkv"
+            else:
+                updates.update(pulse_mode="standard", local_provider="ollama", llm_provider="ollama")
+                if args.model:
+                    updates["local_model"] = args.model
+                updates["llm_model"] = updates["local_model"]
+                if not args.model:
+                    args.model = updates["local_model"]
+                updates = activate(updates)
+                from core.agent_home import prepare_home
+                prepare_home(updates)
+                args.local_mode, args.provider = True, "ollama"
         if not apply_config_updates(base_dir, updates):
             raise SystemExit("Composition configuration was not saved")
         if args.composition_only:
@@ -232,7 +258,7 @@ def main():
     if subscription_cli:
         llm_provider = subscription_cli
         local_mode = False
-    elif local_mode and llm_provider not in {"ollama", "llama_cpp"}:
+    elif local_mode and llm_provider not in {"ollama", "llama_cpp", "rwkv", "bicameral_rwkv"}:
         llm_provider = "ollama"
 
     if cred_path.exists():
@@ -262,7 +288,7 @@ def main():
         if subscription_cli:
             llm_provider = subscription_cli
             local_mode = False
-        elif local_mode and llm_provider not in {"ollama", "llama_cpp"}:
+        elif local_mode and llm_provider not in {"ollama", "llama_cpp", "rwkv", "bicameral_rwkv"}:
             llm_provider = "ollama"
 
         # Track which comms channels the user enables
@@ -271,23 +297,17 @@ def main():
         if not args.non_interactive:
             print("\n" + "-"*40)
             print("  [Mode]")
-            print("  1. Local  — runs entirely on your machine. No API key, no")
-            print("              per-token cost. Full tool use via orchestrated")
-            print("              directed passes. Slower, and needs Ollama or a")
-            print("              GGUF model installed.")
-            print("  2. Hosted — an API provider drives the conscious model, with")
-            print("              native tool calling. Faster and sharper; costs")
-            print("              money continuously, because Helix never stops.")
-            print("  3. Subscription CLI — an already-logged-in Codex or Claude")
-            print("              Code CLI drives the conscious model. No API key.")
-            print("              A subscription is a quota, not a bill: running")
-            print("              hot exhausts the window and parks Helix, so this")
-            print("              mode gates the model behind a slower pulse.")
-            mode_choice = input("  Mode (1/2/3) [2]: ").strip()
-            local_mode = mode_choice == "1"
+            print("  1. Local (Ollama)  — runs on Ollama (e.g. Granite 8B/3B). No API key, no")
+            print("                       per-token cost.")
+            print("  2. Hosted (API)    — hosted cloud model (Gemini, Claude) drives the conscious model.")
+            print("  3. Full Dual RWKV  — 100% pure local Bicameral RWKV architecture (Habitus")
+            print("                       recurrent cortex + Bicameral speaking head).")
+            print("  4. Subscription CLI — an already-logged-in Codex or Claude Code CLI.")
+            mode_choice = input("  Mode (1/2/3/4) [2]: ").strip()
+            local_mode = mode_choice in ("1", "3")
             subscription_cli = ""
 
-            if mode_choice == "3":
+            if mode_choice == "4":
                 selected = input(
                     "  CLI (claude_cli/codex_cli) [claude_cli]: "
                 ).strip().lower()
@@ -301,7 +321,13 @@ def main():
                 binary = "claude" if subscription_cli == "claude_cli" else "codex"
                 print(f"  Subscription CLI selected — make sure `{binary}` is logged in.")
                 print("  Pulse cadence will be set to resting-only to protect the quota.")
-            elif local_mode:
+            elif mode_choice == "3":
+                llm_provider = "rwkv"
+                llm_model = input(
+                    f"  RWKV model path (blank = {DEFAULT_RWKV_MODEL}): "
+                ).strip() or DEFAULT_RWKV_MODEL
+                print("  Full Dual RWKV selected — 100% local unified neural architecture.")
+            elif mode_choice == "1":
                 selected = input(
                     "  Local runtime (ollama/llama_cpp) [ollama]: "
                 ).strip().lower()

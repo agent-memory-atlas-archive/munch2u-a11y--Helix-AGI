@@ -1,0 +1,98 @@
+{
+  "home.json": {
+    "sha256": "419b4d78d88d180f6cfcc80108853a93e480a409d840c6da334782321b0c6629",
+    "bytes": 1887
+  },
+  "identity.json": {
+    "sha256": "8e5b25d733afe45122cc8876156305931bda33cf66afd26d4c634508b5f23631",
+    "bytes": 1039
+  },
+  "workshop/addition.py": {
+    "sha256": "4a81d8618f7865b647dd510947fd3bc7a9f9dfb99da301c8a33cdf4eec075805",
+    "bytes": 35
+  },
+  "bedroom/sleep.json": {
+    "sha256": "1aaa5565ac32c99fb291e8246ad209b04371e17596a3d865a5c6bf88b078804a",
+    "bytes": 184
+  },
+  "modules/web_search.py": {
+    "sha256": "671f9036896444cba16e10f895020126226a5e1b51b214ae982169dd06197a9e",
+    "bytes": 664
+  },
+  "modules/terminal.py": {
+    "sha256": "2330045f8096ff2ddbbcabd37f9a06da36980a0c42f75d75ca1e539bf82c1628",
+    "bytes": 532
+  },
+  "modules/web_read.py": {
+    "sha256": "1d6d4e2e021ef14a7e5edcefe03fb88b48bb98129f754591ffe64cc6b8d0f867",
+    "bytes": 2136
+  },
+  "intakes/home-sense-ef0724f29bba4b85aedb5b33935e4c65.json": {
+    "sha256": "6e9d2679351a9ee3100455a485ecd77699d5b79b6562613e22f491fe7eee565b",
+    "bytes": 592
+  },
+  "intakes/home-sense-6d27aacef113482a805da857ef25ad6a.json": {
+    "sha256": "f12db57871071ea5e85da9020947e4f6422eee48dd8ce60b2bc8b75c5426a608",
+    "bytes": 592
+  },
+  "intakes/home-sense-8a3b2e6a14564916a82de6565643222d.json": {
+    "sha256": "c0720b5e300dcfed3faf1c251fa2ba01fe143b285bc2217aa10294e09e09ffe9",
+    "bytes": 592
+  },
+  "intakes/home-sense-abd37482af934017a8c26d7b8f0ebad2.json": {
+    "sha256": "68c1a03c74fe4f804d39bc74b4f31b20a24578ddfa83b16ab80dfe0f897a2af5",
+    "bytes": 592
+  },
+  "intakes/home-sense-56534fb3812744c881641ab83ff81682.json": {
+    "sha256": "f9059ea0b0169bfc032c2609b3851e6f1f6b0a4fea83340d9722c98a004be03a",
+    "bytes": 602
+  },
+  "intakes/home-sense-83b2001153984057bc92e75543a16064.json": {
+    "sha256": "0857bab35ee0c1e4a735a178650a2c00119c59969444bfcde44b35e6c584f799",
+    "bytes": 632
+  },
+  "intakes/home-sense-edb745c8ef52498c861874aa4da3c374.json": {
+    "sha256": "ee03a56afe6149c7103a7ff19a5a1045070a13f89d13757dd351a1cf250d61a6",
+    "bytes": 592
+  },
+  "intakes/home-sense-a522dc259dd9419f813980a10caa2ef8.json": {
+    "sha256": "5f1443ae0cd2ef13c81c1d667a3c7b502532d7f137a23f484a4943ba23c0bae8",
+    "bytes": 592
+  },
+  "intakes/home-sense-aa15ca2930b14fa99fafcb19cf4557b7.json": {
+    "sha256": "bc0bb8880c59be93ad434e31ef658e871da4cd8c18c542512ce39a7fe1cc8076",
+    "bytes": 592
+  },
+  "intakes/home-sense-c3b537b5db6745f38eb01114036170d3.json": {
+    "sha256": "351afcc68d5c41fd926b8d314b7b44392e4947d6e7d141de43347c82df96c40e",
+    "bytes": 592
+  },
+  "intakes/home-sense-4565d25a10a440cab5b7dffd32bf4ea2.json": {
+    "sha256": "b837a38faf8fe790bc55f8f66b50b9b988e95ddf3b3caa1fc2a65d7ab89b14d9",
+    "bytes": 632
+  },
+  "intakes/home-sense-3e1afaf4f60e4bf0bc1a681f009a8f5e.json": {
+    "sha256": "18ebe2b05b0a337832357c965217e0ea025589debfd80950f60c09596b83fbd9",
+    "bytes": 832
+  },
+  "intakes/home-sense-5879f3ebaa7a429888eadf108964ed34.json": {
+    "sha256": "fa80f54bdacf286f37dd9ed084735dbe25a72ee0c5fdf1972a7eb9a13214b2aa",
+    "bytes": 602
+  },
+  "intakes/home-sense-dd628aa1613c4058b092be20a059428f.json": {
+    "sha256": "7c48dbd1d4e76ef1f722108c06ad05f2c8602fa3c71ccbada0051d04f58e1899",
+    "bytes": 832
+  },
+  "intakes/home-sense-6dc2f9fed35f42239c2d8d2f051eacc2.json": {
+    "sha256": "d4e630f8d6375ed7e414d29ebecb4dac8baf9201d9e443327dcd0cebcfc1264e",
+    "bytes": 592
+  },
+  "intakes/home-sense-875d95f968ff4d2ca8cf5737ecf0612d.json": {
+    "sha256": "179ca7d5fecd4d11abbe0a3d33d2377472b06dca193e3b5f925f1057e2409d98",
+    "bytes": 831
+  },
+  "intakes/home-sense-4ae9fafca09643199c9d51fdbc046861.json": {
+    "sha256": "8550d272b67b2309c49cff43b9f0c92a37198c98077a215d85bcc7efe19b1a2f",
+    "bytes": 592
+  }
+}
