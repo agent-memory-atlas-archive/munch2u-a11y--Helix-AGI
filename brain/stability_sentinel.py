@@ -661,6 +661,7 @@ class StabilitySentinel:
         if driver:
             delta, reason = driver
             self.nudge_omega(delta, reason=f"{event_type}: {reason}")
+            self._update_omega()
 
     def receive_entropy_spike(self, magnitude: float, source: str = "unknown"):
         """Receive a direct entropy spike from an external subsystem.

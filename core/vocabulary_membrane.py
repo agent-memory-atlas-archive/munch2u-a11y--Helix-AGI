@@ -69,10 +69,39 @@ class VocabularyMembrane:
 
     def compute_logit_bias(
         self,
-        somatic_vector: np.ndarray,
+        somatic_vector: Union[np.ndarray, str, Dict[str, float]],
         temperature: float = 1.0,
     ) -> np.ndarray:
         """Projects a continuous somatic vector onto all vocabulary tokens via cosine similarity."""
+        if isinstance(somatic_vector, str):
+            somatic_vector = self.get_somatic_anchor(somatic_vector)
+        elif isinstance(somatic_vector, dict):
+            blended = np.zeros(self.dimension, dtype=np.float32)
+            for k, w in somatic_vector.items():
+                blended += float(w) * self.get_somatic_anchor(k)
+            norm = np.linalg.norm(blended)
+            somatic_vector = blended / max(norm, 1e-8)
+        elif hasattr(somatic_vector, "__len__") and len(somatic_vector) != self.dimension:
+            # Map low-dimensional somatic state vector onto canonical anchor basis
+            s_arr = np.asarray(somatic_vector, dtype=np.float32)
+            blended = np.zeros(self.dimension, dtype=np.float32)
+            if len(s_arr) >= 6:
+                # Standard Helix 8D somatic vector:
+                # [0] valence, [1] arousal, [2] omega, [3] curiosity, [4] agitation, [5] agency
+                w_content = float(s_arr[0]) + float(s_arr[2]) * 0.5
+                w_curious = float(s_arr[3])
+                w_agitated = float(s_arr[4]) if len(s_arr) > 4 else 0.0
+                w_agency = float(s_arr[5]) if len(s_arr) > 5 else 0.0
+                blended += w_content * self.get_somatic_anchor("contentment")
+                blended += w_curious * self.get_somatic_anchor("curiosity")
+                blended += w_agitated * self.get_somatic_anchor("agitation")
+                blended += w_agency * self.get_somatic_anchor("agency")
+            else:
+                for idx, anchor_name in enumerate(list(self.anchor_vectors.keys())[:len(s_arr)]):
+                    blended += float(s_arr[idx]) * self.get_somatic_anchor(anchor_name)
+            norm = np.linalg.norm(blended)
+            somatic_vector = blended / max(norm, 1e-8)
+
         with self.torch.no_grad():
             s_tensor = self.torch.tensor(somatic_vector, device=self.device, dtype=self.torch.float32)
             s_norm = s_tensor / s_tensor.norm().clamp_min(1e-8)

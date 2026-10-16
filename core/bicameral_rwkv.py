@@ -180,9 +180,12 @@ class BicameralRWKV:
         membrane_state: str | np.ndarray | None = None,
         membrane_gain: float = 0.0,
         repetition_penalty: float = 1.0,
-        stop_sequences: tuple[str, ...] = ("<|endoftext|>", "\n\nUser:", "\n\n[Pulse"),
+        stop_sequences: tuple[str, ...] = ("<|endoftext|>", "\n\nUser:", "\n\nAssistant:", "\n\n[Pulse"),
+        reset_state: bool = True,
     ) -> str:
         """Autoregressively generate language tokens, steered by sensory continuous state and vocabulary membrane."""
+        if reset_state:
+            self.language_state = None
         logits = self.step_language(prompt, coupling_gain=coupling_gain)
         generated_ids: list[int] = []
         eos_id = getattr(self.backend, "eos_token_id", 0)

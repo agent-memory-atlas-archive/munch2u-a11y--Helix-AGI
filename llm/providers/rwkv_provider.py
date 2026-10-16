@@ -44,8 +44,8 @@ class BicameralRWKVSession(ChatSession):
         self._pending_context_response = None
 
     def send_message(self, message: str) -> str:
-        self.history.append({"role": "user", "content": message})
         prompt = self._build_prompt(message)
+        self.history.append({"role": "user", "content": message})
         raw_output = self.system.generate_language(
             prompt,
             max_new_tokens=self.max_output_tokens,
