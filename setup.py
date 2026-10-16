@@ -84,7 +84,7 @@ def apply_config_updates(base_dir: Path, updates: dict) -> bool:
     return True
 
 
-def local_mode_config(provider: str, model: str, context_window: int) -> dict:
+def local_mode_config(provider: str = "rwkv", model: str = "", context_window: int = 8192) -> dict:
     """Config for fully-local operation with orchestrated tool use or bicameral RWKV."""
     if provider in ("rwkv", "bicameral_rwkv"):
         chosen_model = model or DEFAULT_RWKV_MODEL
@@ -312,7 +312,12 @@ def main():
             llm_provider = subscription_cli
             local_mode = False
         elif local_mode and llm_provider not in {"ollama", "llama_cpp", "rwkv", "bicameral_rwkv"}:
-            llm_provider = "ollama"
+            llm_provider = "rwkv"
+        elif not args.gemini_key and not args.anthropic_key and not args.openai_key and not args.alibaba_key and not subscription_cli and not args.api_provider:
+            # Default to Dual RWKV when no API flags are provided
+            local_mode = True
+            if llm_provider not in {"ollama", "llama_cpp", "rwkv", "bicameral_rwkv"}:
+                llm_provider = "rwkv"
 
         # Track which comms channels the user enables
         enabled_channels = ["dashboard"]  # Dashboard is always enabled
@@ -320,14 +325,14 @@ def main():
         if not args.non_interactive:
             print("\n" + "-"*40)
             print("  [Mode]")
-            print("  1. Local (Ollama)  — runs on Ollama (e.g. Granite 8B/3B). No API key, no")
+            print("  1. Full Dual RWKV  — 100% pure local Bicameral RWKV architecture (Habitus")
+            print("                       recurrent cortex + Bicameral speaking head). [Default]")
+            print("  2. Local (Ollama)  — runs on Ollama (e.g. Granite 8B/3B). No API key, no")
             print("                       per-token cost.")
-            print("  2. Hosted (API)    — hosted cloud model (Gemini, Claude) drives the conscious model.")
-            print("  3. Full Dual RWKV  — 100% pure local Bicameral RWKV architecture (Habitus")
-            print("                       recurrent cortex + Bicameral speaking head).")
+            print("  3. Hosted (API)    — hosted cloud model (Gemini, Claude) drives the conscious model.")
             print("  4. Subscription CLI — an already-logged-in Codex or Claude Code CLI.")
-            mode_choice = input("  Mode (1/2/3/4) [2]: ").strip()
-            local_mode = mode_choice in ("1", "3")
+            mode_choice = input("  Mode (1/2/3/4) [1]: ").strip() or "1"
+            local_mode = mode_choice in ("1", "2")
             subscription_cli = ""
 
             if mode_choice == "4":
@@ -344,13 +349,13 @@ def main():
                 binary = "claude" if subscription_cli == "claude_cli" else "codex"
                 print(f"  Subscription CLI selected — make sure `{binary}` is logged in.")
                 print("  Pulse cadence will be set to resting-only to protect the quota.")
-            elif mode_choice == "3":
+            elif mode_choice == "1":
                 llm_provider = "rwkv"
                 llm_model = input(
                     f"  RWKV model path (blank = {DEFAULT_RWKV_MODEL}): "
                 ).strip() or DEFAULT_RWKV_MODEL
                 print("  Full Dual RWKV selected — 100% local unified neural architecture.")
-            elif mode_choice == "1":
+            elif mode_choice == "2":
                 selected = input(
                     "  Local runtime (ollama/llama_cpp) [ollama]: "
                 ).strip().lower()

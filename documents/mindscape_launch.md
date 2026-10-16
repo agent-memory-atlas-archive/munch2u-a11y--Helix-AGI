@@ -21,11 +21,7 @@ new agent, omit `--composition-only` to run the existing bootstrap as well.
 Use `--workspace PATH` to select the native workspace. `--resume-only` makes a
 missing joint checkpoint an error instead of permitting first gestation.
 
-`config/config.json` owns `composition`, `local_model`,
-`local_context_window`, and the nested `mindscape` paths. Local Granite is the
-foreground model; cloud credentials cannot replace it in this profile. The
-configured Ollama service must already contain the chat and Qwen embedding
-models. The pinned RWKV checkpoint is verified by MightyMem before loading.
+`config/config.json` owns `composition`, `local_model`, `local_context_window`, and the nested `mindscape` paths. The primary default runtime is the **Bicameral Dual-RWKV System**, uniting the recurrent Habitus memory cortex with the Bicameral RWKV-7 speaking model and Learned Vocabulary Membrane Grounding. For users preferring Ollama, local Granite (3B or 8B) remains supported as an optional foreground language provider. The pinned RWKV checkpoint is verified by MightyMem before loading.
 The supported joint bridge runs on CPU. Transformers 5.17 is pinned because
 the checkpoint's cache API requires at least 5.15.
 

@@ -15,24 +15,31 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def defaults(root=ROOT):
     root = Path(root).resolve()
+    default_rwkv_candidates = [
+        os.environ.get("RWKV_MODEL_PATH"),
+        str(root.parent / "habitus-ai-experiments/habitus-mind/models/rwkv7-g1j-1.5b-20260831-2c18b29"),
+        str(Path.home() / "models/rwkv7-g1j-1.5b-20260831-2c18b29"),
+        str(root / "models/rwkv7-g1j-1.5b-20260831-2c18b29"),
+    ]
+    rwkv_path = next((c for c in default_rwkv_candidates if c and Path(c).exists()), default_rwkv_candidates[1])
     return {
         "composition": "mindscape",
         "pulse_mode": "standard",
-        "local_provider": "ollama",
-        "local_model": "granite4.1:3b",
-        "llm_provider": "ollama",
-        "llm_model": "granite4.1:3b",
+        "local_provider": "rwkv",
+        "local_model": str(rwkv_path),
+        "llm_provider": "rwkv",
+        "llm_model": str(rwkv_path),
         "local_context_window": 8192,
         "mindscape": {
             "package_path": str(root.parent / "MightyMem"),
-            "rwkv_model": str(root.parent / "habitus-ai-experiments/habitus-mind/models/rwkv7-g1j-1.5b-20260831-2c18b29"),
+            "rwkv_model": str(rwkv_path),
             "workspace": str(root),
             "home": str(root / "data/agent_home"),
             "modules_require_room": False,
             "device": "cpu",
             "gestation": "if_missing",
             "context_focus_profiles": {},
-            "action_intent_source": "granite_private",
+            "action_intent_source": "bicameral_rwkv",
         },
     }
 

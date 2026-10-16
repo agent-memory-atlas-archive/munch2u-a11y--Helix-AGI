@@ -1,33 +1,24 @@
 <p align="center">
   <h1 align="center">Helix AGI</h1>
-  <p align="center"><strong>A continuous agent architecture with separated semantic recall, associative memory, and learned task cognition</strong></p>
+  <p align="center"><strong>A Continuous Bicameral Dual-RWKV Architecture with Separated Semantic Recall, Associative Memory, and Learned Task Cognition</strong></p>
+  <p align="center"><em>100% Pure Local Neural Stream · Dual-Head Contemplation & Actualization · Recurrent Habitus Cortex</em></p>
 </p>
 
 ---
-ME
-License
 
-TL;DR — How to Start Helix
-
-Standard Setup: Run ./install.sh (or python setup.py), then start Helix with python main.py. Jump to Quick Start & Setup for complete instructions.
-Mindscape setup also creates the agent's [home, rooms, text surroundings and workshop](documents/agent-home.md). Remembered modules can be reached from any room; experiments execute only inside the isolated workshop.
-Creation guides you through the agent name, initial archetype, main communication channel and credentials. The home uses that name; archetype seeds native Habitus preferences, separately from starter memory depth and voice style.
-Full Local Mode (Over-Agent Setup): For 100% local operation with local Ollama LLMs, navigate to Over_Agent_Design directory (cd ../Over_Agent_Design), run ./Setup_Wizard.sh, then launch with ./Launch_Helix_Agent.sh. See the Over_Agent_Design Guide for full details.
-
-
-> **TL;DR — How to Start Helix**
+> **TL;DR — How to Start Helix (Dual RWKV System)**
 >
-> - **Full local mindscape:** In this checkout, run `venv/bin/python setup.py --composition mindscape --composition-only`, then `venv/bin/python main.py --check-setup`. Start with `venv/bin/python main.py` after checking the composition receipt.
-> - This composition connects **Helix + mRAG + MightyMem/Habitus cortex and RWKV + Context Loom**. Read the [launcher and gestation contract](documents/mindscape_launch.md) for dependencies, paths, saved state, and verification limits.
-> - `./install.sh` starts the graphical setup with this composition selected. The separate Over-Agent experiment is a different runtime.
+> - **Primary Default Architecture — Dual RWKV (Bicameral RWKV-7):** Run `./install.sh` or `python setup.py` (Mode 1: Full Dual RWKV [Default]). This initializes the 100% pure local unified architecture uniting the Bicameral RWKV-7 language stream with the Habitus recurrent memory cortex and Learned Vocabulary Membrane Grounding.
+> - **Verify Loading & Integrity:** Run `venv/bin/python main.py --check-setup` to verify your local neural weights, Bubblewrap sandbox, and composition manifest receipt. Launch with `venv/bin/python main.py`.
+> - **Zero External Tokens Required:** The complete cognitive loop—internal stream contemplation (`<think>`), sensory-motor sandbox actions, continuous Lagrangian stability ($\Omega$), and multi-turn conversational memory—runs fully locally on neural weights with zero paid API costs.
+> - **Alternative Supported Runtimes:** Local Ollama (Granite 3B/8B), authenticated CLI proxies (Codex/Claude), and hosted API fallback remain available as configurable secondary modes.
 
-The local mindscape uses **Granite for foreground language and private intentions,
-with native RWKV/Habitus state and authorization**. The complete cognitive loop—including
-native metadata sensing, sensory-motor action pathways inside Bubblewrap sandboxing,
-verified file read/write with SHA256 integrity checks, continuous internal monologue,
-and coherent multi-turn conversational memory via Context Loom—is fully operational
-and empirically verified across both Granite 3B and 8B.
+The primary default runtime is the **Bicameral Dual-RWKV System**, uniting a recurrent
+Habitus memory cortex with a dual-head Bicameral RWKV-7 speaking model. Internal thoughts
+and external actions are decoupled via the Contemplation and Actualization heads, grounded
+by an 8D learned vocabulary membrane and stabilized by the real-time Stability Sentinel ($\Omega$).
 
+---
 ---
 
 

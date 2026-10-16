@@ -1,3 +1,4 @@
+import os
 """TDD test suite for Bicameral RWKV Speaking Head and ChatSession provider."""
 import unittest
 from pathlib import Path
