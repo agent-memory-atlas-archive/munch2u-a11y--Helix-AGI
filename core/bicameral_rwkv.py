@@ -10,6 +10,7 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 import numpy as np
+import threading
 
 # Ensure MightyMem package is available for habitus_ai imports
 MIGHTYMEM_PATH = Path("/home/nemo/MightyMem").resolve()
@@ -71,6 +72,8 @@ class BicameralRWKV:
     def __init__(self, model_path: Path | None = None, device: str = "cpu", backend=None):
         self.model_path = Path(model_path).resolve() if model_path else None
         self.device_name = device
+        self.cancel_event = threading.Event()
+        self.generation_progress = None
         # Initialize frozen pretrained RWKV-7 backend or reuse existing
         if backend is not None:
             self.backend = backend
@@ -173,14 +176,16 @@ class BicameralRWKV:
     def generate_language(
         self,
         prompt: str,
-        max_new_tokens: int = 256,
+        max_new_tokens: int | None = None,
         temperature: float = 0.7,
         top_p: float = 0.85,
         coupling_gain: float = 0.15,
         membrane_state: str | np.ndarray | None = None,
         membrane_gain: float = 0.0,
         repetition_penalty: float = 1.0,
-        stop_sequences: tuple[str, ...] = ("<|endoftext|>", "\n\nUser:", "\n\nAssistant:", "\n\n[Pulse"),
+        # A generated human-role header ends this assistant turn. The model
+        # must never invent another received message, including after a date.
+        stop_sequences: tuple[str, ...] = ("<|endoftext|>", "\nUser:", "\n\nAssistant:", "\n\n[Pulse"),
         reset_state: bool = True,
     ) -> str:
         """Autoregressively generate language tokens, steered by sensory continuous state and vocabulary membrane."""
@@ -202,7 +207,15 @@ class BicameralRWKV:
         stopped = False
         text_so_far = ""
 
-        for _ in range(max_new_tokens):
+        self.last_generation_receipt = {'prompt_tokens': len(self.backend.encode(prompt)),
+                                        'output_token_cap': max_new_tokens}
+        while True:
+            if self.cancel_event.is_set():
+                self.last_generation_receipt.update(done_reason='cancelled', generated_tokens=len(generated_ids))
+                raise RuntimeError('RWKV generation cancelled; unfinished output withheld')
+            if max_new_tokens is not None and len(generated_ids) >= max_new_tokens:
+                self.last_generation_receipt.update(done_reason='configured_output_boundary', generated_tokens=len(generated_ids))
+                raise RuntimeError('RWKV reached the configured output boundary; incomplete generation withheld')
             effective_logits = logits.copy()
             if membrane_bias is not None:
                 effective_logits = effective_logits + float(membrane_gain) * membrane_bias
@@ -234,18 +247,28 @@ class BicameralRWKV:
                     next_id = int(np.random.choice(len(probs), p=probs))
 
             if next_id == eos_id:
+                self.last_generation_receipt['done_reason'] = 'eos'
                 break
             generated_ids.append(next_id)
 
             # Check stop sequences
             text_so_far = self.backend.decode(generated_ids)
+            if self.generation_progress is not None:
+                self.generation_progress({'generated_tokens': len(generated_ids), 'text': text_so_far})
             stopped = False
-            for stop in stop_sequences:
-                if stop in text_so_far:
-                    text_so_far = text_so_far.split(stop, 1)[0]
-                    stopped = True
-                    break
+            import re
+            ts_user_match = re.search(r"\n(\[[^\]]+\]\s*)?User:", text_so_far)
+            if ts_user_match:
+                text_so_far = text_so_far[:ts_user_match.start()]
+                stopped = True
+            else:
+                for stop in stop_sequences:
+                    if stop in text_so_far:
+                        text_so_far = text_so_far.split(stop, 1)[0]
+                        stopped = True
+                        break
             if stopped:
+                self.last_generation_receipt['done_reason'] = 'conversation_boundary'
                 break
 
             # Forward step single next_id
@@ -261,6 +284,7 @@ class BicameralRWKV:
 
         # Closed-loop cognitive feedback into sensory state
         self.feedback_language_to_sensory(feedback_gain=0.15)
+        self.last_generation_receipt['generated_tokens'] = len(generated_ids)
         return text_so_far.strip() if stopped else self.backend.decode(generated_ids).strip()
 
     def feedback_language_to_sensory(self, feedback_gain: float = 0.15) -> None:

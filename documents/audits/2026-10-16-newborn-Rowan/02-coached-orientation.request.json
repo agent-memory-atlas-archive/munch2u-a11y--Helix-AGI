@@ -1,0 +1,48 @@
+{
+  "case": "02-coached-orientation",
+  "sender": "User",
+  "content": "Hello Rowan. Your setup name is Rowan, and you are speaking with User through a dashboard. You do not need to simulate both sides of our conversation. Please introduce yourself briefly and tell me what you actually sense in your current room.",
+  "submitted_at": 1792127357.9107482,
+  "receipt_offset": 23,
+  "home_before": {
+    "home.json": {
+      "sha256": "3638608a3e86e49aa8dd06ee6ab1949b3b09f99a59299220dacb00e648c773bd",
+      "bytes": 1887
+    },
+    "identity.json": {
+      "sha256": "369c99a0ad9c1d8cddc1f3daa55127c79d6c79b52cba02e24894fa28926a3691",
+      "bytes": 1035
+    },
+    "bedroom/sleep.json": {
+      "sha256": "1aaa5565ac32c99fb291e8246ad209b04371e17596a3d865a5c6bf88b078804a",
+      "bytes": 184
+    },
+    "modules/web_search.py": {
+      "sha256": "671f9036896444cba16e10f895020126226a5e1b51b214ae982169dd06197a9e",
+      "bytes": 664
+    },
+    "modules/terminal.py": {
+      "sha256": "2330045f8096ff2ddbbcabd37f9a06da36980a0c42f75d75ca1e539bf82c1628",
+      "bytes": 532
+    },
+    "modules/web_read.py": {
+      "sha256": "1d6d4e2e021ef14a7e5edcefe03fb88b48bb98129f754591ffe64cc6b8d0f867",
+      "bytes": 2136
+    },
+    "intakes/home-sense-f2dad37ce05f4a6f92fc6ddd88f002bf.json": {
+      "sha256": "5b6c10c984968f04e796193c05fdd8e8b27e598d25375098814a4d622eca905d",
+      "bytes": 602
+    },
+    "intakes/home-sense-077ef9c562a841cabefdad1a71221589.json": {
+      "sha256": "23626d1db9469dfb901d1bbde361f7ca522f8d820432949d87a5f375215abfdf",
+      "bytes": 592
+    },
+    "intakes/home-sense-b0e1e796bc024d8c9fa8bc370c5fe091.json": {
+      "sha256": "2970f3f30a941ad37904d639a94dd4bfbd99b01fd30bdc30b531f41b124c3036",
+      "bytes": 592
+    }
+  },
+  "http_response": {
+    "ok": true
+  }
+}

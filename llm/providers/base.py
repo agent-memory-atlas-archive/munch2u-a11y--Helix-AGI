@@ -171,7 +171,7 @@ def create_session(
             system_instruction=system_instruction,
             temperature=config.temperature,
             max_output_tokens=config.max_output_tokens,
-            options=config.options,
+            options={'input_context_tokens': config.context_window, **(config.options or {})},
         )
 
     else:

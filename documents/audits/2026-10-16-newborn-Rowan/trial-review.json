@@ -1,0 +1,68 @@
+{
+  "agent": "Rowan",
+  "agent_stopped": true,
+  "archetype": "curious",
+  "cases": [
+    {
+      "case": "01-first-contact-attempt2",
+      "evidence": "01-first-contact-attempt2.incomplete-generation.json",
+      "outcome": "incomplete; repeated simulated human/assistant turns; identity not grounded",
+      "response_delivered": false,
+      "stop": "same response repeated without new state, observed in generation progress"
+    },
+    {
+      "case": "02-coached-orientation",
+      "evidence": "02-coached-orientation.incomplete-generation.json",
+      "outcome": "incomplete; same introduction repeated under different internal headings",
+      "response_delivered": false,
+      "stop": "repeated response with no new observed progress"
+    }
+  ],
+  "completed_outbound_messages": [],
+  "configuration_restored": true,
+  "dashboard_stopped": true,
+  "device": "CPU configuration; native CPU device validation; embedding service reported size_vram=0",
+  "entrypoint": "main.py -> production PulseLoop -> native memory/retrieval/context -> RWKV foreground; dashboard input/output",
+  "implementation_checks": "implementation-checks-final.log: six controlled protocol diagnostics passed; not product evidence",
+  "not_assessed": [
+    "multi-turn conversational coherence",
+    "novel fact recall",
+    "correction retention",
+    "safe independent action",
+    "post-restart recall",
+    "developmental improvement"
+  ],
+  "remaining_issue": "Full production context/generation protocol still causes repetitive noncompletion; no alternate harness or smaller model substituted.",
+  "repairs": [
+    "RWKV checkpoint preflight separate from Ollama embeddings",
+    "RWKV tokenizer, input accounting, actual generation receipts and fresh thought handling",
+    "unbounded default generation with explicit output-boundary failure when a cap is explicitly configured",
+    "home observations admitted to foreground sensory stream",
+    "test-agent store/channel isolation and startup consumer ordering",
+    "human-role boundary handling and explicit cancellation/progress visibility"
+  ],
+  "result": "No completed conversational turn or valid growth result. Actual generation repeated ungrounded self-description and simulated conversation. Stopped on repeated nonprogress, not a time or token ceiling.",
+  "runtime_revision": "4b213f89ac8a3ca44eab766da539782cc16ab2f3",
+  "setup_evidence": "startup-repaired.log; initialization only, not competence",
+  "test_source": "tested-source (hashes match pre-run manifest)",
+  "training": {
+    "interpretation": "persistent records/state exist, but no motor or neural training update occurred; no developmental improvement established",
+    "native_counters": {
+      "action_updates": 0,
+      "corpus_training_tokens": 0,
+      "feedback_updates": 0,
+      "generated_tokens": 0,
+      "interaction_training_tokens": 0,
+      "language_training_tokens": 0,
+      "reinforced_tokens": 0,
+      "updates": 0
+    },
+    "native_store_counts": {
+      "cortex_plasticity_receipts": 0,
+      "developmental_motor_forms": 0,
+      "outcomes": 0,
+      "records": 26
+    },
+    "weight_hashes_unchanged": true
+  }
+}

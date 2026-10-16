@@ -168,7 +168,7 @@ def resolve_main_provider(mindscape_settings: dict | None, cfg: dict | None = No
                 model=str(rwkv_path),
                 context_window=int(mindscape_settings.get("local_context_window", 8192)),
                 temperature=0.7,
-                max_output_tokens=512,
+                max_output_tokens=None,
             )
         else:
             context = int(mindscape_settings.get("local_context_window", 32768))
@@ -219,8 +219,27 @@ def setup_helix(data_dir: str = "data", *, start_sensors: bool = True):
 
     mem_stats = memory_manager.get_stats()
     belief_stats = belief_store.get_stats()
+    if belief_stats.get("premises", 0) == 0:
+        print("  Belief store empty — auto-seeding default identity premises...")
+        from bootstrap.seed_builder import BootstrapContext, write_seed_data
+        agent_name = _cfg.get("agent_name", "Helix")
+        creator_name = _cfg.get("creator_name", "User")
+        archetype = _cfg.get("agent_archetype", "curious")
+        ctx = BootstrapContext(
+            agent_name=agent_name,
+            creator_name=creator_name,
+            profile="standard",
+            personality=archetype if archetype in {"curious", "friendly", "safe", "professional"} else "curious",
+            wake_time="08:00",
+            sleep_time="23:00",
+            channels=["dashboard"],
+        )
+        write_seed_data(data_dir, ctx, overwrite=False)
+        belief_stats = belief_store.get_stats()
+        print(f"  Beliefs (auto-seeded): {belief_stats}")
+    else:
+        print(f"  Beliefs: {belief_stats}")
     print(f"  Memory: {mem_stats}")
-    print(f"  Beliefs: {belief_stats}")
     print(f"  Scratchpad: {len(scratchpad.get_active_notes())} active notes")
 
     # ── 2. Physics Engine (stable 8D manifold + 1024D semantic index) ──
@@ -233,7 +252,7 @@ def setup_helix(data_dir: str = "data", *, start_sensors: bool = True):
     # ── 2b. Stability Sentinel ───────────────────────────────────────
     from pathlib import Path
     sentinel = StabilitySentinel(
-        base_dir=Path("."),
+        base_dir=Path(data_dir),
         memory=memory_manager,
         probe_interval=60,
     )
@@ -274,6 +293,7 @@ def setup_helix(data_dir: str = "data", *, start_sensors: bool = True):
         print(f"  Tool notes: load failed ({e})")
     
     # Sensory Cortex (Passive Background Vision/Audio)
+    start_sensors = start_sensors and bool(_cfg.get('camera_enabled', True) or _cfg.get('audio_enabled', False))
     sensory_cortex = SensoryCortex(camera_device=0) if start_sensors else None
     if start_sensors:
         sensory_cortex.start_passive_sensing()
@@ -284,22 +304,32 @@ def setup_helix(data_dir: str = "data", *, start_sensors: bool = True):
 
     # ── 3b. Communication Bots ────────────────────────────────────────────
     telegram_bot = HelixTelegramBot()
+    if 'creation' in _cfg or 'telegram_enabled' in _cfg:
+        telegram_bot.enabled = telegram_bot.enabled and _cfg.get('telegram_enabled', False)
     channel_router.set_telegram_bot(telegram_bot)
     print(f"  Telegram: {'enabled' if telegram_bot.enabled else 'disabled (no token)'}")
 
     discord_bot = HelixDiscordBot()
+    if 'creation' in _cfg or 'discord_enabled' in _cfg:
+        discord_bot.enabled = discord_bot.enabled and _cfg.get('discord_enabled', False)
     channel_router.set_discord_bot(discord_bot)
     print(f"  Discord: {'enabled' if discord_bot.enabled else 'disabled (no token)'}")
 
     slack_bot = HelixSlackBot()
+    if 'creation' in _cfg or 'slack_enabled' in _cfg:
+        slack_bot.enabled = slack_bot.enabled and _cfg.get('slack_enabled', False)
     channel_router.set_slack_bot(slack_bot)
     print(f"  Slack: {'enabled' if slack_bot.enabled else 'disabled (no token)'}")
 
     whatsapp_bot = HelixWhatsAppBot()
+    if 'creation' in _cfg or 'whatsapp_enabled' in _cfg:
+        whatsapp_bot.enabled = whatsapp_bot.enabled and _cfg.get('whatsapp_enabled', False)
     channel_router.set_whatsapp_bot(whatsapp_bot)
     print(f"  WhatsApp: {'enabled' if whatsapp_bot.enabled else 'disabled (no token)'}")
 
     webhook_channel = HelixWebhookChannel()
+    if 'creation' in _cfg or 'webhook_enabled' in _cfg:
+        webhook_channel.enabled = webhook_channel.enabled and _cfg.get('webhook_enabled', False)
     channel_router.set_webhook_channel(webhook_channel)
     print(f"  Webhook: {'enabled' if webhook_channel.enabled else 'disabled (no config)'}")
 
@@ -332,7 +362,7 @@ def setup_helix(data_dir: str = "data", *, start_sensors: bool = True):
     auxiliary_llm = init_auxiliary_client(provider_config)
 
     # ── 6. Pulse Loop ────────────────────────────────────────────
-    journal_dir = "journals"
+    journal_dir = os.path.join(data_dir, 'journals')
 
     if pulse_mode == "dual":
         # ── Dual-Consciousness Mode ─────────────────────────────
@@ -459,6 +489,7 @@ def setup_helix(data_dir: str = "data", *, start_sensors: bool = True):
             sensory_cortex=sensory_cortex,
         )
 
+    pulse_loop.config = _cfg
     if _mindscape_settings is not None:
         from core.mindscape import Mindscape
         pulse_loop.mindscape = Mindscape(_mindscape_settings, data_dir, preconscious, local_models=local_models)
@@ -603,7 +634,7 @@ def setup_helix(data_dir: str = "data", *, start_sensors: bool = True):
     # co-injected into the context window. The nightly Curator reads its
     # clusters for compound synthesis. No writes to belief store or manifold.
     from core.co_occurrence_hook import register_co_occurrence_hook
-    co_tracker = register_co_occurrence_hook(data_dir="data")
+    co_tracker = register_co_occurrence_hook(data_dir=data_dir)
 
     # Affect field hook: Plutchik emotional wave packets (Layer 3)
     # Deposits packets from Lagrangian signals every pulse, evolves
@@ -612,7 +643,7 @@ def setup_helix(data_dir: str = "data", *, start_sensors: bool = True):
     affect_field = register_affect_hook(
         sentinel=sentinel,
         spatial_mind=physics.spatial_mind,
-        data_dir="data",
+        data_dir=data_dir,
     )
 
     print(
@@ -646,12 +677,12 @@ def main_loop(data_dir="data", interactive=False):
     sentinel.start()
 
     # Start Dashboard communication poller thread
-    def poll_dashboard():
+    def poll_dashboard(*, once=False):
         from dashboard.dashboard_comms import get_comms
         comms = get_comms()
         import logging
         poller_logger = logging.getLogger("helix.main.dashboard_poller")
-        while pulse_loop._running:
+        while once or pulse_loop._running:
             try:
                 messages = comms.pop_inbound()
                 for msg in messages:
@@ -667,15 +698,18 @@ def main_loop(data_dir="data", interactive=False):
                     )
             except Exception as e:
                 poller_logger.error(f"Error polling dashboard: {e}")
+            if once:
+                return
             time.sleep(1)
 
     import threading
-    t = threading.Thread(target=poll_dashboard, daemon=True, name="helix-dashboard-poller")
-    t.start()
-
-    # Start the pulse loop in background
+    # The consumer's running condition must be true before its thread starts.
+    # Admit already queued real messages before the first autonomous pulse.
+    poll_dashboard(once=True)
     pulse_loop.wake("system_boot")
     pulse_loop.start()
+    t = threading.Thread(target=poll_dashboard, daemon=True, name="helix-dashboard-poller")
+    t.start()
 
     # Give it a moment to run the first pulse
     time.sleep(1)

@@ -195,7 +195,7 @@ class Mindscape:
             "route": ["Helix canonical memory and beliefs", "native mRAG and Context Office",
                       "Helix preconscious and 8D physics", "MightyMem Habitus graph and cortex",
                       "RWKV recurrent input and native cortex bridge", "Context Loom compiler",
-                      "local Granite foreground", "Helix action/channel path", "canonical post-pulse persistence"],
+                      f"local {self.config['local_provider']} foreground", "Helix action/channel path", "canonical post-pulse persistence"],
             "hardware": {"platform": platform.platform(), "neural_device": "cpu"},
             "local_models": local_models,
             "evaluation": {"kind": "composition initialization", "dataset": None, "grader": None,
@@ -213,7 +213,7 @@ class Mindscape:
                 "excluded_legacy_paths": "legacy orchestrated tools, gravity fallback, dual pulse and office-first loops are not part of native Mindscape",
             },
             "capability_status": {
-                "rwkv_role": "native recurrent input/cortex coupling; Granite retains foreground language",
+                "rwkv_role": f"native recurrent input/cortex coupling; {self.config['local_provider']} foreground language",
                 "non_tool_file_motor": "native workspace actuators with explicit Granite intention bootstrap; competence requires actual action receipts",
                 "rwkv_gradient_training": False,
                 "cortex_plasticity": "native Habitus runtime; no fabricated rewards",
@@ -282,8 +282,12 @@ class Mindscape:
         self._observed_return_id = None
         if str(self.native.backend.device) != "cpu" or str(self.native.runtime.cortex.device) != "cpu":
             raise RuntimeError("Native joint bridge initialized on an undeclared device")
-        from llm.ollama_tokens import OllamaTokenCounter
-        self.token_counter = OllamaTokenCounter(self.config["local_model"])
+        if self.config['local_provider'] in {'rwkv', 'bicameral_rwkv'}:
+            from llm.rwkv_tokens import RWKVTokenCounter
+            self.token_counter = RWKVTokenCounter(self.native.backend.encode, self.config['local_model'])
+        else:
+            from llm.ollama_tokens import OllamaTokenCounter
+            self.token_counter = OllamaTokenCounter(self.config["local_model"])
         loaded = (self.manifest.get("local_models") or {}).get("models", [])
         served = next((entry for entry in loaded if entry["model"] == self.config["local_model"]), None)
         if served and served["digest"] != self.token_counter.model_digest:
@@ -319,13 +323,13 @@ class Mindscape:
             "context_compiler": "core.mindscape_context.MindscapeContextCompiler",
             "tokenizer": self.token_counter.provenance,
             "context_layout": "separate-routing-and-native-ability-effects-v9",
-            "foreground_format": "Granite JSON intention or message; explicit workspace request without return requires intention; native authorization unchanged",
+            "foreground_format": "completed provider output decoded to private intention or message; native authorization unchanged",
             "history_presentation": "delivered assistant prose wrapped losslessly in message JSON; private intentions excluded",
             "recalled_assistant_policy": "older model statements require an explicit past-statement query; actual provider dialogue stays present",
             "context_focus_profiles": self.loom.compiler.focus_profiles,
             "context_focus_status": "configurable bootstrap priorities; not learned RWKV attention",
             "action_intent_source": self.config["mindscape"]["action_intent_source"],
-            "action_route": "private Granite intention -> native SELF selected affordance -> workspace actuator -> native sensory return -> next Helix pulse",
+            "action_route": "private foreground intention -> native SELF selected affordance -> workspace actuator -> native sensory return -> next Helix pulse",
             "native_abilities": self.body.abilities,
             "agent_home": self.home,
             "gestation_seed": self.gestation_receipt,
@@ -358,6 +362,8 @@ class Mindscape:
         from habitus_ai.developmental_runtime import DevelopmentalInput
         from habitus_ai.types import InputTrunk
         scene, text = self.body.workspace.observe_environment(pulse)
+        self.foreground_home_observation = {'text': text, 'producer': 'home_filesystem',
+                                            'source_ids': [scene['observation_id']]}
         ids = self.native.backend.encode(text)
         if ids:
             self.native.backend.consume(ids)

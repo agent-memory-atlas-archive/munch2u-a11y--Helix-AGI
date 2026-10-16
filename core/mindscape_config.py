@@ -17,11 +17,19 @@ def defaults(root=ROOT):
     root = Path(root).resolve()
     default_rwkv_candidates = [
         os.environ.get("RWKV_MODEL_PATH"),
+        str(Path.home() / "habitus-ai-experiments/habitus-mind/models/rwkv7-g1j-1.5b-20260831-2c18b29"),
         str(root.parent / "habitus-ai-experiments/habitus-mind/models/rwkv7-g1j-1.5b-20260831-2c18b29"),
         str(Path.home() / "models/rwkv7-g1j-1.5b-20260831-2c18b29"),
         str(root / "models/rwkv7-g1j-1.5b-20260831-2c18b29"),
     ]
     rwkv_path = next((c for c in default_rwkv_candidates if c and Path(c).exists()), default_rwkv_candidates[1])
+    default_mightymem_candidates = [
+        os.environ.get("MIGHTYMEM_PATH"),
+        str(root.parent / "MightyMem"),
+        str(Path.home() / "MightyMem"),
+        str(Path("/home/nemo/MightyMem")),
+    ]
+    mightymem_path = next((c for c in default_mightymem_candidates if c and Path(c).exists()), str(root.parent / "MightyMem"))
     return {
         "composition": "mindscape",
         "pulse_mode": "standard",
@@ -31,7 +39,7 @@ def defaults(root=ROOT):
         "llm_model": str(rwkv_path),
         "local_context_window": 8192,
         "mindscape": {
-            "package_path": str(root.parent / "MightyMem"),
+            "package_path": mightymem_path,
             "rwkv_model": str(rwkv_path),
             "workspace": str(root),
             "home": str(root / "data/agent_home"),
@@ -121,13 +129,19 @@ def local_model_receipt(config):
     """Check the selected local service before creating state or loading weights."""
     import urllib.request
     base = config.get("ollama_url", "http://localhost:11434").rstrip("/")
-    names = (config["local_model"], os.environ.get("HELIX_SEMANTIC_MODEL", "qwen3-embedding:0.6b"))
+    rwkv = config['local_provider'] in {'rwkv', 'bicameral_rwkv'}
+    names = (os.environ.get("HELIX_SEMANTIC_MODEL", "qwen3-embedding:0.6b"),)
+    if not rwkv:
+        names = (config['local_model'],) + names
+    elif not Path(config['local_model'], 'model.safetensors.index.json').is_file():
+        raise RuntimeError('Configured foreground RWKV checkpoint is missing')
     with urllib.request.urlopen(base + "/api/tags") as response:
         available = {row["name"]: row for row in json.load(response)["models"]}
     missing = [name for name in names if name not in available]
     if missing:
         raise RuntimeError(f"Full mindscape cannot start: local models missing: {', '.join(missing)}")
-    return {"url": base, "models": [available[name] for name in names]}
+    return {"url": base, "models": [available[name] for name in names],
+            'foreground': {'provider': config['local_provider'], 'model': config['local_model']}}
 
 
 def source_receipt(root):

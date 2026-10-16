@@ -300,6 +300,8 @@ class PulseLoop:
         self._running = False
         self._wake_event.set()
         self._state = "DORMANT"
+        if self._chat is not None and hasattr(self._chat, 'cancel_pending'):
+            self._chat.cancel_pending()
         if self.mindscape is not None:
             if getattr(self, "_thread", None) is not None and self._thread is not threading.current_thread():
                 self._thread.join()
@@ -1092,6 +1094,13 @@ class PulseLoop:
             # describing an imagined action. This grants no native authority.
             self._chat.context_format = foreground_schema(
                 intention_required=self.mindscape.needs_native_observation)
+            if self._provider_config.provider_type in {'rwkv', 'bicameral_rwkv'}:
+                self._chat.options['generation_progress_path'] = str(
+                    self.mindscape.directory / 'foreground-in-progress.json')
+                self._chat.options['current_sensory_items'] = [
+                    dict(self.mindscape.foreground_home_observation)] + [
+                    {'text': event, 'producer': 'native_action_return'} for event in events
+                    if event.startswith('Native action [receipt:')]
 
         # 4. Send to LLM
         thought = (
@@ -1755,10 +1764,17 @@ class PulseLoop:
             )
 
         # ── 1. Identity Preamble ─────────────────────────────────────
-        primary_identity = "You are Helix, an autonomous cognitive daemon running on a local PC."
+        agent_name = (getattr(self, "config", {}) or {}).get("agent_name", "Helix")
+        creator_name = (getattr(self, "config", {}) or {}).get("creator_name", "User")
+        primary_identity = f"You are {agent_name}, an autonomous cognitive organism created by {creator_name}."
         if identity_beliefs:
             # Use the single heaviest premise as the fundamental preamble
-            primary_identity = identity_beliefs[0].get("content", primary_identity)
+            first_premise = identity_beliefs[0].get("content", "")
+            if first_premise:
+                if agent_name in first_premise and (creator_name in first_premise or creator_name == "User"):
+                    primary_identity = first_premise
+                else:
+                    primary_identity = f"You are {agent_name}, created by {creator_name}. {first_premise}"
             # Remove it from the list so it's not duplicated in the secondary list
             identity_beliefs = identity_beliefs[1:]
 
@@ -1783,14 +1799,17 @@ class PulseLoop:
         #    so different identity facets surface across session rebuilds.
         _PREMISE_COOLDOWN = 10
         _MAX_PREMISES = 15       # hard count cap — prevents belief flooding
-        self._sysinstruction_rebuild_count += 1
+        if not hasattr(self, "_premise_blacklist"):
+            self._premise_blacklist = {}
+        self._sysinstruction_rebuild_count = getattr(self, "_sysinstruction_rebuild_count", 0) + 1
         rebuild_n = self._sysinstruction_rebuild_count
 
         # Build a seed for the gravity query from what Helix is currently
         # attending to: the identity preamble + recent thought context.
         gravity_seed = primary_identity
-        if self._previous_thoughts:
-            gravity_seed += " " + self._previous_thoughts[:300]
+        prev = getattr(self, "_previous_thoughts", "")
+        if prev:
+            gravity_seed += " " + prev[:300]
 
         # Use preconscious gravity query if the cache is ready
         gravity_candidates = []
@@ -1916,18 +1935,19 @@ class PulseLoop:
             parts.extend(prop_lines)
 
         # ── 4. Communication & Actions ───────────────────────────────
-        if self._tool_format == "orchestrated":
+        tool_fmt = getattr(self, "_tool_format", "")
+        if tool_fmt == "orchestrated":
             # Layer A only — one line per toolset. The full schemas live in
             # the directed passes that actually run the tools, so this costs
             # ~200 tokens where the declarations would cost ~6000.
             try:
                 from llm.orchestrated import main_window_tool_block
-                block = main_window_tool_block(self.tool_executor)
+                block = main_window_tool_block(getattr(self, "tool_executor", None))
                 if block:
                     parts.append(block)
             except Exception as e:
                 logger.warning("Could not render the tool block: %s", e)
-        elif self._tool_format == "local":
+        elif tool_fmt == "local":
             parts.append(
                 "\n## Communication & Actions\n"
                 "All interactions with your environment (files, web, terminal, social, email, perception) "
@@ -1956,7 +1976,7 @@ class PulseLoop:
         else:
             provider_type = (
                 self._provider_config.provider_type
-                if self._provider_config else ""
+                if getattr(self, "_provider_config", None) else ""
             )
             if provider_type == "anthropic":
                 parts.append(

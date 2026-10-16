@@ -176,6 +176,7 @@ class CredentialsPage(QWidget):
 
         self.provider_combo = QComboBox()
         self._provider_map = {
+            "Dual RWKV (100% Local Unified Neural Architecture)": "rwkv",
             "Codex CLI (ChatGPT subscription)": "codex_cli",
             "Gemini (Google)": "gemini",
             "Claude (Anthropic)": "anthropic",
@@ -188,7 +189,7 @@ class CredentialsPage(QWidget):
         self.provider_combo.addItems(list(self._provider_map.keys()))
 
         # Set current from config
-        saved_provider = self.wizard.config.get("llm_provider", "gemini")
+        saved_provider = self.wizard.config.get("llm_provider") or self.wizard.config.get("local_provider") or "gemini"
         display_name = self._provider_reverse.get(saved_provider, "Gemini (Google)")
         self.provider_combo.setCurrentText(display_name)
 
@@ -429,12 +430,11 @@ class CredentialsPage(QWidget):
             self.discord_check.setChecked(self.wizard.config.get("discord_enabled", True))
         if creds.get("HELIX_VISION_PROVIDER"):
             self.vision_combo.setCurrentText(creds["HELIX_VISION_PROVIDER"])
-        if creds.get("HELIX_PROVIDER") and not self.wizard.config.get("llm_provider"):
-            display = self._provider_reverse.get(
-                creds["HELIX_PROVIDER"],
-                "Gemini (Google)"
-            )
-            self.provider_combo.setCurrentText(display)
+        saved_prov = self.wizard.config.get("llm_provider") or self.wizard.config.get("local_provider") or creds.get("HELIX_PROVIDER")
+        if saved_prov:
+            display = self._provider_reverse.get(saved_prov)
+            if display:
+                self.provider_combo.setCurrentText(display)
         
         # Load model list and set current edit text
         self._update_models_list()
@@ -442,8 +442,9 @@ class CredentialsPage(QWidget):
     def _save_and_next(self):
         """Save credential values to config and advance."""
         cfg = self.wizard.config
-        if cfg.get("composition") == "mindscape" and self._get_provider() != "ollama":
-            QMessageBox.warning(self, "Choose the configured runtime", "This agent's full Mindscape gestation uses Ollama. Select Ollama and its local model to continue.")
+        selected_provider = self._get_provider()
+        if cfg.get("composition") == "mindscape" and selected_provider not in ("ollama", "rwkv", "bicameral_rwkv"):
+            QMessageBox.warning(self, "Choose the configured runtime", "This agent's full Mindscape gestation uses a local model (Ollama or RWKV). Select a local runtime to continue.")
             return
         cfg["gemini_api_key"] = self.gemini_key.text().strip()
         cfg["anthropic_api_key"] = self.anthropic_key.text().strip()

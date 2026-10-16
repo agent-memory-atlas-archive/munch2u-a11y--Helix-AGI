@@ -58,6 +58,10 @@ def upsert_env_values(path: Path, updates: dict) -> None:
     rendered.extend(f"{key}={value}" for key, value in pending.items())
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text("\n".join(rendered).rstrip() + "\n")
+    try:
+        path.chmod(0o600)
+    except Exception:
+        pass
 
 
 def apply_config_updates(base_dir: Path, updates: dict) -> bool:
@@ -191,6 +195,19 @@ def main():
     parser.add_argument("--webhook-inbound-secret", default="", help="Generic Webhook Inbound Secret")
     parser.add_argument("--moltbook-key", default="", help="Moltbook API Key")
     parser.add_argument(
+        "--archetype",
+        choices=["balanced", "curious", "deliberate", "builder"],
+        default="balanced",
+        help="Initial archetype for agent identity",
+    )
+    parser.add_argument(
+        "--primary-channel",
+        choices=["dashboard", "telegram", "discord", "slack", "whatsapp", "webhook"],
+        default="dashboard",
+        help="Primary communication channel",
+    )
+    parser.add_argument("--data-dir", default="", help="Custom data directory for the agent")
+    parser.add_argument(
         "--profile",
         choices=["birth", "prepared", "developed", "basic", "standard", "predeveloped", "pre-developed", "import", "imported", "external"],
         default="standard",
@@ -215,6 +232,24 @@ def main():
         if args.composition == "mindscape":
             updates = {**defaults(base_dir), **existing, **updates}
             updates["mindscape"] = {**defaults(base_dir)["mindscape"], **existing.get("mindscape", {})}
+            if args.archetype:
+                updates["agent_archetype"] = args.archetype
+            if args.primary_channel:
+                updates["primary_channel"] = args.primary_channel
+            if args.data_dir:
+                updates["data_dir"] = str(Path(args.data_dir).resolve())
+            from core.agent_creation import creation_settings
+            creation_dict = {
+                **updates,
+                "agent_name": args.agent_name,
+                "creator_name": args.creator_name,
+                "agent_archetype": getattr(args, "archetype", "balanced"),
+                "primary_channel": getattr(args, "primary_channel", "dashboard"),
+            }
+            if args.data_dir:
+                creation_dict["data_dir"] = str(Path(args.data_dir).resolve())
+            creation_res = creation_settings(creation_dict, root=base_dir)
+            updates.update(creation_res)
             for key, value in (("package_path", args.mightymem_path), ("rwkv_model", args.rwkv_model), ("workspace", args.workspace), ("home", args.agent_home)):
                 if value is not None:
                     updates["mindscape"][key] = str(value.resolve())
@@ -246,6 +281,25 @@ def main():
         if not apply_config_updates(base_dir, updates):
             raise SystemExit("Composition configuration was not saved")
         if args.composition_only:
+            target_data_dir = Path(updates.get("data_dir") or (base_dir / "data"))
+            bootstrap_context = BootstrapContext(
+                agent_name=updates.get("agent_name", args.agent_name),
+                creator_name=updates.get("creator_name", args.creator_name),
+                profile=args.profile,
+                personality=args.personality,
+                wake_time="08:00",
+                sleep_time="23:00",
+                channels=["dashboard"],
+            )
+            write_seed_data(target_data_dir, bootstrap_context, overwrite=False)
+            cred_dir = Path(os.path.expanduser("~/.config/helix"))
+            cred_dir.mkdir(parents=True, exist_ok=True)
+            cred_path = cred_dir / "credentials.env"
+            upsert_env_values(cred_path, {
+                "HELIX_PROVIDER": updates.get("llm_provider", "rwkv"),
+                "HELIX_MODEL": updates.get("llm_model", ""),
+                "HELIX_COMMS_CHANNELS": updates.get("primary_channel", "dashboard"),
+            })
             print(f"Configured {args.composition}. Verify actual loading with: venv/bin/python main.py --check-setup")
             return
     elif args.composition_only:
@@ -313,7 +367,7 @@ def main():
             local_mode = False
         elif local_mode and llm_provider not in {"ollama", "llama_cpp", "rwkv", "bicameral_rwkv"}:
             llm_provider = "rwkv"
-        elif not args.gemini_key and not args.anthropic_key and not args.openai_key and not args.alibaba_key and not subscription_cli and not args.api_provider:
+        elif not args.gemini_key and not args.anthropic_key and not args.openai_key and not getattr(args, "alibaba_key", "") and not subscription_cli and not getattr(args, "api_provider", ""):
             # Default to Dual RWKV when no API flags are provided
             local_mode = True
             if llm_provider not in {"ollama", "llama_cpp", "rwkv", "bicameral_rwkv"}:
@@ -638,10 +692,11 @@ def main():
         else:
             personality = "curious"
 
-    # ── Load schedule from config for dynamic belief text ─────────────
+    # ── Load schedule and identity from config for dynamic belief text ─
     config_path = base_dir / "config" / "config.json"
     sleep_time_str = "23:00"
     wake_time_str = "08:00"
+    target_data_dir = Path(args.data_dir) if args.data_dir else (base_dir / "data")
     if config_path.exists():
         try:
             with open(config_path) as f:
@@ -649,6 +704,12 @@ def main():
             active_hours = _cfg.get("active_hours", {})
             sleep_time_str = active_hours.get("end", "23:00")
             wake_time_str = active_hours.get("start", "08:00")
+            if _cfg.get("data_dir"):
+                target_data_dir = Path(_cfg["data_dir"])
+            if _cfg.get("agent_name"):
+                agent_name = _cfg["agent_name"]
+            if _cfg.get("creator_name"):
+                creator_name = _cfg["creator_name"]
         except Exception:
             pass
 
@@ -662,7 +723,7 @@ def main():
         sleep_time=sleep_time_str,
         channels=_comms_list,
     )
-    seed_result = write_seed_data(base_dir / "data", bootstrap_context, overwrite=False)
+    seed_result = write_seed_data(target_data_dir, bootstrap_context, overwrite=False)
 
     print(
         f"  Seeding bootstrap beliefs ({profile_label(profile)} profile, "

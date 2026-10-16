@@ -1,0 +1,537 @@
+diff --git a/core/bicameral_rwkv.py b/core/bicameral_rwkv.py
+index 68ca199..39feb04 100644
+--- a/core/bicameral_rwkv.py
++++ b/core/bicameral_rwkv.py
+@@ -10,6 +10,7 @@ from __future__ import annotations
+ import sys
+ from pathlib import Path
+ import numpy as np
++import threading
+ 
+ # Ensure MightyMem package is available for habitus_ai imports
+ MIGHTYMEM_PATH = Path("/home/nemo/MightyMem").resolve()
+@@ -71,6 +72,8 @@ class BicameralRWKV:
+     def __init__(self, model_path: Path | None = None, device: str = "cpu", backend=None):
+         self.model_path = Path(model_path).resolve() if model_path else None
+         self.device_name = device
++        self.cancel_event = threading.Event()
++        self.generation_progress = None
+         # Initialize frozen pretrained RWKV-7 backend or reuse existing
+         if backend is not None:
+             self.backend = backend
+@@ -173,14 +176,16 @@ class BicameralRWKV:
+     def generate_language(
+         self,
+         prompt: str,
+-        max_new_tokens: int = 256,
++        max_new_tokens: int | None = None,
+         temperature: float = 0.7,
+         top_p: float = 0.85,
+         coupling_gain: float = 0.15,
+         membrane_state: str | np.ndarray | None = None,
+         membrane_gain: float = 0.0,
+         repetition_penalty: float = 1.0,
+-        stop_sequences: tuple[str, ...] = ("<|endoftext|>", "\n\nUser:", "\n\nAssistant:", "\n\n[Pulse"),
++        # A generated human-role header ends this assistant turn. The model
++        # must never invent another received message, including after a date.
++        stop_sequences: tuple[str, ...] = ("<|endoftext|>", "\nUser:", "\n\nAssistant:", "\n\n[Pulse"),
+         reset_state: bool = True,
+     ) -> str:
+         """Autoregressively generate language tokens, steered by sensory continuous state and vocabulary membrane."""
+@@ -202,7 +207,15 @@ class BicameralRWKV:
+         stopped = False
+         text_so_far = ""
+ 
+-        for _ in range(max_new_tokens):
++        self.last_generation_receipt = {'prompt_tokens': len(self.backend.encode(prompt)),
++                                        'output_token_cap': max_new_tokens}
++        while True:
++            if self.cancel_event.is_set():
++                self.last_generation_receipt.update(done_reason='cancelled', generated_tokens=len(generated_ids))
++                raise RuntimeError('RWKV generation cancelled; unfinished output withheld')
++            if max_new_tokens is not None and len(generated_ids) >= max_new_tokens:
++                self.last_generation_receipt.update(done_reason='configured_output_boundary', generated_tokens=len(generated_ids))
++                raise RuntimeError('RWKV reached the configured output boundary; incomplete generation withheld')
+             effective_logits = logits.copy()
+             if membrane_bias is not None:
+                 effective_logits = effective_logits + float(membrane_gain) * membrane_bias
+@@ -234,11 +247,14 @@ class BicameralRWKV:
+                     next_id = int(np.random.choice(len(probs), p=probs))
+ 
+             if next_id == eos_id:
++                self.last_generation_receipt['done_reason'] = 'eos'
+                 break
+             generated_ids.append(next_id)
+ 
+             # Check stop sequences
+             text_so_far = self.backend.decode(generated_ids)
++            if self.generation_progress is not None:
++                self.generation_progress({'generated_tokens': len(generated_ids), 'text': text_so_far})
+             stopped = False
+             for stop in stop_sequences:
+                 if stop in text_so_far:
+@@ -246,6 +262,7 @@ class BicameralRWKV:
+                     stopped = True
+                     break
+             if stopped:
++                self.last_generation_receipt['done_reason'] = 'conversation_boundary'
+                 break
+ 
+             # Forward step single next_id
+@@ -261,6 +278,7 @@ class BicameralRWKV:
+ 
+         # Closed-loop cognitive feedback into sensory state
+         self.feedback_language_to_sensory(feedback_gain=0.15)
++        self.last_generation_receipt['generated_tokens'] = len(generated_ids)
+         return text_so_far.strip() if stopped else self.backend.decode(generated_ids).strip()
+ 
+     def feedback_language_to_sensory(self, feedback_gain: float = 0.15) -> None:
+diff --git a/core/mindscape.py b/core/mindscape.py
+index b3d0675..f9ad91c 100644
+--- a/core/mindscape.py
++++ b/core/mindscape.py
+@@ -195,7 +195,7 @@ class Mindscape:
+             "route": ["Helix canonical memory and beliefs", "native mRAG and Context Office",
+                       "Helix preconscious and 8D physics", "MightyMem Habitus graph and cortex",
+                       "RWKV recurrent input and native cortex bridge", "Context Loom compiler",
+-                      "local Granite foreground", "Helix action/channel path", "canonical post-pulse persistence"],
++                      f"local {self.config['local_provider']} foreground", "Helix action/channel path", "canonical post-pulse persistence"],
+             "hardware": {"platform": platform.platform(), "neural_device": "cpu"},
+             "local_models": local_models,
+             "evaluation": {"kind": "composition initialization", "dataset": None, "grader": None,
+@@ -213,7 +213,7 @@ class Mindscape:
+                 "excluded_legacy_paths": "legacy orchestrated tools, gravity fallback, dual pulse and office-first loops are not part of native Mindscape",
+             },
+             "capability_status": {
+-                "rwkv_role": "native recurrent input/cortex coupling; Granite retains foreground language",
++                "rwkv_role": f"native recurrent input/cortex coupling; {self.config['local_provider']} foreground language",
+                 "non_tool_file_motor": "native workspace actuators with explicit Granite intention bootstrap; competence requires actual action receipts",
+                 "rwkv_gradient_training": False,
+                 "cortex_plasticity": "native Habitus runtime; no fabricated rewards",
+@@ -282,8 +282,12 @@ class Mindscape:
+         self._observed_return_id = None
+         if str(self.native.backend.device) != "cpu" or str(self.native.runtime.cortex.device) != "cpu":
+             raise RuntimeError("Native joint bridge initialized on an undeclared device")
+-        from llm.ollama_tokens import OllamaTokenCounter
+-        self.token_counter = OllamaTokenCounter(self.config["local_model"])
++        if self.config['local_provider'] in {'rwkv', 'bicameral_rwkv'}:
++            from llm.rwkv_tokens import RWKVTokenCounter
++            self.token_counter = RWKVTokenCounter(self.native.backend.encode, self.config['local_model'])
++        else:
++            from llm.ollama_tokens import OllamaTokenCounter
++            self.token_counter = OllamaTokenCounter(self.config["local_model"])
+         loaded = (self.manifest.get("local_models") or {}).get("models", [])
+         served = next((entry for entry in loaded if entry["model"] == self.config["local_model"]), None)
+         if served and served["digest"] != self.token_counter.model_digest:
+@@ -319,13 +323,13 @@ class Mindscape:
+             "context_compiler": "core.mindscape_context.MindscapeContextCompiler",
+             "tokenizer": self.token_counter.provenance,
+             "context_layout": "separate-routing-and-native-ability-effects-v9",
+-            "foreground_format": "Granite JSON intention or message; explicit workspace request without return requires intention; native authorization unchanged",
++            "foreground_format": "completed provider output decoded to private intention or message; native authorization unchanged",
+             "history_presentation": "delivered assistant prose wrapped losslessly in message JSON; private intentions excluded",
+             "recalled_assistant_policy": "older model statements require an explicit past-statement query; actual provider dialogue stays present",
+             "context_focus_profiles": self.loom.compiler.focus_profiles,
+             "context_focus_status": "configurable bootstrap priorities; not learned RWKV attention",
+             "action_intent_source": self.config["mindscape"]["action_intent_source"],
+-            "action_route": "private Granite intention -> native SELF selected affordance -> workspace actuator -> native sensory return -> next Helix pulse",
++            "action_route": "private foreground intention -> native SELF selected affordance -> workspace actuator -> native sensory return -> next Helix pulse",
+             "native_abilities": self.body.abilities,
+             "agent_home": self.home,
+             "gestation_seed": self.gestation_receipt,
+@@ -358,6 +362,8 @@ class Mindscape:
+         from habitus_ai.developmental_runtime import DevelopmentalInput
+         from habitus_ai.types import InputTrunk
+         scene, text = self.body.workspace.observe_environment(pulse)
++        self.foreground_home_observation = {'text': text, 'producer': 'home_filesystem',
++                                            'source_ids': [scene['observation_id']]}
+         ids = self.native.backend.encode(text)
+         if ids:
+             self.native.backend.consume(ids)
+diff --git a/core/mindscape_config.py b/core/mindscape_config.py
+index 57e78d2..3a277ed 100644
+--- a/core/mindscape_config.py
++++ b/core/mindscape_config.py
+@@ -121,13 +121,19 @@ def local_model_receipt(config):
+     """Check the selected local service before creating state or loading weights."""
+     import urllib.request
+     base = config.get("ollama_url", "http://localhost:11434").rstrip("/")
+-    names = (config["local_model"], os.environ.get("HELIX_SEMANTIC_MODEL", "qwen3-embedding:0.6b"))
++    rwkv = config['local_provider'] in {'rwkv', 'bicameral_rwkv'}
++    names = (os.environ.get("HELIX_SEMANTIC_MODEL", "qwen3-embedding:0.6b"),)
++    if not rwkv:
++        names = (config['local_model'],) + names
++    elif not Path(config['local_model'], 'model.safetensors.index.json').is_file():
++        raise RuntimeError('Configured foreground RWKV checkpoint is missing')
+     with urllib.request.urlopen(base + "/api/tags") as response:
+         available = {row["name"]: row for row in json.load(response)["models"]}
+     missing = [name for name in names if name not in available]
+     if missing:
+         raise RuntimeError(f"Full mindscape cannot start: local models missing: {', '.join(missing)}")
+-    return {"url": base, "models": [available[name] for name in names]}
++    return {"url": base, "models": [available[name] for name in names],
++            'foreground': {'provider': config['local_provider'], 'model': config['local_model']}}
+ 
+ 
+ def source_receipt(root):
+diff --git a/core/pulse_loop.py b/core/pulse_loop.py
+index 1f78d68..5217746 100644
+--- a/core/pulse_loop.py
++++ b/core/pulse_loop.py
+@@ -300,6 +300,8 @@ class PulseLoop:
+         self._running = False
+         self._wake_event.set()
+         self._state = "DORMANT"
++        if self._chat is not None and hasattr(self._chat, 'cancel_pending'):
++            self._chat.cancel_pending()
+         if self.mindscape is not None:
+             if getattr(self, "_thread", None) is not None and self._thread is not threading.current_thread():
+                 self._thread.join()
+@@ -1092,6 +1094,13 @@ class PulseLoop:
+             # describing an imagined action. This grants no native authority.
+             self._chat.context_format = foreground_schema(
+                 intention_required=self.mindscape.needs_native_observation)
++            if self._provider_config.provider_type in {'rwkv', 'bicameral_rwkv'}:
++                self._chat.options['generation_progress_path'] = str(
++                    self.mindscape.directory / 'foreground-in-progress.json')
++                self._chat.options['current_sensory_items'] = [
++                    dict(self.mindscape.foreground_home_observation)] + [
++                    {'text': event, 'producer': 'native_action_return'} for event in events
++                    if event.startswith('Native action [receipt:')]
+ 
+         # 4. Send to LLM
+         thought = (
+diff --git a/llm/providers/base.py b/llm/providers/base.py
+index 2ed6341..ed87885 100644
+--- a/llm/providers/base.py
++++ b/llm/providers/base.py
+@@ -171,7 +171,7 @@ def create_session(
+             system_instruction=system_instruction,
+             temperature=config.temperature,
+             max_output_tokens=config.max_output_tokens,
+-            options=config.options,
++            options={'input_context_tokens': config.context_window, **(config.options or {})},
+         )
+ 
+     else:
+diff --git a/llm/providers/rwkv_provider.py b/llm/providers/rwkv_provider.py
+index 64f7f43..d1b1161 100644
+--- a/llm/providers/rwkv_provider.py
++++ b/llm/providers/rwkv_provider.py
+@@ -2,6 +2,9 @@
+ from __future__ import annotations
+ 
+ import json
++import hashlib
++import time
++from llm.rwkv_tokens import RWKVTokenCounter
+ import logging
+ from pathlib import Path
+ from typing import Optional, Dict, Any, List
+@@ -18,11 +21,12 @@ class BicameralRWKVSession(ChatSession):
+         model_path: str,
+         system_instruction: str = "",
+         temperature: float = 0.7,
+-        max_output_tokens: int = 512,
++        max_output_tokens: int | None = None,
+         backend=None,
+         options: Optional[Dict[str, Any]] = None,
+     ):
+         self.model_path = Path(model_path) if model_path else None
++        self.model = str(self.model_path)
+         self.system_instruction = system_instruction
+         self.temperature = temperature
+         self.max_output_tokens = max_output_tokens
+@@ -37,70 +41,85 @@ class BicameralRWKVSession(ChatSession):
+         )
+         self.context_format = None
+         self.context_decoder = None
+-        self.context_counter = None
++        self.context_counter = RWKVTokenCounter(self.system.backend.encode, self.model_path)
+         self.last_context_receipt = {}
+         self.last_context_output_kind = None
+         self.last_contemplation = ""
+         self._pending_context_response = None
+ 
+-    def send_message(self, message: str) -> str:
+-        prompt = self._build_prompt(message)
+-        self.history.append({"role": "user", "content": message})
+-        raw_output = self.system.generate_language(
+-            prompt,
+-            max_new_tokens=self.max_output_tokens,
+-            temperature=self.temperature,
+-            coupling_gain=float(self.options.get("coupling_gain", 0.15)),
+-            membrane_state=self.options.get("membrane_state"),
+-            membrane_gain=float(self.options.get("membrane_gain", 0.0)),
+-            repetition_penalty=float(self.options.get("repetition_penalty", 1.15)),
+-        )
+-        from core.mindscape_intention import extract_contemplation_and_actualization
+-        contemplation, actualized = extract_contemplation_and_actualization(raw_output)
+-        if contemplation:
+-            self.last_contemplation = contemplation
+-
+-        reply = actualized if actualized else raw_output
+-        self.history.append({"role": "assistant", "content": reply})
+-        return reply
+-
+-    def send_context(self, message: str) -> str:
+-        prompt = self._build_prompt(message)
+-        raw_output = self.system.generate_language(
+-            prompt,
+-            max_new_tokens=self.max_output_tokens,
+-            temperature=self.temperature,
+-            coupling_gain=float(self.options.get("coupling_gain", 0.15)),
+-            membrane_state=self.options.get("membrane_state"),
+-            membrane_gain=float(self.options.get("membrane_gain", 0.0)),
+-            repetition_penalty=float(self.options.get("repetition_penalty", 1.15)),
+-        )
+-        from core.mindscape_intention import extract_contemplation_and_actualization
+-        contemplation, actualized = extract_contemplation_and_actualization(raw_output)
+-        if contemplation:
+-            self.last_contemplation = contemplation
+-
+-        thought = raw_output
++    def _generate(self, message):
++        messages = self.context_messages(message)
++        receipt = self.context_counter.check_request(messages, int(self.options.get('input_context_tokens', 8192)))
++        prompt = self.context_counter.render_messages(messages)
++        receipt.update(model=self.model, device=str(self.system.device),
++                       prompt_sha256=hashlib.sha256(prompt.encode()).hexdigest(), started_at=time.time())
++        sensory = self.options.pop('current_sensory_items', [])
++        for item in sensory:
++            self.system.sensory_observe(item['text'])
++        receipt['sensory_admissions'] = sensory
++        self.last_contemplation = ''
+         self.last_context_output_kind = None
+-        if self.context_decoder is not None:
+-            try:
+-                thought, self.last_context_output_kind = self.context_decoder(raw_output)
+-            except Exception as exc:
+-                logger.debug("Foreground decode fallback: %s", exc)
++        progress_path = self.options.get('generation_progress_path')
++        if progress_path:
++            def progress(value):
++                from core.mindscape_config import write_json
++                write_json(Path(progress_path), {**value, 'time': time.time(), 'status': 'incomplete',
++                                                'prompt_sha256': receipt['prompt_sha256']})
++            self.system.generation_progress = progress
++        raw = self.system.generate_language(
++            prompt, max_new_tokens=self.max_output_tokens, temperature=self.temperature,
++            coupling_gain=float(self.options.get('coupling_gain', 0.15)),
++            membrane_state=self.options.get('membrane_state'),
++            membrane_gain=float(self.options.get('membrane_gain', 0.0)),
++            repetition_penalty=float(self.options.get('repetition_penalty', 1.15)))
++        generation = dict(self.system.last_generation_receipt)
++        if generation['prompt_tokens'] != receipt['prompt_tokens']:
++            raise RuntimeError('RWKV request accounting differs from evaluated input')
++        from core.mindscape_intention import extract_contemplation_and_actualization
++        contemplation, actualized = extract_contemplation_and_actualization(raw)
++        self.last_contemplation = contemplation
++        receipt.update(generation, raw_foreground=raw, contemplation=contemplation,
++                       completed_at=time.time(), evaluated_prompt_tokens=generation['prompt_tokens'])
++        self._last_token_count = receipt['prompt_tokens'] + receipt['generated_tokens']
++        self.last_context_receipt = receipt
++        if progress_path:
++            from core.mindscape_config import write_json
++            write_json(Path(progress_path), {**receipt, 'status': 'complete'})
++        return raw, actualized
++
++    def send_message(self, message):
++        raw, actualized = self._generate(message)
++        if not actualized:
++            raise RuntimeError('RWKV produced only private contemplation; no public reply completed')
++        self.history.extend([{'role': 'user', 'content': message}, {'role': 'assistant', 'content': actualized}])
++        return actualized
++
++    def send_context(self, message):
++        raw, actualized = self._generate(message)
++        if self.context_decoder:
++            thought, kind = self.context_decoder(raw)
++            if kind == 'contemplation':
++                thought = '[thought] ' + self.last_contemplation
++            self.last_context_output_kind = kind
+         else:
+-            thought = actualized if actualized else raw_output
+-
++            thought = actualized or '[thought] ' + self.last_contemplation
++        self.last_context_receipt['output_kind'] = self.last_context_output_kind
+         self._pending_context_response = thought
+         return thought
+ 
+     def finish_context(self, current_messages: List[str], response: str, *, delivered: bool) -> None:
++        if response != self._pending_context_response:
++            raise ValueError("No matching completed RWKV response to commit")
+         self.history.extend({"role": "user", "content": msg} for msg in current_messages)
+         if delivered:
+             self.history.append({"role": "assistant", "content": response})
+         self._pending_context_response = None
+ 
+     def pulse_input_allowance(self) -> int:
+-        return 8192
++        remaining = int(self.options.get("input_context_tokens", 8192)) - self.context_counter.count_messages(self.context_messages(""))
++        if remaining <= 0:
++            raise RuntimeError("Configured RWKV input allowance exhausted; no history was clipped")
++        return remaining
+ 
+     def covered_source_hashes(self) -> set:
+         import hashlib
+@@ -109,12 +128,22 @@ class BicameralRWKVSession(ChatSession):
+     def get_history_size(self) -> int:
+         return sum(len(item.get("content", "")) for item in self.history)
+ 
+-    def _build_prompt(self, current_message: str) -> str:
+-        parts = []
+-        if self.system_instruction:
+-            parts.append(f"System: {self.system_instruction}")
+-        for item in self.history:
+-            role = "User" if item["role"] == "user" else "Assistant"
+-            parts.append(f"{role}: {item['content']}")
+-        parts.append(f"User: {current_message}\nAssistant:")
+-        return "\n\n".join(parts)
++    def context_messages(self, message):
++        return ([{'role': 'system', 'content': self.system_instruction}]
++                + [dict(item) for item in self.history]
++                + ([{'role': 'user', 'content': message}] if message else []))
++
++    def _build_prompt(self, current_message):
++        return self.context_counter.render_messages(self.context_messages(current_message))
++
++    def get_last_token_count(self):
++        return getattr(self, '_last_token_count', 0)
++
++    def get_history(self):
++        return [dict(item) for item in self.history]
++
++    def close(self):
++        self.system = None
++
++    def cancel_pending(self):
++        self.system.cancel_event.set()
+diff --git a/main.py b/main.py
+index 04fb179..6134e59 100644
+--- a/main.py
++++ b/main.py
+@@ -168,7 +168,7 @@ def resolve_main_provider(mindscape_settings: dict | None, cfg: dict | None = No
+                 model=str(rwkv_path),
+                 context_window=int(mindscape_settings.get("local_context_window", 8192)),
+                 temperature=0.7,
+-                max_output_tokens=512,
++                max_output_tokens=None,
+             )
+         else:
+             context = int(mindscape_settings.get("local_context_window", 32768))
+@@ -233,7 +233,7 @@ def setup_helix(data_dir: str = "data", *, start_sensors: bool = True):
+     # ── 2b. Stability Sentinel ───────────────────────────────────────
+     from pathlib import Path
+     sentinel = StabilitySentinel(
+-        base_dir=Path("."),
++        base_dir=Path(data_dir),
+         memory=memory_manager,
+         probe_interval=60,
+     )
+@@ -274,6 +274,7 @@ def setup_helix(data_dir: str = "data", *, start_sensors: bool = True):
+         print(f"  Tool notes: load failed ({e})")
+     
+     # Sensory Cortex (Passive Background Vision/Audio)
++    start_sensors = start_sensors and bool(_cfg.get('camera_enabled', True) or _cfg.get('audio_enabled', False))
+     sensory_cortex = SensoryCortex(camera_device=0) if start_sensors else None
+     if start_sensors:
+         sensory_cortex.start_passive_sensing()
+@@ -284,22 +285,32 @@ def setup_helix(data_dir: str = "data", *, start_sensors: bool = True):
+ 
+     # ── 3b. Communication Bots ────────────────────────────────────────────
+     telegram_bot = HelixTelegramBot()
++    if 'creation' in _cfg or 'telegram_enabled' in _cfg:
++        telegram_bot.enabled = telegram_bot.enabled and _cfg.get('telegram_enabled', False)
+     channel_router.set_telegram_bot(telegram_bot)
+     print(f"  Telegram: {'enabled' if telegram_bot.enabled else 'disabled (no token)'}")
+ 
+     discord_bot = HelixDiscordBot()
++    if 'creation' in _cfg or 'discord_enabled' in _cfg:
++        discord_bot.enabled = discord_bot.enabled and _cfg.get('discord_enabled', False)
+     channel_router.set_discord_bot(discord_bot)
+     print(f"  Discord: {'enabled' if discord_bot.enabled else 'disabled (no token)'}")
+ 
+     slack_bot = HelixSlackBot()
++    if 'creation' in _cfg or 'slack_enabled' in _cfg:
++        slack_bot.enabled = slack_bot.enabled and _cfg.get('slack_enabled', False)
+     channel_router.set_slack_bot(slack_bot)
+     print(f"  Slack: {'enabled' if slack_bot.enabled else 'disabled (no token)'}")
+ 
+     whatsapp_bot = HelixWhatsAppBot()
++    if 'creation' in _cfg or 'whatsapp_enabled' in _cfg:
++        whatsapp_bot.enabled = whatsapp_bot.enabled and _cfg.get('whatsapp_enabled', False)
+     channel_router.set_whatsapp_bot(whatsapp_bot)
+     print(f"  WhatsApp: {'enabled' if whatsapp_bot.enabled else 'disabled (no token)'}")
+ 
+     webhook_channel = HelixWebhookChannel()
++    if 'creation' in _cfg or 'webhook_enabled' in _cfg:
++        webhook_channel.enabled = webhook_channel.enabled and _cfg.get('webhook_enabled', False)
+     channel_router.set_webhook_channel(webhook_channel)
+     print(f"  Webhook: {'enabled' if webhook_channel.enabled else 'disabled (no config)'}")
+ 
+@@ -332,7 +343,7 @@ def setup_helix(data_dir: str = "data", *, start_sensors: bool = True):
+     auxiliary_llm = init_auxiliary_client(provider_config)
+ 
+     # ── 6. Pulse Loop ────────────────────────────────────────────
+-    journal_dir = "journals"
++    journal_dir = os.path.join(data_dir, 'journals')
+ 
+     if pulse_mode == "dual":
+         # ── Dual-Consciousness Mode ─────────────────────────────
+@@ -603,7 +614,7 @@ def setup_helix(data_dir: str = "data", *, start_sensors: bool = True):
+     # co-injected into the context window. The nightly Curator reads its
+     # clusters for compound synthesis. No writes to belief store or manifold.
+     from core.co_occurrence_hook import register_co_occurrence_hook
+-    co_tracker = register_co_occurrence_hook(data_dir="data")
++    co_tracker = register_co_occurrence_hook(data_dir=data_dir)
+ 
+     # Affect field hook: Plutchik emotional wave packets (Layer 3)
+     # Deposits packets from Lagrangian signals every pulse, evolves
+@@ -612,7 +623,7 @@ def setup_helix(data_dir: str = "data", *, start_sensors: bool = True):
+     affect_field = register_affect_hook(
+         sentinel=sentinel,
+         spatial_mind=physics.spatial_mind,
+-        data_dir="data",
++        data_dir=data_dir,
+     )
+ 
+     print(
+@@ -646,12 +657,12 @@ def main_loop(data_dir="data", interactive=False):
+     sentinel.start()
+ 
+     # Start Dashboard communication poller thread
+-    def poll_dashboard():
++    def poll_dashboard(*, once=False):
+         from dashboard.dashboard_comms import get_comms
+         comms = get_comms()
+         import logging
+         poller_logger = logging.getLogger("helix.main.dashboard_poller")
+-        while pulse_loop._running:
++        while once or pulse_loop._running:
+             try:
+                 messages = comms.pop_inbound()
+                 for msg in messages:
+@@ -667,15 +678,18 @@ def main_loop(data_dir="data", interactive=False):
+                     )
+             except Exception as e:
+                 poller_logger.error(f"Error polling dashboard: {e}")
++            if once:
++                return
+             time.sleep(1)
+ 
+     import threading
+-    t = threading.Thread(target=poll_dashboard, daemon=True, name="helix-dashboard-poller")
+-    t.start()
+-
+-    # Start the pulse loop in background
++    # The consumer's running condition must be true before its thread starts.
++    # Admit already queued real messages before the first autonomous pulse.
++    poll_dashboard(once=True)
+     pulse_loop.wake("system_boot")
+     pulse_loop.start()
++    t = threading.Thread(target=poll_dashboard, daemon=True, name="helix-dashboard-poller")
++    t.start()
+ 
+     # Give it a moment to run the first pulse
+     time.sleep(1)
