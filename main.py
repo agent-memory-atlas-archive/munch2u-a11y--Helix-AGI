@@ -151,10 +151,17 @@ def resolve_main_provider(mindscape_settings: dict | None, cfg: dict | None = No
     if mindscape_settings is not None:
         local_prov = mindscape_settings.get("local_provider", "ollama")
         if local_prov in ("rwkv", "bicameral_rwkv"):
+            default_rwkv_candidates = [
+                os.environ.get("RWKV_MODEL_PATH"),
+                str(Path.home() / "habitus-ai-experiments" / "habitus-mind" / "models" / "rwkv7-g1j-1.5b-20260831-2c18b29"),
+                str(Path.home() / "models" / "rwkv7-g1j-1.5b-20260831-2c18b29"),
+                str(Path("models") / "rwkv7-g1j-1.5b-20260831-2c18b29"),
+            ]
+            fallback_rwkv = next((c for c in default_rwkv_candidates if c and Path(c).exists()), default_rwkv_candidates[1])
             rwkv_path = (
                 mindscape_settings.get("mindscape", {}).get("rwkv_model")
                 or mindscape_settings.get("local_model")
-                or "/home/nemo/habitus-ai-experiments/habitus-mind/models/rwkv7-g1j-1.5b-20260831-2c18b29"
+                or fallback_rwkv
             )
             return ProviderConfig(
                 provider_type="rwkv",

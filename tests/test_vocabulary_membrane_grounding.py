@@ -9,7 +9,7 @@ from unittest.mock import MagicMock
 from pathlib import Path
 import numpy as np
 
-RWKV_MODEL_PATH = Path("/home/nemo/habitus-ai-experiments/habitus-mind/models/rwkv7-g1j-1.5b-20260831-2c18b29")
+RWKV_MODEL_PATH = Path(os.environ.get("RWKV_MODEL_PATH", Path.home() / "habitus-ai-experiments" / "habitus-mind" / "models" / "rwkv7-g1j-1.5b-20260831-2c18b29"))
 
 
 class TestVocabularyMembraneGrounding(unittest.TestCase):

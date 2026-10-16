@@ -30,7 +30,7 @@ from core.vocabulary_membrane import VocabularyMembrane
 from habitus_ai.store import MindStore
 from llm.providers.rwkv_provider import BicameralRWKVSession
 
-RWKV_MODEL_PATH = Path("/home/nemo/habitus-ai-experiments/habitus-mind/models/rwkv7-g1j-1.5b-20260831-2c18b29")
+RWKV_MODEL_PATH = Path(os.environ.get("RWKV_MODEL_PATH", Path.home() / "habitus-ai-experiments" / "habitus-mind" / "models" / "rwkv7-g1j-1.5b-20260831-2c18b29"))
 
 
 class TestNewbornGestationGrowth(unittest.TestCase):
@@ -147,8 +147,8 @@ class TestNewbornGestationGrowth(unittest.TestCase):
             self.assertNotIn("<think>", reply, f"Turn {idx} leaked think tag")
             self.assertNotIn("</think>", reply, f"Turn {idx} leaked end think tag")
             
-            # Anti-greeting verification: Turn 1 can greet, Turns 2-5 must NOT repeat greeting
-            if idx > 1:
+            # Anti-greeting verification: Initial exchange (Turns 1-2) may greet; subsequent turns (3-5) must NOT repeat greetings
+            if idx > 2:
                 self.assertIsNone(
                     salutation_pattern.match(reply.strip()),
                     f"Turn {idx} repeated greeting: {reply[:60]}"

@@ -482,11 +482,73 @@
   .affect-anger { animation: emoji-rumble 0.2s infinite linear; }
   .affect-anticipation { animation: emoji-scan 3s infinite ease-in-out; }
   .affect-neutral { animation: emoji-breath 4s infinite ease-in-out; }
+
+  /* Room Indicator */
+  .room-indicator-box {
+    display: flex; align-items: center; gap: 8px; margin-left: 14px;
+    background: rgba(30, 41, 59, 0.6); padding: 4px 10px; border-radius: 8px; border: 1px solid var(--border);
+  }
+  .room-badge { font-size: 11px; color: var(--accent); font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+  .room-sub { font-size: 10px; color: var(--dim); }
+  .staging-btn {
+    margin-left: 12px; background: rgba(99, 102, 241, 0.18); border: 1px solid rgba(99, 102, 241, 0.4);
+    color: #a5b4fc; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 500;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .staging-btn:hover { background: rgba(99, 102, 241, 0.35); color: #fff; }
+
+  /* Modals */
+  .modal-overlay {
+    display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(5, 8, 15, 0.75); backdrop-filter: blur(4px); z-index: 1000;
+    justify-content: center; align-items: center;
+  }
+  .modal-box {
+    background: #0f172a; border: 1px solid #334155; border-radius: 14px;
+    width: 580px; max-width: 90vw; max-height: 85vh; display: flex; flex-direction: column;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6); padding: 22px;
+  }
+  .dropzone {
+    border: 2px dashed #475569; border-radius: 10px; padding: 28px; text-align: center;
+    background: rgba(30, 41, 59, 0.3); cursor: pointer; transition: all 0.2s; margin-bottom: 16px;
+  }
+  .dropzone.dragover { border-color: var(--accent); background: rgba(59, 130, 246, 0.15); }
+  .dropzone-icon { font-size: 32px; margin-bottom: 8px; }
+  .dropzone-text { font-size: 13px; color: var(--text); }
+  .dropzone-sub { font-size: 11px; color: var(--dim); margin-top: 4px; }
+  .staged-list { flex: 1; overflow-y: auto; max-height: 220px; border: 1px solid var(--border); border-radius: 8px; padding: 6px; }
+  .staged-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 12px; }
+  .staged-item:last-child { border-bottom: none; }
+  .staged-name { font-family: 'JetBrains Mono', monospace; color: #e2e8f0; font-weight: 500; }
+  .staged-meta { font-size: 10px; color: var(--dim); }
+  .staged-del-btn { background: none; border: 1px solid rgba(239, 68, 68, 0.4); color: #f87171; border-radius: 4px; padding: 2px 6px; font-size: 10px; cursor: pointer; }
+  .staged-del-btn:hover { background: rgba(239, 68, 68, 0.2); }
+
+  /* Modules Studio */
+  .module-item-btn {
+    width: 100%; text-align: left; padding: 8px 10px; border-radius: 6px; border: none;
+    background: transparent; color: var(--dim); font-size: 11px; cursor: pointer;
+    font-family: 'JetBrains Mono', monospace; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    transition: all 0.15s;
+  }
+  .module-item-btn:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+  .module-item-btn.active { background: rgba(99, 102, 241, 0.15); color: #a5b4fc; font-weight: 600; border-left: 2px solid #818cf8; }
+  .add-module-btn {
+    background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.4);
+    color: var(--accent); border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; padding: 1px 6px;
+  }
+  .add-module-btn:hover { background: rgba(59, 130, 246, 0.4); color: #fff; }
+
 </style>
 </head>
 <body>
 <header>
   <h1 id="dashboard-title">COGNITIVE DASHBOARD</h1>
+  <div class="room-indicator-box" title="Current Agent Spatial Room Location">
+    <span class="room-badge" id="agent-room-badge">📍 Room: <strong id="agent-room-name">/</strong></span>
+    <span class="room-sub" id="agent-room-desc">Home Root</span>
+  </div>
+  <button id="staging-drawer-btn" class="staging-btn" title="Open Safe Staging Inbox">📥 Safe Staging (<span id="staged-count-badge">0</span>)</button>
   <span id="state-badge" class="status-badge">UNKNOWN</span>
   <span class="pulse-count">Pulse <span id="pulse-num">—</span></span>
 </header>
@@ -496,6 +558,7 @@
     <div class="tab-bar">
       <button class="active" data-tab="thoughts">Thoughts</button>
       <button data-tab="tools">Tools</button>
+      <button data-tab="modules">Modules 🛠️</button>
       <button data-tab="beliefs">Beliefs</button>
       <button data-tab="spatial">Spatial</button>
       <button data-tab="injections">Injections</button>
@@ -528,6 +591,26 @@
         <div id="recent-tools-list" class="recent-tools-list" style="flex: 1; overflow-y: auto;"></div>
       </div>
     </div>
+    <div id="modules-panel" style="display: none; flex: 1; min-height: 0; flex-direction: row; background: var(--bg);">
+      <div style="width: 140px; border-right: 1px solid var(--border); display: flex; flex-direction: column; background: var(--panel);">
+        <div style="padding: 8px 10px; font-size: 11px; font-weight: 600; color: var(--dim); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+          <span>MODULES</span>
+          <button id="add-module-btn" class="add-module-btn" title="Add Python Tool Module">+</button>
+        </div>
+        <div id="modules-list" style="flex: 1; overflow-y: auto; padding: 4px;"></div>
+      </div>
+      <div style="flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #0b0f19;">
+        <div style="padding: 8px 14px; background: #0f172a; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div id="module-active-title" style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #e2e8f0; font-weight: 600;">Select a module</div>
+            <div id="module-active-doc" style="font-size: 10px; color: var(--dim); margin-top: 2px;">Docstring will appear here</div>
+          </div>
+          <span id="module-active-meta" style="font-size: 10px; color: var(--dim); font-family: 'JetBrains Mono', monospace;"></span>
+        </div>
+        <div id="module-code-view" style="flex: 1; overflow: auto; padding: 14px; font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.5; color: #a5b4fc; white-space: pre; tab-size: 4; background: #0a0e17;">// Select a module on the left to view its source code.</div>
+      </div>
+    </div>
+
     <div id="spatial-panel" class="spatial-panel" style="display: none;">
       <div class="panel-section">
         <h3>Extracted Concepts</h3>
@@ -599,6 +682,196 @@
 <script type="importmap">
 { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/" } }
+
+// ── Module Studio & Pseudo-IDE ──
+let activeModule = null;
+
+async function fetchModules() {
+  try {
+    const res = await fetch('/api/modules');
+    const data = await res.json();
+    const listEl = document.getElementById('modules-list');
+    if (!listEl) return;
+    listEl.innerHTML = '';
+    if (!data.modules || data.modules.length === 0) {
+      listEl.innerHTML = '<div style="padding: 10px; font-size: 10px; color: var(--dim);">No modules found.</div>';
+      return;
+    }
+    data.modules.forEach(m => {
+      const btn = document.createElement('button');
+      btn.className = 'module-item-btn';
+      btn.textContent = m.name;
+      btn.title = m.doc || m.name;
+      if (activeModule === m.name) btn.classList.add('active');
+      btn.onclick = () => loadModuleCode(m.name);
+      listEl.appendChild(btn);
+    });
+    if (!activeModule && data.modules.length > 0) {
+      loadModuleCode(data.modules[0].name);
+    }
+  } catch (err) {
+    console.error('Failed to load modules:', err);
+  }
+}
+
+async function loadModuleCode(name) {
+  activeModule = name;
+  document.querySelectorAll('#modules-list .module-item-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent === name);
+  });
+  try {
+    const res = await fetch(`'/api/modules/'${encodeURIComponent(name)}`);
+    const data = await res.json();
+    const tEl = document.getElementById('module-active-title');
+    const cEl = document.getElementById('module-code-view');
+    const mEl = document.getElementById('module-active-meta');
+    if (tEl) tEl.textContent = data.name;
+    if (cEl) cEl.textContent = data.code;
+    if (mEl) mEl.textContent = `${data.size} bytes`;
+  } catch (err) {
+    console.error('Failed to load module code:', err);
+  }
+}
+
+// Add Module Modal Handlers
+const addModModal = document.getElementById('add-module-modal');
+const addModBtn = document.getElementById('add-module-btn');
+const closeModBtn = document.getElementById('close-add-module-btn');
+const saveModBtn = document.getElementById('save-module-btn');
+const modErrorEl = document.getElementById('add-module-error');
+
+if (addModBtn) addModBtn.onclick = () => { if (addModModal) addModModal.style.display = 'flex'; if (modErrorEl) modErrorEl.style.display = 'none'; };
+if (closeModBtn) closeModBtn.onclick = () => { if (addModModal) addModModal.style.display = 'none'; };
+
+if (saveModBtn) saveModBtn.onclick = async () => {
+  const name = document.getElementById('new-module-name').value.trim();
+  const code = document.getElementById('new-module-code').value;
+  if (modErrorEl) modErrorEl.style.display = 'none';
+  if (!name || !code.trim()) {
+    if (modErrorEl) {
+      modErrorEl.textContent = 'Please provide both filename and Python code.';
+      modErrorEl.style.display = 'block';
+    }
+    return;
+  }
+  try {
+    const res = await fetch('/api/modules', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, code })
+    });
+    const ret = await res.json();
+    if (!res.ok) {
+      if (modErrorEl) {
+        modErrorEl.textContent = ret.error || 'Validation failed.';
+        modErrorEl.style.display = 'block';
+      }
+      return;
+    }
+    if (addModModal) addModModal.style.display = 'none';
+    document.getElementById('new-module-name').value = '';
+    document.getElementById('new-module-code').value = '';
+    activeModule = ret.name;
+    fetchModules();
+  } catch (err) {
+    if (modErrorEl) {
+      modErrorEl.textContent = 'Network error: ' + err.message;
+      modErrorEl.style.display = 'block';
+    }
+  }
+};
+
+// ── Safe Staging Inbox ──
+const stagingModal = document.getElementById('staging-modal');
+const openStagingBtn = document.getElementById('staging-drawer-btn');
+const closeStagingBtn = document.getElementById('close-staging-modal-btn');
+const stagingDropzone = document.getElementById('staging-dropzone');
+const stagingFileInput = document.getElementById('staging-file-input');
+const stagedListEl = document.getElementById('staged-files-list');
+const stagedBadgeEl = document.getElementById('staged-count-badge');
+
+if (openStagingBtn) openStagingBtn.onclick = () => { if (stagingModal) stagingModal.style.display = 'flex'; fetchStagedFiles(); };
+if (closeStagingBtn) closeStagingBtn.onclick = () => { if (stagingModal) stagingModal.style.display = 'none'; };
+
+async function fetchStagedFiles() {
+  try {
+    const res = await fetch('/api/staged_files');
+    const data = await res.json();
+    const items = data.staged || [];
+    if (stagedBadgeEl) stagedBadgeEl.textContent = items.length;
+    if (!stagedListEl) return;
+    stagedListEl.innerHTML = '';
+    if (items.length === 0) {
+      stagedListEl.innerHTML = '<div style="color: var(--dim); text-align: center; padding: 18px; font-size: 11px;">No files currently staged.</div>';
+      return;
+    }
+    items.forEach(item => {
+      const row = document.createElement('div');
+      row.className = 'staged-item';
+      row.innerHTML = `
+        <div>
+          <span class="staged-name">${escapeHtml(item.name)}</span>
+          <span class="staged-meta"> (${item.size} bytes)</span>
+        </div>
+        <button class="staged-del-btn" onclick="deleteStagedFile('${encodeURIComponent(item.name)}')">Remove</button>
+      `;
+      stagedListEl.appendChild(row);
+    });
+  } catch (err) {
+    console.error('Failed to fetch staged files:', err);
+  }
+}
+
+window.deleteStagedFile = async function(encName) {
+  try {
+    await fetch(`'/api/staged_files/'${encName}`, { method: 'DELETE' });
+    fetchStagedFiles();
+  } catch (err) {
+    console.error('Failed to delete staged file:', err);
+  }
+};
+
+// Dropzone interactions
+if (stagingDropzone) {
+  stagingDropzone.onclick = () => { if (stagingFileInput) stagingFileInput.click(); };
+  stagingDropzone.ondragover = (e) => { e.preventDefault(); stagingDropzone.classList.add('dragover'); };
+  stagingDropzone.ondragleave = () => stagingDropzone.classList.remove('dragover');
+  stagingDropzone.ondrop = async (e) => {
+    e.preventDefault();
+    stagingDropzone.classList.remove('dragover');
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      for (const file of e.dataTransfer.files) {
+        await uploadStagedFile(file);
+      }
+      fetchStagedFiles();
+    }
+  };
+}
+
+if (stagingFileInput) {
+  stagingFileInput.onchange = async () => {
+    if (stagingFileInput.files && stagingFileInput.files.length > 0) {
+      for (const file of stagingFileInput.files) {
+        await uploadStagedFile(file);
+      }
+      fetchStagedFiles();
+    }
+  };
+}
+
+async function uploadStagedFile(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+  try {
+    await fetch('/api/stage_file', { method: 'POST', body: formData });
+  } catch (err) {
+    console.error('Failed to upload staged file:', err);
+  }
+}
+
+// Initial background poll for staged count
+fetchStagedFiles();
+
 </script>
 <script type="module">
 import * as THREE from 'three';
@@ -620,6 +893,7 @@ const toolsPanel = document.getElementById('tools-panel');
 const spatialPanel = document.getElementById('spatial-panel');
 const injectionsPanel = document.getElementById('injections-panel');
 const canvasPanel = document.getElementById('canvas-panel');
+const modulesPanel = document.getElementById('modules-panel');
 
 function escapeHtml(value) {
   return String(value || '')
@@ -645,6 +919,7 @@ document.querySelectorAll('.tab-bar button').forEach(btn => {
     spatialPanel.style.display = 'none';
     injectionsPanel.style.display = 'none';
     canvasPanel.style.display = 'none';
+    if (modulesPanel) modulesPanel.style.display = 'none';
     
     if (currentTab === 'chat') {
       chatPanel.classList.add('visible');
@@ -660,6 +935,9 @@ document.querySelectorAll('.tab-bar button').forEach(btn => {
     } else if (currentTab === 'injections') {
       injectionsPanel.style.display = 'flex';
       fetchInjectionHistory();
+    } else if (currentTab === 'modules') {
+      if (modulesPanel) modulesPanel.style.display = 'flex';
+      fetchModules();
     } else if (currentTab === 'canvas') {
       canvasPanel.style.display = 'flex';
       fetchCanvas();
@@ -995,6 +1273,29 @@ scene.add(grid);
 // Point groups
 let pointMeshes = [];
 let pointData = [];
+let latticeMesh = null;
+
+// Psi Wave Packets (dynamic neural cipher pulses)
+const psiPackets = [];
+for (let i = 0; i < 5; i++) {
+  const pGeo = new THREE.SphereGeometry(0.08, 8, 8);
+  const pMat = new THREE.MeshBasicMaterial({
+    color: 0x38bdf8,
+    transparent: true,
+    opacity: 0.9,
+    blending: THREE.AdditiveBlending
+  });
+  const pMesh = new THREE.Mesh(pGeo, pMat);
+  pMesh.visible = false;
+  scene.add(pMesh);
+  psiPackets.push({
+    mesh: pMesh,
+    progress: 1.0,
+    start: new THREE.Vector3(),
+    end: new THREE.Vector3(),
+    speed: 0.012 + i * 0.004
+  });
+}
 
 // Attention crosshair
 const attnGeo = new THREE.OctahedronGeometry(0.25, 0);
@@ -1091,9 +1392,55 @@ function updateSpatial(data) {
   });
 
   document.getElementById('point-count').textContent = data.point_count;
+
+  // Construct dynamic translucent habitus lattice
+  if (latticeMesh) {
+    scene.remove(latticeMesh);
+    latticeMesh.geometry.dispose();
+    latticeMesh.material.dispose();
+    latticeMesh = null;
+  }
+  const edgePts = [];
+  const maxDistSq = 16.0; // connection radius of 4.0
+  const pts = data.points || [];
+  for (let i = 0; i < pts.length; i++) {
+    for (let j = i + 1; j < pts.length; j++) {
+      const dx = pts[i].x - pts[j].x;
+      const dy = pts[i].y - pts[j].y;
+      const dz = pts[i].z - pts[j].z;
+      const dSq = dx*dx + dy*dy + dz*dz;
+      if (dSq < maxDistSq) {
+        edgePts.push(pts[i].x, pts[i].y, pts[i].z);
+        edgePts.push(pts[j].x, pts[j].y, pts[j].z);
+      }
+    }
+  }
+  if (edgePts.length > 0) {
+    const edgeGeo = new THREE.BufferGeometry();
+    edgeGeo.setAttribute('position', new THREE.Float32BufferAttribute(edgePts, 3));
+    const edgeMat = new THREE.LineBasicMaterial({
+      color: 0x6366f1,
+      transparent: true,
+      opacity: 0.18,
+      blending: THREE.AdditiveBlending
+    });
+    latticeMesh = new THREE.LineSegments(edgeGeo, edgeMat);
+    scene.add(latticeMesh);
+  }
 }
 
 function updateGauges(data) {
+  // Update Agent Room Location
+  if (data.room) {
+    const rName = document.getElementById('agent-room-name');
+    if (rName) rName.textContent = data.room;
+    const rDesc = document.getElementById('agent-room-desc');
+    if (rDesc) {
+      const desc = (data.rooms && data.rooms[data.room]) || (data.room === '.' ? 'Home Base' : '');
+      const count = data.room_entries ? ` (${data.room_entries.length} items)` : '';
+      rDesc.textContent = desc + count;
+    }
+  }
   document.getElementById('g-omega').textContent = data.omega.toFixed(3);
   document.getElementById('gf-omega').style.width = (data.omega * 100) + '%';
   document.getElementById('g-gamma').textContent = data.gamma.toFixed(3);
@@ -1150,6 +1497,25 @@ function animate() {
   time += 0.02;
   attnMesh.rotation.y = time;
   attnMesh.scale.setScalar(1 + Math.sin(time * 2) * 0.15);
+
+  // Animate Psi Wave Packets traveling through habitus lattice
+  if (pointData.length > 1) {
+    psiPackets.forEach((p) => {
+      p.progress += p.speed;
+      if (p.progress >= 1.0) {
+        p.progress = 0.0;
+        const src = attnMesh.position;
+        const target = pointData[Math.floor(Math.random() * pointData.length)];
+        p.start.copy(src);
+        p.end.set(target.x, target.y, target.z);
+        p.mesh.visible = true;
+      }
+      p.mesh.position.lerpVectors(p.start, p.end, p.progress);
+      const s = Math.sin(p.progress * Math.PI) * 1.6;
+      p.mesh.scale.setScalar(Math.max(0.01, s));
+    });
+  }
+
   renderer.render(scene, camera);
 }
 animate();
@@ -1256,6 +1622,247 @@ fetchLogs();
 pollChatOutbound();
 fetch('/api/spatial').then(r=>r.json()).then(updateSpatial).catch(()=>{});
 fetch('/api/status').then(r=>r.json()).then(updateGauges).catch(()=>{});
+
+// ── Module Studio & Pseudo-IDE ──
+let activeModule = null;
+
+async function fetchModules() {
+  try {
+    const res = await fetch('/api/modules');
+    const data = await res.json();
+    const listEl = document.getElementById('modules-list');
+    if (!listEl) return;
+    listEl.innerHTML = '';
+    if (!data.modules || data.modules.length === 0) {
+      listEl.innerHTML = '<div style="padding: 10px; font-size: 10px; color: var(--dim);">No modules found.</div>';
+      return;
+    }
+    data.modules.forEach(m => {
+      const btn = document.createElement('button');
+      btn.className = 'module-item-btn';
+      btn.textContent = m.name;
+      btn.title = m.doc || m.name;
+      if (activeModule === m.name) btn.classList.add('active');
+      btn.onclick = () => loadModuleCode(m.name);
+      listEl.appendChild(btn);
+    });
+    if (!activeModule && data.modules.length > 0) {
+      loadModuleCode(data.modules[0].name);
+    }
+  } catch (err) {
+    console.error('Failed to load modules:', err);
+  }
+}
+
+async function loadModuleCode(name) {
+  activeModule = name;
+  document.querySelectorAll('#modules-list .module-item-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent === name);
+  });
+  try {
+    const res = await fetch(`'/api/modules/'${encodeURIComponent(name)}`);
+    const data = await res.json();
+    const tEl = document.getElementById('module-active-title');
+    const cEl = document.getElementById('module-code-view');
+    const mEl = document.getElementById('module-active-meta');
+    if (tEl) tEl.textContent = data.name;
+    if (cEl) cEl.textContent = data.code;
+    if (mEl) mEl.textContent = `${data.size} bytes`;
+  } catch (err) {
+    console.error('Failed to load module code:', err);
+  }
+}
+
+// Add Module Modal Handlers
+const addModModal = document.getElementById('add-module-modal');
+const addModBtn = document.getElementById('add-module-btn');
+const closeModBtn = document.getElementById('close-add-module-btn');
+const saveModBtn = document.getElementById('save-module-btn');
+const modErrorEl = document.getElementById('add-module-error');
+
+if (addModBtn) addModBtn.onclick = () => { if (addModModal) addModModal.style.display = 'flex'; if (modErrorEl) modErrorEl.style.display = 'none'; };
+if (closeModBtn) closeModBtn.onclick = () => { if (addModModal) addModModal.style.display = 'none'; };
+
+if (saveModBtn) saveModBtn.onclick = async () => {
+  const name = document.getElementById('new-module-name').value.trim();
+  const code = document.getElementById('new-module-code').value;
+  if (modErrorEl) modErrorEl.style.display = 'none';
+  if (!name || !code.trim()) {
+    if (modErrorEl) {
+      modErrorEl.textContent = 'Please provide both filename and Python code.';
+      modErrorEl.style.display = 'block';
+    }
+    return;
+  }
+  try {
+    const res = await fetch('/api/modules', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, code })
+    });
+    const ret = await res.json();
+    if (!res.ok) {
+      if (modErrorEl) {
+        modErrorEl.textContent = ret.error || 'Validation failed.';
+        modErrorEl.style.display = 'block';
+      }
+      return;
+    }
+    if (addModModal) addModModal.style.display = 'none';
+    document.getElementById('new-module-name').value = '';
+    document.getElementById('new-module-code').value = '';
+    activeModule = ret.name;
+    fetchModules();
+  } catch (err) {
+    if (modErrorEl) {
+      modErrorEl.textContent = 'Network error: ' + err.message;
+      modErrorEl.style.display = 'block';
+    }
+  }
+};
+
+// ── Safe Staging Inbox ──
+const stagingModal = document.getElementById('staging-modal');
+const openStagingBtn = document.getElementById('staging-drawer-btn');
+const closeStagingBtn = document.getElementById('close-staging-modal-btn');
+const stagingDropzone = document.getElementById('staging-dropzone');
+const stagingFileInput = document.getElementById('staging-file-input');
+const stagedListEl = document.getElementById('staged-files-list');
+const stagedBadgeEl = document.getElementById('staged-count-badge');
+
+if (openStagingBtn) openStagingBtn.onclick = () => { if (stagingModal) stagingModal.style.display = 'flex'; fetchStagedFiles(); };
+if (closeStagingBtn) closeStagingBtn.onclick = () => { if (stagingModal) stagingModal.style.display = 'none'; };
+
+async function fetchStagedFiles() {
+  try {
+    const res = await fetch('/api/staged_files');
+    const data = await res.json();
+    const items = data.staged || [];
+    if (stagedBadgeEl) stagedBadgeEl.textContent = items.length;
+    if (!stagedListEl) return;
+    stagedListEl.innerHTML = '';
+    if (items.length === 0) {
+      stagedListEl.innerHTML = '<div style="color: var(--dim); text-align: center; padding: 18px; font-size: 11px;">No files currently staged.</div>';
+      return;
+    }
+    items.forEach(item => {
+      const row = document.createElement('div');
+      row.className = 'staged-item';
+      row.innerHTML = `
+        <div>
+          <span class="staged-name">${escapeHtml(item.name)}</span>
+          <span class="staged-meta"> (${item.size} bytes)</span>
+        </div>
+        <button class="staged-del-btn" onclick="deleteStagedFile('${encodeURIComponent(item.name)}')">Remove</button>
+      `;
+      stagedListEl.appendChild(row);
+    });
+  } catch (err) {
+    console.error('Failed to fetch staged files:', err);
+  }
+}
+
+window.deleteStagedFile = async function(encName) {
+  try {
+    await fetch(`'/api/staged_files/'${encName}`, { method: 'DELETE' });
+    fetchStagedFiles();
+  } catch (err) {
+    console.error('Failed to delete staged file:', err);
+  }
+};
+
+// Dropzone interactions
+if (stagingDropzone) {
+  stagingDropzone.onclick = () => { if (stagingFileInput) stagingFileInput.click(); };
+  stagingDropzone.ondragover = (e) => { e.preventDefault(); stagingDropzone.classList.add('dragover'); };
+  stagingDropzone.ondragleave = () => stagingDropzone.classList.remove('dragover');
+  stagingDropzone.ondrop = async (e) => {
+    e.preventDefault();
+    stagingDropzone.classList.remove('dragover');
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      for (const file of e.dataTransfer.files) {
+        await uploadStagedFile(file);
+      }
+      fetchStagedFiles();
+    }
+  };
+}
+
+if (stagingFileInput) {
+  stagingFileInput.onchange = async () => {
+    if (stagingFileInput.files && stagingFileInput.files.length > 0) {
+      for (const file of stagingFileInput.files) {
+        await uploadStagedFile(file);
+      }
+      fetchStagedFiles();
+    }
+  };
+}
+
+async function uploadStagedFile(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+  try {
+    await fetch('/api/stage_file', { method: 'POST', body: formData });
+  } catch (err) {
+    console.error('Failed to upload staged file:', err);
+  }
+}
+
+// Initial background poll for staged count
+fetchStagedFiles();
+
 </script>
+<!-- Safe Staging Inbox Modal -->
+<div id="staging-modal" class="modal-overlay">
+  <div class="modal-box">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+      <h3 style="margin: 0; font-size: 15px; color: var(--accent); display: flex; align-items: center; gap: 8px;">
+        <span>📥</span> Safe Staging Inbox
+      </h3>
+      <button id="close-staging-modal-btn" style="background: none; border: none; color: var(--dim); font-size: 18px; cursor: pointer;">&times;</button>
+    </div>
+    
+    <div style="background: rgba(124, 58, 237, 0.12); border: 1px solid rgba(167, 139, 250, 0.4); border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; font-size: 11px; color: #e2e8f0; line-height: 1.4;">
+      <strong>🌱 Developmental Safety Rule:</strong> Files placed here are safely staged in the agent's room.
+      The agent will discover and inspect them with <code>sense .</code> during ambient pulse cycles without sensory shock or collapsing Sentinel &Omega;.
+    </div>
+
+    <div id="staging-dropzone" class="dropzone">
+      <div class="dropzone-icon">📁</div>
+      <div class="dropzone-text">Drag & drop files here, or <strong>click to browse</strong></div>
+      <div class="dropzone-sub">Supported: text, code, JSON, logs, data files</div>
+      <input type="file" id="staging-file-input" style="display: none;" />
+    </div>
+
+    <div style="font-size: 11px; font-weight: 600; color: var(--dim); margin-bottom: 6px;">CURRENTLY STAGED FILES</div>
+    <div id="staged-files-list" class="staged-list">
+      <div style="color: var(--dim); text-align: center; padding: 18px; font-size: 11px;">No files currently staged.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Module Modal -->
+<div id="add-module-modal" class="modal-overlay">
+  <div class="modal-box" style="width: 640px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">
+      <h3 style="margin: 0; font-size: 15px; color: var(--accent);">Add Tool Module</h3>
+      <button id="close-add-module-btn" style="background: none; border: none; color: var(--dim); font-size: 18px; cursor: pointer;">&times;</button>
+    </div>
+    <div style="margin-bottom: 10px;">
+      <label style="font-size: 11px; color: var(--dim); display: block; margin-bottom: 4px;">Module Filename (.py):</label>
+      <input type="text" id="new-module-name" placeholder="custom_tool.py" style="width: 100%; background: #0b0f19; border: 1px solid var(--border); color: #fff; padding: 6px 10px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 11px;" />
+    </div>
+    <div style="flex: 1; display: flex; flex-direction: column; margin-bottom: 10px;">
+      <label style="font-size: 11px; color: var(--dim); display: block; margin-bottom: 4px;">Python Source Code:</label>
+      <textarea id="new-module-code" rows="12" style="width: 100%; background: #0b0f19; border: 1px solid var(--border); color: #a5b4fc; padding: 10px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.4; resize: none;" placeholder="# Custom agent module&#10;def run(arguments):&#10;    # Write tool execution logic here&#10;    return {'output': 'Success'}"></textarea>
+    </div>
+    <div id="add-module-error" style="display: none; color: #f87171; font-size: 11px; margin-bottom: 10px; padding: 6px; background: rgba(239, 68, 68, 0.1); border-radius: 4px;"></div>
+    <div style="display: flex; justify-content: flex-end; gap: 8px;">
+      <button id="save-module-btn" style="background: #2563eb; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; font-size: 11px; font-weight: 500; cursor: pointer;">Save & Validate Module</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

@@ -20,7 +20,7 @@ Overlap well below 1.0 with equal recall means the two find different valid
 evidence. Overlap near 1.0 means the port is faithful item-for-item. Recall
 notably below mRAG's is the failure this exists to catch.
 
-Requires the Micro-RAG source tree (--mrag-path, default /home/nemo/Local-mRag).
+Requires the Micro-RAG source tree (--mrag-path, default ~/Local-mRag).
 
 Usage:
     python scripts/mrag_port_parity.py --dataset /path/to/locomo10.json -d 0 -q 60
@@ -276,7 +276,7 @@ def main():
     parser.add_argument("--dataset", default="locomo10.json")
     parser.add_argument("-d", "--dialogue-index", type=int, default=0)
     parser.add_argument("-q", "--max-questions", type=int, default=60)
-    parser.add_argument("--mrag-path", default="/home/nemo/Local-mRag")
+    parser.add_argument("--mrag-path", default="~/Local-mRag")
     parser.add_argument("--save", default="documents/mrag_port_parity.md")
     args = parser.parse_args()
 

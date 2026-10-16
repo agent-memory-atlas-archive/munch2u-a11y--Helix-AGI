@@ -13,7 +13,7 @@ from core.bicameral_rwkv import BicameralRWKV
 from llm.providers.rwkv_provider import BicameralRWKVSession
 from core.mindscape_intention import decode_foreground, parse_intention
 
-RWKV_MODEL_PATH = Path("/home/nemo/habitus-ai-experiments/habitus-mind/models/rwkv7-g1j-1.5b-20260831-2c18b29")
+RWKV_MODEL_PATH = Path(os.environ.get("RWKV_MODEL_PATH", Path.home() / "habitus-ai-experiments" / "habitus-mind" / "models" / "rwkv7-g1j-1.5b-20260831-2c18b29"))
 
 
 class TestInteractiveBattery(unittest.TestCase):

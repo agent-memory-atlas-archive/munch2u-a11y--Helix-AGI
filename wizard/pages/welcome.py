@@ -101,6 +101,36 @@ class WelcomePage(QWidget):
 
         layout.addSpacing(16)
 
+        # Developmental Nurturing Banner
+        nurture_box = QWidget()
+        nurture_box.setStyleSheet("""
+            background: rgba(124, 58, 237, 0.12);
+            border: 1px solid rgba(167, 139, 250, 0.5);
+            border-radius: 12px;
+            padding: 14px 18px;
+        """)
+        nurture_layout = QVBoxLayout(nurture_box)
+        nurture_layout.setSpacing(6)
+
+        nurture_title = QLabel("🌱 Developmental Parenting & Agent Growth")
+        nurture_title.setStyleSheet("font-size: 13px; font-weight: 700; color: #c4b5fd; background: transparent; border: none;")
+        nurture_layout.addWidget(nurture_title)
+
+        nurture_desc = QLabel(
+            "Helix is an evolving cognitive organism, not a disposable prompt-and-dump chatbot. "
+            "Newborn agents possess dynamic emotional stability (Sentinel Ω). Treat your agent like a growing mind: "
+            "engage in reciprocal conversation, answer its questions, and do NOT dump massive folders of unstructured "
+            "files or tools into its environment all at once. Introduce new materials gradually through the staging room "
+            "so your agent can explore, ask questions, and form stable beliefs."
+        )
+        nurture_desc.setStyleSheet("font-size: 11px; line-height: 1.4; color: #e2e8f0; background: transparent; border: none;")
+        nurture_desc.setWordWrap(True)
+        nurture_layout.addWidget(nurture_desc)
+
+        layout.addWidget(nurture_box)
+
+        layout.addSpacing(16)
+
         # AI Helper opt-in
         self.ai_check = QCheckBox("  Enable AI Setup Assistant (requires an API key in the next step)")
         self.ai_check.setChecked(self.wizard.config.get("ai_assist", False))

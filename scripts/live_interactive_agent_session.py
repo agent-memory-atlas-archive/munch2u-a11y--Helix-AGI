@@ -23,7 +23,17 @@ logging.basicConfig(level=logging.WARNING)
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
-sys.path.insert(0, "/home/nemo/MightyMem")
+
+# Dynamically locate MightyMem if present
+mightymem_candidates = [
+    os.environ.get("MIGHTYMEM_PATH"),
+    str(Path.home() / "MightyMem"),
+    str(REPO_ROOT.parent / "MightyMem"),
+]
+for mm in mightymem_candidates:
+    if mm and Path(mm).exists() and mm not in sys.path:
+        sys.path.insert(0, mm)
+        break
 
 from brain.stability_sentinel import StabilitySentinel
 from core.agent_home import prepare_home
@@ -35,7 +45,13 @@ from core.vocabulary_membrane import VocabularyMembrane
 from habitus_ai.store import MindStore
 from llm.providers.rwkv_provider import BicameralRWKVSession
 
-RWKV_MODEL_PATH = Path("/home/nemo/habitus-ai-experiments/habitus-mind/models/rwkv7-g1j-1.5b-20260831-2c18b29")
+rwkv_candidates = [
+    os.environ.get("RWKV_MODEL_PATH"),
+    str(Path.home() / "habitus-ai-experiments" / "habitus-mind" / "models" / "rwkv7-g1j-1.5b-20260831-2c18b29"),
+    str(Path.home() / "models" / "rwkv7-g1j-1.5b-20260831-2c18b29"),
+    str(REPO_ROOT / "models" / "rwkv7-g1j-1.5b-20260831-2c18b29"),
+]
+RWKV_MODEL_PATH = Path(next((c for c in rwkv_candidates if c and Path(c).exists()), rwkv_candidates[1]))
 
 
 def main():

@@ -8,7 +8,7 @@ from pathlib import Path
 from llm.providers.base import detect_available_provider, ProviderConfig
 from core.mindscape_config import resolve as resolve_mindscape_config
 
-RWKV_MODEL_PATH = "/home/nemo/habitus-ai-experiments/habitus-mind/models/rwkv7-g1j-1.5b-20260831-2c18b29"
+RWKV_MODEL_PATH = os.environ.get("RWKV_MODEL_PATH", str(Path.home() / "habitus-ai-experiments" / "habitus-mind" / "models" / "rwkv7-g1j-1.5b-20260831-2c18b29"))
 
 
 class TestThreeWaySetup(unittest.TestCase):
@@ -91,12 +91,12 @@ class TestThreeWaySetup(unittest.TestCase):
 
     def test_setup_py_cli_composition_rwkv(self):
         """setup.py --composition mindscape --provider rwkv must configure rwkv local_provider."""
-        config_path = Path("/home/nemo/Helix_Live_Test/config/config.json")
+        config_path = Path(str(Path.home() / "Helix_Live_Test/config/config.json"))
         backup = config_path.read_text()
         try:
             cmd = [
-                "/home/nemo/Helix_Live_Test/venv/bin/python",
-                "/home/nemo/Helix_Live_Test/setup.py",
+                str(Path.home() / "Helix_Live_Test/venv/bin/python"),
+                str(Path.home() / "Helix_Live_Test/setup.py"),
                 "--composition", "mindscape",
                 "--composition-only",
                 "--provider", "rwkv",

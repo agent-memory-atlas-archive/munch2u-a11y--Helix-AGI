@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Evaluation of mRAG 8D Spatial Memory & Multi-Hop Recall using Early Helix Memories and Gemini 3.1 Flash-Lite.
 
-Loads authentic early Helix beliefs/memories from /home/nemo/Helix/data/beliefs,
+Loads authentic early Helix beliefs/memories from ~/Helix/data/beliefs,
 executes mRAG spatial retrieval with internal salience metadata and multi-hop planning,
 and queries Gemini 3.1 Flash-Lite to evaluate emotive cleanliness, accuracy, and chain of thought.
 """
@@ -19,8 +19,8 @@ from typing import Any, Dict, List, Optional
 
 from dotenv import load_dotenv
 
-# Load credentials from /home/nemo/.config/helix/credentials.env
-CRED_PATH = Path("/home/nemo/.config/helix/credentials.env")
+# Load credentials from ~/.config/helix/credentials.env
+CRED_PATH = Path(os.environ.get("HELIX_CREDENTIALS_PATH", Path.home() / ".config" / "helix" / "credentials.env"))
 if CRED_PATH.exists():
     load_dotenv(CRED_PATH)
 
@@ -34,7 +34,7 @@ from core.unified_retrieval import UnifiedRetrieval
 logger = logging.getLogger("test_helix_early_memories")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
-HELIX_DATA_DIR = Path("/home/nemo/Helix/data/beliefs")
+HELIX_DATA_DIR = Path(os.environ.get("HELIX_DATA_DIR", Path.home() / "Helix" / "data" / "beliefs"))
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 MODEL_NAME = "gemini-3.1-flash-lite"
 
@@ -83,7 +83,7 @@ def call_gemini_api(prompt: str, system_instruction: str = "") -> str:
 
 
 def load_early_helix_beliefs(belief_store: BeliefStore) -> Dict[str, int]:
-    """Load authentic early beliefs from /home/nemo/Helix/data/beliefs into BeliefStore."""
+    """Load authentic early beliefs from ~/Helix/data/beliefs into BeliefStore."""
     categories = ["premises", "people", "concepts", "propositions", "preferences", "skills"]
     stats = {}
 

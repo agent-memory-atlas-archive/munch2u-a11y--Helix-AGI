@@ -228,7 +228,14 @@ def detect_available_provider() -> Optional[ProviderConfig]:
             logger.warning("HELIX_PROVIDER=anthropic but ANTHROPIC_API_KEY is missing.")
 
     elif provider_pref in ("rwkv", "bicameral_rwkv"):
-        model = model_pref or "/home/nemo/habitus-ai-experiments/habitus-mind/models/rwkv7-g1j-1.5b-20260831-2c18b29"
+        rwkv_candidates = [
+            os.environ.get("RWKV_MODEL_PATH"),
+            str(Path.home() / "habitus-ai-experiments" / "habitus-mind" / "models" / "rwkv7-g1j-1.5b-20260831-2c18b29"),
+            str(Path.home() / "models" / "rwkv7-g1j-1.5b-20260831-2c18b29"),
+            str(Path("models") / "rwkv7-g1j-1.5b-20260831-2c18b29"),
+        ]
+        resolved_rwkv = next((c for c in rwkv_candidates if c and Path(c).exists()), rwkv_candidates[1])
+        model = model_pref or resolved_rwkv
         logger.info(f"Using explicitly configured RWKV provider with model: {model}")
         return ProviderConfig(
             provider_type="rwkv",

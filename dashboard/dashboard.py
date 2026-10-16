@@ -404,6 +404,53 @@ def read_status() -> Dict[str, Any]:
         except Exception:
             pass
 
+    # Determine agent spatial location & room
+    home_dir = DATA_DIR / "agent_home"
+    if not home_dir.exists():
+        candidates = list((DATA_DIR / "agents").glob("*/home.json")) if (DATA_DIR / "agents").exists() else []
+        if candidates:
+            home_dir = candidates[0].parent
+
+    current_room = "."
+    sqlite_candidates = [DATA_DIR / "mindscape" / "joint" / "mind.sqlite"]
+    if (DATA_DIR / "agents").exists():
+        sqlite_candidates.extend((DATA_DIR / "agents").glob("*/mindscape/joint/mind.sqlite"))
+    
+    for sq in sqlite_candidates:
+        if sq.exists():
+            try:
+                import sqlite3
+                conn = sqlite3.connect(sq)
+                cur = conn.cursor()
+                cur.execute("SELECT value FROM metadata WHERE key = 'agent_workspace_position';")
+                row = cur.fetchone()
+                if row and row[0]:
+                    current_room = row[0]
+                    break
+            except Exception:
+                pass
+
+    rooms = {}
+    room_entries = []
+    if home_dir.exists():
+        home_json = home_dir / "home.json"
+        if home_json.exists():
+            try:
+                with open(home_json) as f:
+                    rooms = json.load(f).get("rooms", {})
+            except Exception:
+                pass
+        target_path = home_dir if current_room in (".", "") else home_dir / current_room
+        if target_path.exists() and target_path.is_dir():
+            for item in sorted(target_path.iterdir()):
+                if item.name.startswith("."):
+                    continue
+                room_entries.append({
+                    "name": item.name,
+                    "is_dir": item.is_dir(),
+                    "size": item.stat().st_size if item.is_file() else 0
+                })
+
     return {
         "beliefs": stats,
         "omega": omega,
@@ -411,6 +458,9 @@ def read_status() -> Dict[str, Any]:
         "pulse": pulse,
         "state": state,
         "affect": affect,
+        "room": current_room,
+        "rooms": rooms,
+        "room_entries": room_entries,
     }
 
 
@@ -594,6 +644,136 @@ def create_app():
         messages = comms.get_outbound(since)
         total = comms.get_outbound_count()
         return jsonify({"messages": messages, "total": total})
+
+    # ── Safe File Staging Endpoints ──────────────────────────────────────────
+
+    staging_dir = DATA_DIR / "agent_home" / "staging"
+    staging_dir.mkdir(parents=True, exist_ok=True)
+
+    @app.route("/api/stage_file", methods=["POST"])
+    def api_stage_file():
+        """Safely stage a file into the agent's staging room for gradual observation."""
+        try:
+            if "file" in request.files:
+                f = request.files["file"]
+                filename = Path(f.filename).name
+                dest = staging_dir / filename
+                f.save(str(dest))
+                return jsonify({"ok": True, "filename": filename, "size": dest.stat().st_size, "path": f"staging/{filename}"})
+            
+            data = request.get_json(force=True, silent=True) or {}
+            filename = Path(data.get("filename", "staged_input.txt")).name
+            content = data.get("content", "")
+            dest = staging_dir / filename
+            dest.write_text(content, encoding="utf-8")
+            return jsonify({"ok": True, "filename": filename, "size": len(content.encode("utf-8")), "path": f"staging/{filename}"})
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
+    @app.route("/api/staged_files", methods=["GET"])
+    def api_staged_files():
+        """List all files currently in the agent's safe staging area."""
+        try:
+            items = []
+            for item in sorted(staging_dir.iterdir()):
+                if item.is_file() and not item.name.startswith("."):
+                    items.append({
+                        "name": item.name,
+                        "size": item.stat().st_size,
+                        "modified": item.stat().st_mtime
+                    })
+            return jsonify({"staged": items})
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
+    @app.route("/api/staged_files/<path:filename>", methods=["DELETE"])
+    def api_delete_staged_file(filename: str):
+        """Remove a staged file."""
+        try:
+            target = (staging_dir / Path(filename).name).resolve()
+            if target.exists() and staging_dir in target.parents:
+                target.unlink()
+                return jsonify({"ok": True})
+            return jsonify({"error": "File not found"}), 404
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
+    # ── Module Studio & Pseudo-IDE Endpoints ─────────────────────────────────
+
+    modules_dir = DATA_DIR / "agent_home" / "modules"
+    modules_dir.mkdir(parents=True, exist_ok=True)
+
+    @app.route("/api/modules", methods=["GET", "POST"])
+    def api_modules():
+        """List or add modules in the agent's modules directory."""
+        import ast
+        if request.method == "POST":
+            data = request.get_json(force=True, silent=True) or {}
+            name = Path(data.get("name", "")).name
+            code = data.get("code", "")
+            if not name.endswith(".py"):
+                name += ".py"
+            if not name or not code.strip():
+                return jsonify({"error": "Both module name and code are required."}), 400
+            
+            # Syntax validation via AST
+            try:
+                ast.parse(code)
+            except SyntaxError as e:
+                return jsonify({"error": f"Python Syntax Error: {e.msg} at line {e.lineno}"}), 400
+            
+            dest = modules_dir / name
+            dest.write_text(code, encoding="utf-8")
+
+            # Update home.json if present
+            home_json = DATA_DIR / "agent_home" / "home.json"
+            if home_json.exists():
+                try:
+                    with open(home_json, "r") as f:
+                        hdata = json.load(f)
+                    mod_key = name[:-3]
+                    hdata.setdefault("modules", {})[mod_key] = {
+                        "path": str(dest.resolve()),
+                        "room": "modules",
+                        "network": "requests" in code or "urllib" in code,
+                        "parameters": []
+                    }
+                    with open(home_json, "w") as f:
+                        json.dump(hdata, f, indent=2)
+                except Exception:
+                    pass
+
+            return jsonify({"ok": True, "name": name, "size": len(code.encode("utf-8"))})
+
+        # GET: list modules
+        mod_list = []
+        for mf in sorted(modules_dir.glob("*.py")):
+            doc = ""
+            try:
+                code_text = mf.read_text(encoding="utf-8")
+                tree = ast.parse(code_text)
+                doc = ast.get_docstring(tree) or ""
+            except Exception:
+                pass
+            mod_list.append({
+                "name": mf.name,
+                "doc": doc.strip(),
+                "size": mf.stat().st_size,
+                "lines": len(code_text.splitlines()) if "code_text" in locals() else 0
+            })
+        return jsonify({"modules": mod_list})
+
+    @app.route("/api/modules/<path:filename>", methods=["GET"])
+    def api_get_module_code(filename: str):
+        """Get source code for a specific module."""
+        target = (modules_dir / Path(filename).name).resolve()
+        if target.exists() and modules_dir in target.parents:
+            return jsonify({
+                "name": target.name,
+                "code": target.read_text(encoding="utf-8"),
+                "size": target.stat().st_size
+            })
+        return jsonify({"error": "Module not found"}), 404
 
     return app
 

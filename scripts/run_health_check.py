@@ -49,7 +49,7 @@ def check_health():
         checks.append(("Core Dependencies", "FAIL", f"Missing libraries: {', '.join(missing)}"))
 
     # 3. Credentials & Config Check
-    cred_file = Path("/home/nemo/.config/helix/credentials.env")
+    cred_file = Path(os.environ.get("HELIX_CREDENTIALS_PATH", Path.home() / ".config" / "helix" / "credentials.env"))
     gemini_key = os.environ.get("GEMINI_API_KEY")
     if cred_file.exists() or gemini_key:
         checks.append(("API Credentials", "PASS", f"Found credentials at {cred_file}"))

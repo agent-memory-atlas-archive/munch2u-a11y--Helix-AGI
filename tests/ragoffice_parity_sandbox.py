@@ -48,7 +48,7 @@ logger = logging.getLogger("ragoffice_parity_sandbox")
 EXPECTED_ITEMS = 110
 EXPECTED_ANSWERABLE = 100
 EXPECTED_CONTROLS = 10
-DEFAULT_RAGOFFICE_ROOT = Path("/home/nemo/RAGOffice")
+DEFAULT_RAGOFFICE_ROOT = Path(os.environ.get("RAGOFFICE_ROOT", Path.home() / "RAGOffice"))
 DEFAULT_OUTPUT_DIR = Path("benchmark_results/ragoffice_parity_110")
 
 # Exact text from RAGOffice/tools/llm_client.py at snapshot time. Keeping this

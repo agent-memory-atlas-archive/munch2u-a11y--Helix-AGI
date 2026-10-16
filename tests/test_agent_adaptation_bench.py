@@ -20,8 +20,8 @@ from typing import Any, Dict, List, Optional
 
 from dotenv import load_dotenv
 
-# Load credentials from /home/nemo/.config/helix/credentials.env
-CRED_PATH = Path("/home/nemo/.config/helix/credentials.env")
+# Load credentials from ~/.config/helix/credentials.env
+CRED_PATH = Path(os.environ.get("HELIX_CREDENTIALS_PATH", Path.home() / ".config" / "helix" / "credentials.env"))
 if CRED_PATH.exists():
     load_dotenv(CRED_PATH)
 

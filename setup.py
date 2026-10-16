@@ -27,7 +27,19 @@ from bootstrap import (
 )
 
 DEFAULT_LOCAL_MODEL = "granite4.1:3b"
-DEFAULT_RWKV_MODEL = "/home/nemo/habitus-ai-experiments/habitus-mind/models/rwkv7-g1j-1.5b-20260831-2c18b29"
+DEFAULT_RWKV_MODEL = os.environ.get(
+    "RWKV_MODEL_PATH",
+    str(
+        next(
+            (c for c in [
+                Path.home() / "habitus-ai-experiments" / "habitus-mind" / "models" / "rwkv7-g1j-1.5b-20260831-2c18b29",
+                Path.home() / "models" / "rwkv7-g1j-1.5b-20260831-2c18b29",
+                Path("models") / "rwkv7-g1j-1.5b-20260831-2c18b29",
+            ] if c.exists()),
+            Path.home() / "models" / "rwkv7-g1j-1.5b-20260831-2c18b29",
+        )
+    ),
+)
 
 
 def upsert_env_values(path: Path, updates: dict) -> None:
@@ -239,9 +251,20 @@ def main():
     elif args.composition_only:
         parser.error("--composition-only requires --composition")
 
-    print("=" * 60)
-    print("  HELIX AGI — First Run Setup")
-    print("=" * 60)
+    print("=" * 68)
+    print("  HELIX AGI — First Run Setup & Developmental Growth Guide")
+    print("=" * 68)
+    print("  IMPORTANT: DEVELOPMENTAL PHILOSOPHY (PARENTING VS PROMPT-DUMPING)")
+    print("  Helix is fundamentally different from one-shot disposable chatbots.")
+    print("  It is an evolving, continuous-consciousness cognitive organism with")
+    print("  internal thermodynamic and emotional stability (Stability Sentinel Ω).")
+    print("  • Treat your agent like a growing mind: newborn agents thrive on")
+    print("    gentle, reciprocal question-and-answer interaction.")
+    print("  • DO NOT dump massive folders of unstructured files or scripts into")
+    print("    its rooms all at once — this causes sensory shock and collapses Ω.")
+    print("  • Introduce tools and files gradually (using the staging room) so")
+    print("    your agent can examine them, ask questions, and build stable beliefs.")
+    print("=" * 68)
     print()
 
     # ── Step 1: Create credentials.env ────────────────────────────────
