@@ -105,6 +105,13 @@ CATEGORY_COLORS = {
     "people": "#F472B6",
     "preferences": "#FB923C",
     "feedback": "#94A3B8",
+    "concepts": "#38BDF8",
+    "desires": "#E879F9",
+    "premises": "#818CF8",
+    "propositions": "#A78BFA",
+    "memory": "#60A5FA",
+    "trail": "#F59E0B",
+    "belief": "#34D399",
 }
 
 
@@ -203,7 +210,7 @@ def _coerce_xyz(position: List[float]) -> tuple[float, float, float]:
 
 
 def _pca_3d(positions: Any) -> Any:
-    """Project Nx8 positions to Nx3 via PCA (numpy only)."""
+    """Project Nx8 positions to Nx3 via PCA (numpy only) and normalize spread."""
     if not NUMPY_AVAILABLE:
         return positions
     if len(positions) < 2:
@@ -213,7 +220,13 @@ def _pca_3d(positions: Any) -> Any:
     eigenvalues, eigenvectors = np.linalg.eigh(cov)
     # Top 3 components (eigh returns ascending order)
     top3 = eigenvectors[:, -3:][:, ::-1]
-    return centered @ top3
+    proj = centered @ top3
+
+    # Normalize spread so nodes span ~[-4.5, 4.5] for clear 3D visualization
+    std = proj.std(axis=0)
+    median_std = float(np.median(std)) if len(std) > 0 and np.median(std) > 1e-5 else 1.0
+    scale = 2.8 / median_std
+    return proj * scale
 
 
 def read_spatial() -> Dict[str, Any]:
@@ -275,24 +288,42 @@ def read_spatial() -> Dict[str, Any]:
             except Exception:
                 pass
 
-    # Project to 3D
+    # Project to 3D with balanced Habitus Cortex basis
     projected = []
     if all_positions:
         if NUMPY_AVAILABLE:
             pos_array = np.array(all_positions, dtype=np.float32)
-            proj_3d = _pca_3d(pos_array)
+            # Separate persistent habitus nodes (beliefs/memories) from transient trails
+            is_core = np.array([m["type"] != "trail" for m in point_meta], dtype=bool)
+            core_pos = pos_array[is_core] if np.any(is_core) else pos_array
+            
+            mean = core_pos.mean(axis=0)
+            centered_core = core_pos - mean
+            cov = np.cov(centered_core, rowvar=False) if len(core_pos) > 1 else np.eye(pos_array.shape[1])
+            eigenvalues, eigenvectors = np.linalg.eigh(cov)
+            top3 = eigenvectors[:, -3:][:, ::-1]
+            
+            core_proj = centered_core @ top3
+            std_mean = float(np.mean(core_proj.std(axis=0))) if len(core_pos) > 1 and float(np.mean(core_proj.std(axis=0))) > 1e-5 else 1.0
+            scale = 2.4 / std_mean
+            
+            # Project all points into habitus basis
+            full_proj = (pos_array - mean) @ top3 * scale
+            # Clamp extreme trail spikes to stay within visible galaxy
+            full_proj = np.clip(full_proj, -8.0, 8.0)
+            
             for i, meta in enumerate(point_meta):
                 cat = belief_categories.get(meta["id"], meta["category"])
                 projected.append({
-                    "x": round(float(proj_3d[i, 0]), 4),
-                    "y": round(float(proj_3d[i, 1]), 4),
-                    "z": round(float(proj_3d[i, 2]), 4),
+                    "x": round(float(full_proj[i, 0]), 4),
+                    "y": round(float(full_proj[i, 1]), 4),
+                    "z": round(float(full_proj[i, 2]), 4),
                     "id": meta["id"],
                     "type": meta["type"],
                     "content": meta["content"],
                     "mass": round(meta["mass"], 3),
                     "category": cat,
-                    "color": CATEGORY_COLORS.get(cat, "#666666"),
+                    "color": CATEGORY_COLORS.get(cat, "#38BDF8"),
                 })
         else:
             for raw_pos, meta in zip(all_positions, point_meta):
@@ -323,14 +354,15 @@ def read_spatial() -> Dict[str, Any]:
         _, eigvec = np.linalg.eigh(cov)
         top3 = eigvec[:, -3:][:, ::-1]
 
+        scale_attn = scale if "scale" in locals() else 1.0
         ac = _load_npy(ATTENTION_NPY)
         if ac is not None and len(ac) == len(mean):
-            proj = (ac - mean) @ top3
+            proj = np.clip((ac - mean) @ top3 * scale_attn, -8.0, 8.0)
             attn = {"x": round(float(proj[0]), 4), "y": round(float(proj[1]), 4), "z": round(float(proj[2]), 4)}
 
         ap = _load_npy(ATTENTION_PREV)
         if ap is not None and len(ap) == len(mean):
-            proj = (ap - mean) @ top3
+            proj = np.clip((ap - mean) @ top3 * scale_attn, -8.0, 8.0)
             attn_prev = {"x": round(float(proj[0]), 4), "y": round(float(proj[1]), 4), "z": round(float(proj[2]), 4)}
 
     gamma = 0.5

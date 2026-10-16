@@ -10,6 +10,7 @@ from PyQt6.QtWidgets import (
     QScrollArea, QSpacerItem, QSizePolicy, QFrame, QCheckBox,
 )
 from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QPixmap
 from bootstrap import personality_label, profile_label
 from wizard.ai_helper import AiHelperBanner
 from core.agent_creation import ARCHETYPES
@@ -181,6 +182,36 @@ class SummaryPage(QWidget):
                 card_layout.addLayout(row)
 
             self.summary_layout.addWidget(card)
+
+        # Dashboard & Habitus Mindscape Visual Card
+        base_dir = Path(__file__).resolve().parent.parent.parent
+        preview_path = base_dir / "wizard" / "assets" / "habitus_mindscape_preview.png"
+        if preview_path.exists():
+            preview_card = QWidget()
+            preview_card.setStyleSheet("""
+                background: rgba(15, 23, 42, 0.65);
+                border: 1px solid rgba(56, 189, 248, 0.4);
+                border-radius: 10px;
+                padding: 12px 16px;
+            """)
+            p_layout = QVBoxLayout(preview_card)
+            p_layout.setSpacing(6)
+            p_title = QLabel("🌌 3D Habitus Mindscape & Real-Time Dashboard (Port 5050)")
+            p_title.setStyleSheet("font-size: 13px; font-weight: 700; color: #38bdf8; background: transparent; border: none;")
+            p_layout.addWidget(p_title)
+
+            p_desc = QLabel("Upon launch, Helix provides real-time 3D habitus memory visualization, thermodynamic stability gauges (Ω), safe file staging, and module code management.")
+            p_desc.setStyleSheet("font-size: 11px; color: #94a3b8; background: transparent; border: none;")
+            p_desc.setWordWrap(True)
+            p_layout.addWidget(p_desc)
+
+            p_img = QLabel()
+            pix = QPixmap(str(preview_path))
+            p_img.setPixmap(pix.scaled(520, 180, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
+            p_img.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            p_layout.addWidget(p_img)
+
+            self.summary_layout.addWidget(preview_card)
 
         self.summary_layout.addStretch()
 

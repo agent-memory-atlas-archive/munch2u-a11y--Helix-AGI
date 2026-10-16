@@ -645,7 +645,7 @@
   </div>
   <!-- 3D Scene -->
   <div class="scene-panel">
-    <div class="scene-label">8D → 3D PCA PROJECTION</div>
+    <div class="scene-label">HABITUS MINDSCAPE • 8D → 3D PCA LATTICE</div>
     <canvas id="three-canvas"></canvas>
     <div id="tooltip"></div>
     <div class="legend" id="legend"></div>
@@ -682,196 +682,6 @@
 <script type="importmap">
 { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/" } }
-
-// ── Module Studio & Pseudo-IDE ──
-let activeModule = null;
-
-async function fetchModules() {
-  try {
-    const res = await fetch('/api/modules');
-    const data = await res.json();
-    const listEl = document.getElementById('modules-list');
-    if (!listEl) return;
-    listEl.innerHTML = '';
-    if (!data.modules || data.modules.length === 0) {
-      listEl.innerHTML = '<div style="padding: 10px; font-size: 10px; color: var(--dim);">No modules found.</div>';
-      return;
-    }
-    data.modules.forEach(m => {
-      const btn = document.createElement('button');
-      btn.className = 'module-item-btn';
-      btn.textContent = m.name;
-      btn.title = m.doc || m.name;
-      if (activeModule === m.name) btn.classList.add('active');
-      btn.onclick = () => loadModuleCode(m.name);
-      listEl.appendChild(btn);
-    });
-    if (!activeModule && data.modules.length > 0) {
-      loadModuleCode(data.modules[0].name);
-    }
-  } catch (err) {
-    console.error('Failed to load modules:', err);
-  }
-}
-
-async function loadModuleCode(name) {
-  activeModule = name;
-  document.querySelectorAll('#modules-list .module-item-btn').forEach(b => {
-    b.classList.toggle('active', b.textContent === name);
-  });
-  try {
-    const res = await fetch(`'/api/modules/'${encodeURIComponent(name)}`);
-    const data = await res.json();
-    const tEl = document.getElementById('module-active-title');
-    const cEl = document.getElementById('module-code-view');
-    const mEl = document.getElementById('module-active-meta');
-    if (tEl) tEl.textContent = data.name;
-    if (cEl) cEl.textContent = data.code;
-    if (mEl) mEl.textContent = `${data.size} bytes`;
-  } catch (err) {
-    console.error('Failed to load module code:', err);
-  }
-}
-
-// Add Module Modal Handlers
-const addModModal = document.getElementById('add-module-modal');
-const addModBtn = document.getElementById('add-module-btn');
-const closeModBtn = document.getElementById('close-add-module-btn');
-const saveModBtn = document.getElementById('save-module-btn');
-const modErrorEl = document.getElementById('add-module-error');
-
-if (addModBtn) addModBtn.onclick = () => { if (addModModal) addModModal.style.display = 'flex'; if (modErrorEl) modErrorEl.style.display = 'none'; };
-if (closeModBtn) closeModBtn.onclick = () => { if (addModModal) addModModal.style.display = 'none'; };
-
-if (saveModBtn) saveModBtn.onclick = async () => {
-  const name = document.getElementById('new-module-name').value.trim();
-  const code = document.getElementById('new-module-code').value;
-  if (modErrorEl) modErrorEl.style.display = 'none';
-  if (!name || !code.trim()) {
-    if (modErrorEl) {
-      modErrorEl.textContent = 'Please provide both filename and Python code.';
-      modErrorEl.style.display = 'block';
-    }
-    return;
-  }
-  try {
-    const res = await fetch('/api/modules', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, code })
-    });
-    const ret = await res.json();
-    if (!res.ok) {
-      if (modErrorEl) {
-        modErrorEl.textContent = ret.error || 'Validation failed.';
-        modErrorEl.style.display = 'block';
-      }
-      return;
-    }
-    if (addModModal) addModModal.style.display = 'none';
-    document.getElementById('new-module-name').value = '';
-    document.getElementById('new-module-code').value = '';
-    activeModule = ret.name;
-    fetchModules();
-  } catch (err) {
-    if (modErrorEl) {
-      modErrorEl.textContent = 'Network error: ' + err.message;
-      modErrorEl.style.display = 'block';
-    }
-  }
-};
-
-// ── Safe Staging Inbox ──
-const stagingModal = document.getElementById('staging-modal');
-const openStagingBtn = document.getElementById('staging-drawer-btn');
-const closeStagingBtn = document.getElementById('close-staging-modal-btn');
-const stagingDropzone = document.getElementById('staging-dropzone');
-const stagingFileInput = document.getElementById('staging-file-input');
-const stagedListEl = document.getElementById('staged-files-list');
-const stagedBadgeEl = document.getElementById('staged-count-badge');
-
-if (openStagingBtn) openStagingBtn.onclick = () => { if (stagingModal) stagingModal.style.display = 'flex'; fetchStagedFiles(); };
-if (closeStagingBtn) closeStagingBtn.onclick = () => { if (stagingModal) stagingModal.style.display = 'none'; };
-
-async function fetchStagedFiles() {
-  try {
-    const res = await fetch('/api/staged_files');
-    const data = await res.json();
-    const items = data.staged || [];
-    if (stagedBadgeEl) stagedBadgeEl.textContent = items.length;
-    if (!stagedListEl) return;
-    stagedListEl.innerHTML = '';
-    if (items.length === 0) {
-      stagedListEl.innerHTML = '<div style="color: var(--dim); text-align: center; padding: 18px; font-size: 11px;">No files currently staged.</div>';
-      return;
-    }
-    items.forEach(item => {
-      const row = document.createElement('div');
-      row.className = 'staged-item';
-      row.innerHTML = `
-        <div>
-          <span class="staged-name">${escapeHtml(item.name)}</span>
-          <span class="staged-meta"> (${item.size} bytes)</span>
-        </div>
-        <button class="staged-del-btn" onclick="deleteStagedFile('${encodeURIComponent(item.name)}')">Remove</button>
-      `;
-      stagedListEl.appendChild(row);
-    });
-  } catch (err) {
-    console.error('Failed to fetch staged files:', err);
-  }
-}
-
-window.deleteStagedFile = async function(encName) {
-  try {
-    await fetch(`'/api/staged_files/'${encName}`, { method: 'DELETE' });
-    fetchStagedFiles();
-  } catch (err) {
-    console.error('Failed to delete staged file:', err);
-  }
-};
-
-// Dropzone interactions
-if (stagingDropzone) {
-  stagingDropzone.onclick = () => { if (stagingFileInput) stagingFileInput.click(); };
-  stagingDropzone.ondragover = (e) => { e.preventDefault(); stagingDropzone.classList.add('dragover'); };
-  stagingDropzone.ondragleave = () => stagingDropzone.classList.remove('dragover');
-  stagingDropzone.ondrop = async (e) => {
-    e.preventDefault();
-    stagingDropzone.classList.remove('dragover');
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      for (const file of e.dataTransfer.files) {
-        await uploadStagedFile(file);
-      }
-      fetchStagedFiles();
-    }
-  };
-}
-
-if (stagingFileInput) {
-  stagingFileInput.onchange = async () => {
-    if (stagingFileInput.files && stagingFileInput.files.length > 0) {
-      for (const file of stagingFileInput.files) {
-        await uploadStagedFile(file);
-      }
-      fetchStagedFiles();
-    }
-  };
-}
-
-async function uploadStagedFile(file) {
-  const formData = new FormData();
-  formData.append('file', file);
-  try {
-    await fetch('/api/stage_file', { method: 'POST', body: formData });
-  } catch (err) {
-    console.error('Failed to upload staged file:', err);
-  }
-}
-
-// Initial background poll for staged count
-fetchStagedFiles();
-
 </script>
 <script type="module">
 import * as THREE from 'three';
@@ -883,7 +693,9 @@ let logTotal = { thoughts: 0, tools: 0, beliefs: 0, spatial: 0 };
 const CAT_COLORS = {
   self_identity:'#FFD700', knowledge:'#4A9EFF', skills:'#4ADE80',
   capabilities:'#A78BFA', people:'#F472B6', preferences:'#FB923C',
-  feedback:'#94A3B8', desires:'#E879F9', memory:'#475569', belief:'#666'
+  feedback:'#94A3B8', desires:'#E879F9', concepts:'#38BDF8',
+  premises:'#818CF8', propositions:'#A78BFA', memory:'#60A5FA',
+  trail:'#F59E0B', belief:'#34D399'
 };
 
 // ── Log Tabs ──
@@ -1350,15 +1162,20 @@ function updateSpatial(data) {
   const seenCategories = new Set();
 
   data.points.forEach(p => {
-    const radius = Math.max(0.08, Math.min(0.4, Math.sqrt(p.mass) * 0.25));
-    const geo = p.type === 'memory'
-      ? new THREE.SphereGeometry(0.05, 6, 6)
-      : new THREE.SphereGeometry(radius, 12, 12);
-    const color = new THREE.Color(p.color || '#666');
+    const isMemory = p.type === 'memory';
+    const isTrail = p.type === 'trail';
+    const radius = isMemory ? 0.13 : (isTrail ? 0.08 : Math.max(0.15, Math.min(0.38, Math.sqrt(p.mass || 0.5) * 0.32)));
+    const geo = new THREE.SphereGeometry(radius, 14, 14);
+    const colorHex = p.color || CAT_COLORS[p.category] || '#38BDF8';
+    const color = new THREE.Color(colorHex);
     const mat = new THREE.MeshStandardMaterial({
-      color, emissive: color, emissiveIntensity: p.type === 'memory' ? 0.1 : 0.3,
-      transparent: p.type === 'memory', opacity: p.type === 'memory' ? 0.35 : 0.85,
-      roughness: 0.6,
+      color,
+      emissive: color,
+      emissiveIntensity: isTrail ? 0.2 : (isMemory ? 0.4 : 0.7),
+      roughness: 0.35,
+      metalness: 0.2,
+      transparent: isMemory,
+      opacity: isMemory ? 0.8 : 0.98,
     });
     const mesh = new THREE.Mesh(geo, mat);
     mesh.position.set(p.x, p.y, p.z);
@@ -1393,7 +1210,7 @@ function updateSpatial(data) {
 
   document.getElementById('point-count').textContent = data.point_count;
 
-  // Construct dynamic translucent habitus lattice
+  // Construct dynamic translucent habitus lattice using K-nearest neighbors
   if (latticeMesh) {
     scene.remove(latticeMesh);
     latticeMesh.geometry.dispose();
@@ -1401,27 +1218,36 @@ function updateSpatial(data) {
     latticeMesh = null;
   }
   const edgePts = [];
-  const maxDistSq = 16.0; // connection radius of 4.0
   const pts = data.points || [];
+  const maxNeighbors = 3;
+  const maxDistSq = 25.0; // connection radius of 5.0 in scaled 3D space
+
   for (let i = 0; i < pts.length; i++) {
-    for (let j = i + 1; j < pts.length; j++) {
+    const dists = [];
+    for (let j = 0; j < pts.length; j++) {
+      if (i === j) continue;
       const dx = pts[i].x - pts[j].x;
       const dy = pts[i].y - pts[j].y;
       const dz = pts[i].z - pts[j].z;
       const dSq = dx*dx + dy*dy + dz*dz;
-      if (dSq < maxDistSq) {
+      if (dSq < maxDistSq) dists.push({ j, dSq });
+    }
+    dists.sort((a, b) => a.dSq - b.dSq);
+    const neighbors = dists.slice(0, maxNeighbors);
+    neighbors.forEach(({ j }) => {
+      if (i < j) {
         edgePts.push(pts[i].x, pts[i].y, pts[i].z);
         edgePts.push(pts[j].x, pts[j].y, pts[j].z);
       }
-    }
+    });
   }
   if (edgePts.length > 0) {
     const edgeGeo = new THREE.BufferGeometry();
     edgeGeo.setAttribute('position', new THREE.Float32BufferAttribute(edgePts, 3));
     const edgeMat = new THREE.LineBasicMaterial({
-      color: 0x6366f1,
+      color: 0x818cf8,
       transparent: true,
-      opacity: 0.18,
+      opacity: 0.32,
       blending: THREE.AdditiveBlending
     });
     latticeMesh = new THREE.LineSegments(edgeGeo, edgeMat);

@@ -30,6 +30,27 @@ and empirically verified across both Granite 3B and 8B.
 
 ---
 
+
+---
+
+## 🌌 Cognitive Dashboard & 3D Habitus Mindscape
+
+Helix includes a real-time monitoring and interaction interface (`http://localhost:5050`) featuring:
+
+<p align="center">
+  <img src="documents/screenshots/habitus_mindscape_3d.png" alt="Helix 3D Habitus Mindscape" width="85%" />
+</p>
+
+- **3D Habitus Galaxy & Neural Lattice**: 8D semantic space projected to 3D with dynamic K-nearest neighbor relational edges and animated $\Psi$ cipher pulse waves propagating through memory nodes in real time.
+- **Spatial Room Locator ("Where the Agent Is")**: Live indicator showing whether the agent is in `/`, `/modules`, `/workshop`, `/intakes`, or `/thinking`.
+- **Safe Staging Inbox**: Drag-and-drop dropzone preventing sensory shock by allowing gradual, safe introduction of files into the agent room.
+- **Module Studio (Pseudo-IDE)**: Syntax-highlighted Python tool inspector and AST-validated module creator.
+
+<p align="center">
+  <img src="documents/screenshots/modules_studio.png" alt="Modules & Code Studio" width="48%" />
+  <img src="documents/screenshots/safe_staging_inbox.png" alt="Safe Staging Inbox" width="48%" />
+</p>
+
 ## What is Helix AGI?
 
 Helix AGI is a multi-model agentic system that implements continuous autonomous operation, structured memory consolidation, and adaptive tool learning.
