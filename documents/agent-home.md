@@ -1,7 +1,10 @@
 # Agent home and body
 
 **Source review: 2026-10-17.** The home is filesystem data separate from the
-source checkout, model weights and persistent mind stores. Guided creation
+source checkout, model weights and persistent mind stores. It supplies the
+agent's continuous text surroundings and the places its body can act.
+[The engine guide](sensing-action-speech.md) connects this home to private
+thought and direct speech. Guided creation
 uses `data/homes/<Agent Name>` and `data/agents/<Agent Name>`; spaces and
 Unicode are allowed after name validation. The wizard provisions identity and
 creation manifests. The CLI has a provisioning gap documented in the
@@ -65,6 +68,17 @@ Successful goals require a joint checkpoint before public completion.
 There is no current Chat opcode for write/mkdir, module activation, web
 browsing or sleep. Put an experiment in the workshop before requesting
 execution; uploading to staging does not move it there automatically.
+
+## Thinking and speaking
+
+The `thinking/` room provides a quiet environment. Private thought is also a
+runtime mode available in any room. A thought-only pulse can preserve an
+unfinished interaction and continue it on the next pulse.
+
+Outward communication uses ordinary prose once the internal communication
+route has a recipient and permits delivery. The model does not need to emit
+`SPEAK`, action JSON or a tool call to reply. Body actions use their separate
+numeric motor route.
 
 ## Installed module handler contract
 
@@ -153,7 +167,6 @@ execution and graceful restart through the current production route. A separate
 earlier control verified sensing while a script was running. Focus, handler
 interfaces and web modules also have isolated implementation checks.
 
-No search-provider evaluation, production sleep-learning result, learned motor
-development or general conversational-coherence result is established by those
-checks. Use Dashboard **Environment and actions**/`/api/motor` for actual
-body returns; the staging endpoint targets the selected `mindscape.home`.
+For current body returns use Dashboard **Environment and actions**/`/api/motor`;
+the staging endpoint targets the selected `mindscape.home`. Detailed evaluation
+scope is recorded with the live evidence and [nursery status](nursery_status.md).

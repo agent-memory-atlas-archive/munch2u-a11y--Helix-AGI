@@ -1,8 +1,11 @@
 # Helix Current Technical Architecture
 
-**Source review: 2026-10-17 · Branch: `main`, including uncommitted motor/runtime
-repairs.** This describes source wiring. Behavioral evidence is scoped separately
-below and does not establish general autonomous competence.
+**Updated: 2026-10-17 · Branch: `main`.**
+
+The native engine combines continuous text senses, a filesystem body, private
+thought and direct speech. Body actions use numeric signals; outward speech
+uses ordinary prose selected for delivery by the internal communication route.
+See [sensing, action and speech](sensing-action-speech.md) for the user guide.
 
 ## Composition and ownership
 
@@ -90,28 +93,38 @@ returns cannot satisfy another obligation. Before publishing completion, goal
 metadata and receipts must be committed in a matching joint neural/graph-memory
 checkpoint. Checkpoint failure leaves an explicit blocked goal.
 
-This policy is inspectable command-recognition scaffolding. It does not
-demonstrate learned motor output, neural command generalization or spontaneous
-autonomous exploration. Older `Mindscape.act`, natural-intention/wire parsers
-and subconscious-affordance helpers remain for legacy/component use; the
-production native pulse does not dispatch generated prose through them.
+The current policy translates explicit user goals; learned independent action
+selection is the next stage. Older `Mindscape.act` and prose/wire-intention
+helpers remain separate from production native dispatch.
 
-### Sensory and language paths
+### Continuous sensing
 
-The sensor samples real attributes and immediate entries of the current room
-at `mindscape.sensory_interval_seconds` (default 1.0). It does not read file
-contents. Changed frames persist under the named home's `intakes/`; unchanged
-frames still produce `sensory_tick` receipts and are deduplicated for neural
-admission. A running script can delay native consumption without stopping
-filesystem sampling.
+The sensor samples real current-room attributes and immediate entries at
+`mindscape.sensory_interval_seconds` (default 1.0). It records names, types,
+sizes and modifications; OPEN supplies file contents. Changed frames persist
+under the named home's `intakes/`. Each tick produces a receipt, including
+unchanged frames deduplicated for neural admission. Sampling continues during
+foreground generation and workshop execution; native processing uses the serial
+owner.
 
-Foreground generation uses `decode_speech` with no action wire format. Private
-`<think>` content and outward speech remain separate. Delivery uses the
-generation's own recipient snapshot, and only observations available to that
-generation can be marked consumed. Empty/role-echo output is classified
-explicitly; missing receipts or generation errors do not produce invented
-fallback prose. A foreground failure is visible in health state and can park
-language while the receptive/body loops remain available.
+### Private thought to direct speech
+
+`BicameralRWKVSession` separates private contemplation from outward prose,
+and `decode_speech` accepts ordinary language. A thought-only pulse retains
+the pending interaction and private continuation. Later pulses can continue
+thinking and deliver a reply without a generated `SPEAK` command, action JSON
+or provider function call.
+
+`classify_sensed_feeling` derives the communication mode from the native
+cortex/recurrent state and output routes. Outward delivery requires a resolved
+recipient and channel. `PulseLoop._deliver_mindscape_output` keeps private
+`[thought]` output internal and routes outward prose to the recipient.
+Legacy `[SPEAK: ...]` wrappers are accepted for compatibility, not required.
+
+Each generation retains its own recipient and observation snapshot, so a new
+message cannot redirect an earlier reply or mark unseen results consumed.
+Empty output and errors retain explicit health/receipt state. A foreground
+failure can park language while the receptive/body loops remain available.
 
 ## Memory, retrieval and context
 
@@ -225,10 +238,10 @@ limits. They are not a recommended limit contract for native operation.
 See [action paths](action_path.md), [launch](mindscape_launch.md),
 [home](agent-home.md) and [nursery status](nursery_status.md).
 
-The [October 17 operational record](audits/2026-10-17-native-body-operational/README.md)
-has composition and per-request receipts for actual movement, opening, isolated
-execution, checkpoint completion and graceful restart. Its 72 focused checks
-are implementation diagnostics. It does not establish conversational coherence,
-durable factual-recall accuracy, learned autonomy, nursery learning or a
-comparative performance score. October 10–16 failure reports remain historical
-evidence for their original compositions.
+The [October 17 live record](audits/2026-10-17-native-body-operational/README.md)
+connects actual sensing and move/open/run behavior to the production context,
+native model, action returns and joint checkpoints. Graceful restart retained
+identity, position and completed goals. Thought/speech separation and delivery
+routing are implemented and have focused checks; general conversation quality
+and learned independent action selection remain separate evaluation targets.
+Older failure reports retain their original source/date scope.

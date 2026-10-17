@@ -1,9 +1,27 @@
 # Helix System Manual
 
 **Source review: 2026-10-17 · Scope: current `mindscape` composition.**
-This is an operator/developer reference, not an agent system prompt.
-See [architecture](documents/architecture_current.md) for wiring and
-[launch](documents/mindscape_launch.md) for complete creation commands.
+Helix runs a continuous sensing, thinking, action and communication loop.
+Its digital body interacts with a named filesystem home while private thought
+and outward speech follow separate paths.
+
+## Sense, act, think and speak
+
+| Capability | How to use it |
+|---|---|
+| Continuous surroundings | The sensor observes the current room in the background |
+| Navigation and files | Ask to move, inspect or open a named path |
+| Local experiments | Put a Python script in the workshop, then ask to open and run it |
+| Private thought to speech | Converse normally; the internal communication route delivers ordinary prose without a generated `SPEAK` command |
+| Persistent identity and home | Restart the selected agent to resume its saved lineage and room |
+
+The body controller currently follows explicit user goals. Speech uses its own
+communication state and recipient routing: a thought-only pulse can continue
+privately, then a later outward pulse can reply to the same person.
+
+Start with [sensing, action and speech](documents/sensing-action-speech.md).
+Use [architecture](documents/architecture_current.md) for implementation wiring
+and [launch](documents/mindscape_launch.md) for complete creation commands.
 
 ## Select and start an agent
 
@@ -22,9 +40,9 @@ Run these in separate terminals from the Helix root. The main process uses
 creating a matching home or identity. The GUI launcher can start the dashboard.
 Plain `main.py` does not start the HTTP server.
 
-`venv/bin/python main.py --check-setup` loads and synchronizes actual state and
-can create checkpoints. It exits before continuous channel/body operation;
-successful initialization does not establish conversational or action ability.
+`venv/bin/python main.py --check-setup` checks initialization, synchronizes
+actual state and can create checkpoints. Start normally afterward for continuous
+channels, sensing and body operation.
 
 ## Identity, home and communication
 
@@ -43,8 +61,9 @@ changing setup fields cannot rewrite an existing gestation.
 | Basic / standard / predeveloped | Starter belief/memory depth |
 | Voice wording | Bootstrap text style, separate from the native archetype |
 
-These are initial preferences and text seeds, not trained competencies.
-The optional nursery helper is not called during normal creation or startup.
+Archetypes provide initial preferences; memory depth and voice provide text
+seeds. The separate [nursery prototype](documents/nursery_status.md) is outside
+normal creation/startup.
 
 Dashboard needs no channel token. The wizard also handles Telegram and Discord;
 the CLI includes Slack, WhatsApp and webhook options. External channels require
@@ -73,10 +92,9 @@ filenames with spaces; case is preserved. `it` binds only to an explicitly
 opened file earlier in the same request. Each requested target is tracked.
 Ambiguous, negated or failed requests cannot be completed by guessing.
 
-This is a bootstrap command policy. It does not yet expose arbitrary file
-creation, web/module activation or sleep through native Chat. Related handlers
-exist in the body, but a registered handler alone is not a connected action
-route. Model speech and retrieved/file text have no execution authority.
+Chat currently exposes move, sense, open and run. Additional module handlers
+are described in the [home guide](documents/agent-home.md). Actual body work
+uses numeric motor signals; conversation uses ordinary prose.
 
 Before execution, the real user request traverses persistent retrieval,
 all nine Loom lanes, context compilation and actual native RWKV consumption.
@@ -189,10 +207,8 @@ preserves those roles and complete source contributions, recording admission
 and exclusion decisions. Activity priorities are bootstrap settings rather
 than learned neural attention.
 
-Affect and stability are runtime signals for attention/posture, not truth,
-permission or proof of subjective experience. The older manual's standalone
-`core/somatic_engine.py` and `tools/internal_sleep_tool.py` references do not
-exist in this checkout and are not installed features.
+Affect and stability supply runtime attention/posture signals. Factual evidence
+and action permission remain attached to their actual sources and receipts.
 
 ## Auxiliary work, sleep and learning
 
@@ -226,10 +242,7 @@ together. Graceful restart has retained identity, room and completed motor
 goal history in the recorded trial. Crash-atomic replay of all intermediate
 actions and exactly-once projection activation remain unestablished.
 
-The [October 17 operational record](documents/audits/2026-10-17-native-body-operational/README.md)
-documents real movement, file opening, isolated Python execution and restart.
-The recorded 72 focused checks are implementation diagnostics, not a product
-score. General conversational coherence, factual recall accuracy, learned
-autonomy and growth remain unverified. The
-[test guide](tests/TEST_SUITE_README.md) defines the evidence required for a new
-full-system result.
+The [October 17 live record](documents/audits/2026-10-17-native-body-operational/README.md)
+verifies the body workflow and graceful restart. Thought/speech separation and
+routing have focused implementation checks. For evaluation methods and detailed
+scope, use the [test guide](tests/TEST_SUITE_README.md).

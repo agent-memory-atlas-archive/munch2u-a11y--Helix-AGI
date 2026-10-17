@@ -3,10 +3,14 @@
 **Source review: 2026-10-17 · Current native route: `main.py → setup_helix →
 PulseLoop`, with independent receptive, sensory and motor loops.**
 
-The default Mindscape configuration uses a persistent native RWKV/Habitus mind
-and a local RWKV foreground. Explicit user goals produce numeric body signals;
-language generation has no actuator authority. See the
-[current architecture](architecture_current.md) for ownership and evidence flow.
+Start the continuous sensing, action and speech engine through the normal
+Helix entry point. The default Mindscape configuration combines a persistent
+RWKV/Habitus mind with a local RWKV language stream. The body follows explicit
+user goals through numeric motor signals; thought can remain private and
+outward speech is ordinary prose.
+
+See [sensing, action and speech](sensing-action-speech.md) for what to try, or
+[architecture](architecture_current.md) for implementation wiring.
 
 ## Dependencies
 
@@ -125,11 +129,13 @@ Please open /staging/Notes.txt.
 Please sense .
 ```
 
-The receptor currently supports explicit move/sense/open/run requests. Arbitrary
-write/mkdir, module activation, browser and sleep requests are not exposed by
-this policy, even though related body handlers exist. The legacy room and
-Module Studio views still have old home-path assumptions; the current body
-read-back endpoint is `GET /api/motor`.
+Converse normally for speech. A private thinking pulse can continue into a
+later reply without generating a `SPEAK` command or action JSON.
+
+The Chat body route supports move/sense/open/run. Additional module handlers
+are covered in the [home guide](agent-home.md). For current body state, use
+`GET /api/motor` or **Environment and actions**; older room/Module Studio views
+retain legacy home-path assumptions.
 
 ## State, limits and shutdown
 
@@ -167,12 +173,11 @@ unestablished.
 
 ## Verification scope
 
-`--check-setup` loads the actual composition, synchronizes state and exits
-without running the continuous channels/body loops. It proves initialization
-only. It is not a recall, conversation, nursery or action evaluation.
+`--check-setup` validates initialization and synchronizes actual state. Start
+normally afterward to use the continuous channels/body loops.
 
-The [October 17 evidence](audits/2026-10-17-native-body-operational/README.md)
-covers a normal no-argument launch, graceful restart and verified movement,
-opening and isolated execution through production memory, compiler and native
-model admission. General coherence, learned autonomy and developmental growth
-remain unverified. Earlier failed trials remain preserved for their own sources.
+The [October 17 live record](audits/2026-10-17-native-body-operational/README.md)
+documents a normal launch, graceful restart and working movement, file opening
+and isolated execution. Thought/speech separation and routing have focused
+implementation checks. Detailed scope and historical trials are linked from
+that record and the [test guide](../tests/TEST_SUITE_README.md).

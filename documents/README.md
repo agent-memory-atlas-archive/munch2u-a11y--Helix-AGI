@@ -1,65 +1,57 @@
 # Helix documentation
 
-**Reviewed: 2026-10-17 · Source: `main` plus current working-tree changes.**
-Guides describe current source. A source review, initialization check or unit
-test does not establish product competence.
+Start with the [sensing, action and speech guide](sensing-action-speech.md).
+It explains the continuous text senses, filesystem body and transition from
+private thought to ordinary speech without a generated command.
 
-## Current references
+## Use the agent
 
-| Document | Purpose |
+| Guide | Purpose |
 |---|---|
-| [Project README](../README.md) | Overview, startup and verified/unfinished boundaries |
-| [Current architecture](architecture_current.md) | Native ownership, memory/context/model flow, actions and persistence |
-| [System manual](../SYSTEM_MANUAL.md) | Operator workflow and subsystem/configuration reference |
-| [Mindscape launch](mindscape_launch.md) | Dependencies, named creation, CLI provisioning gap, startup and shutdown |
-| [Action paths](action_path.md) | Numeric native body contract and separate legacy routes |
-| [Agent home](agent-home.md) | Rooms, sensing, module-handler limits and workshop containment |
-| [Nursery status](nursery_status.md) | Disconnected prototype, persistence/safety gaps and integration requirements |
-| [Test guide](../tests/TEST_SUITE_README.md) | Implementation diagnostics and full-product evidence requirements |
-| [Models](../models/README.md) | Pinned RWKV, embeddings and optional model files |
-| [Developer examples](../examples/README.md) | Isolated API demonstrations, not the full native runtime |
-| [Task cognition](task_cognition_pipeline.md) | Separate legacy focus-worker route; disabled in native Mindscape |
+| [Project README](../README.md) | Overview and quick start |
+| [Sensing, action and speech](sensing-action-speech.md) | How the engine works and what to try |
+| [Setup and launch](mindscape_launch.md) | Dependencies, guided creation, CLI provisioning and startup |
+| [System manual](../SYSTEM_MANUAL.md) | Operation, configuration, health and persistence |
+| [Agent home](agent-home.md) | Rooms, module interfaces, sensory intake and workshop containment |
 
-Use executable source to resolve wiring discrepancies. For behavioral claims,
-require the exact declared composition, real entry point and output path,
-per-request receipts and verified outcomes. Tests and source alone do not
-outrank contradictory live evidence. Architecture is the canonical wiring
-reference; the manual and README should agree with it.
+## Develop and inspect
 
-## Recent operational evidence
+| Guide | Purpose |
+|---|---|
+| [Current architecture](architecture_current.md) | Runtime ownership, memory/context/model connections and persistence |
+| [Action paths](action_path.md) | Numeric body signals, authorization and completion |
+| [Models](../models/README.md) | RWKV checkpoint, embeddings and optional model files |
+| [Test guide](../tests/TEST_SUITE_README.md) | Implementation checks and full-product evaluation |
+| [Developer examples](../examples/README.md) | Isolated API demonstrations |
+| [Task cognition](task_cognition_pipeline.md) | Separate legacy focus-worker route |
+| [Nursery status](nursery_status.md) | Prototype behavior and remaining integration work |
 
-[October 17 native-body record](audits/2026-10-17-native-body-operational/README.md)
-links the composition manifest, actual model-context admission, matching
-action returns, independent file/artifact read-back and joint checkpoint.
-It covers a normal launch, graceful restart and move/open/run work on the
-CPU RWKV profile. The 72 focused implementation checks are separate diagnostics.
+## Current support and evidence
 
-This is not evidence of learned autonomy, broad conversational coherence,
-factual-recall accuracy or nursery-driven growth. Earlier October 17 trials
-with auxiliary-routing or checkpoint mismatches remain diagnostic provenance,
-not substitutes for the final handoff composition.
+The [October 17 live record](audits/2026-10-17-native-body-operational/README.md)
+documents working movement, file opening, sandboxed Python execution and
+graceful restart on CPU. A separate live control verified sensing during a
+running script. Thought/speech separation and delivery routing have focused
+implementation checks.
+
+The body currently follows explicit user goals; independent learned action
+selection is the next stage. Detailed receipts and evaluation scope belong
+in the operational record and test guide.
 
 ## Historical audits and design work
 
-[`audits/`](audits/) preserves dated source reviews, reproductions, failing
-trials and implementation checks. Statements such as “latest,” “paused,”
-“current” or “passed” inside those snapshots refer to their original source/date.
-Do not apply them to a changed runtime without verifying its composition.
+Dated [audits](audits/) preserve their original source, successes and failures.
+For current wiring, use [architecture](architecture_current.md).
 
 - [October 10 diagnostic handoff](mindscape_diagnostics_2026-10-10.md)
 - [Earlier integration plan](mindscape_implementation_plan.md)
 - [Older module audit index](audits/audit_overview.md)
-- [Over-Agent design](../Over_Agent_Design/README.md): separate design/prototype material.
-- [Design reflection](design_reflection.md): creative framing, not a technical or experience claim.
-
-Old natural-intention, wire-format, provider-tool and focus-worker documents
-do not define the current native motor route. The nursery's report cards and
-isolated “live model” helpers do not establish full-product learning.
+- [Over-Agent design](../Over_Agent_Design/README.md)
+- [Creative design reflection](design_reflection.md)
 
 ## Benchmark records
 
-These are historical or isolated adapter studies, not evaluations of the
-current native Mindscape composition:
+These reports retain the results of their original retrieval/adapter studies:
 
 - [LoCoMo retrieval report](locomo_benchmark_report.md)
 - [Unified retrieval report](unified_retrieval_report.md)
@@ -67,13 +59,11 @@ current native Mindscape composition:
 - [Benchmark reports](benchmark/)
 - [Benchmark output guide](../benchmark_results/README.md)
 
-Preserve original measured outputs as provenance. If a study bypasses the
-current production ingestion, memory lanes, compiler, model or action/output
-path, its numbers cannot be used as current product scores or comparisons.
+They do not score the current native engine. A new product claim requires the
+actual production composition and verified outputs; see the
+[test guide](../tests/TEST_SUITE_README.md#evidence-boundary).
 
 ## Maintenance rule
 
-Changes to runtime wiring, providers, stores, context admission, actions or
-lifecycle should update architecture and the relevant operator guide together.
-Keep current support, observed behavior, implementation diagnostics and planned
-work distinct. Do not silently turn a failed historical run into a success.
+Keep source wiring, operator guides and documented support in agreement.
+Preserve historical evidence and distinguish it from current behavior.
