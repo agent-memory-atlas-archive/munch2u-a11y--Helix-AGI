@@ -3,17 +3,25 @@
 A local Dual RWKV agent runtime combining a persistent RWKV/Habitus mind, a foreground
 RWKV language stream, role-separated memory retrieval, and a filesystem body.
 
-**Documentation reviewed: 2026-10-17, `main` plus the current working-tree
-changes.** The recent motor implementation is not yet a tagged release.
+**Documentation reviewed: 2026-10-17 · Current branch: `main`.**
 
-The current `mindscape` composition can receive explicit movement, inspection,
-file-open and Python-run requests independently of language generation. Its
-actuators receive integer motor signals bound to observed targets. Foreground
-speech has no execution authority and requires no model function calls.
+**Verified working: the sensory and action routes.** The live CPU agent moved
+between rooms, opened real files, ran a Python script in the isolated workshop,
+and retained identity, position and completed goals after graceful restart.
+A separate live control verified filesystem sensing during script execution.
+See the [recorded evidence](documents/audits/2026-10-17-native-body-operational/README.md).
 
-This is an operational bootstrap policy. Learned motor selection, open-ended
-autonomous exploration, general conversational coherence and developmental
-growth have not been established by the latest trial.
+**Current control policy: explicit user commands.** A host-coded bootstrap
+recognizer translates movement, inspection, file-open and Python-run requests
+into goals. Requests pass through production memory, context compilation and
+native RWKV intake before integer motor signals and native SELF authorization
+drive the actuators. Foreground speech has no execution authority and requires
+no model function calls.
+
+**Still unfinished: learned autonomous motor selection.** The neural agent has
+not been shown learning to choose and sequence these actions from sensory input
+on its own. The working body is one part of that goal. This trial did not assess
+general conversational quality, factual-recall accuracy or developmental growth.
 
 ## TL;DR: start the selected Dual RWKV agent
 
