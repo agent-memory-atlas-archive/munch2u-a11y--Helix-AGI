@@ -136,14 +136,15 @@ class HomeDiagnostics(unittest.TestCase):
         self.assertIn("activate", [variant["properties"]["action"]["const"] for variant in foreground_schema(intention_required=True)["oneOf"]])
 
     def test_namespace_command_only_binds_workshop_writable_and_has_no_limits(self):
-        with patch("core.mindscape_workspace.subprocess.run", return_value=subprocess.CompletedProcess([], 0, "", "")) as run:
+        process = SimpleNamespace(returncode=0, communicate=lambda **kw: ("", ""))
+        with patch("core.mindscape_workspace.subprocess.Popen", return_value=process) as run:
             self.body._isolated([sys.executable, "-I", "/workspace/experiment.py"])
         command = run.call_args.args[0]
         bind = command.index("--bind")
         self.assertEqual(command[bind + 1:bind + 3], [str(self.root / "workshop"), "/workspace"])
         self.assertNotIn("--share-net", command)
         self.assertNotIn("timeout", run.call_args.kwargs)
-        with patch("core.mindscape_workspace.subprocess.run", return_value=subprocess.CompletedProcess([], 0, "", "")) as run:
+        with patch("core.mindscape_workspace.subprocess.Popen", return_value=process) as run:
             self.body._isolated([sys.executable, "/modules/web_read.py"], network=True, module_scripts=True)
         self.assertNotIn("--bind", run.call_args.args[0])
         self.assertIn("--share-net", run.call_args.args[0])

@@ -1,5 +1,10 @@
 # Helix Agent Lab
 
+> **Evaluation scope:** this plugin's prompt suites and cross-agent simulator
+> are separate harnesses, not the normal native Mindscape entry point. “Native
+> benchmark” below names a repository benchmark adapter, not proof that all
+> production components ran. See the [full-product evidence rule](../../tests/TEST_SUITE_README.md#evidence-boundary).
+
 Helix Agent Lab is a local MCP plugin for reproducible coding-agent tests. It launches official, already-installed Codex, Claude Code, or Gemini CLIs and never reads or relays provider credentials.
 
 This package is a working proof of concept. It supports:

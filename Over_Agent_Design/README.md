@@ -1,5 +1,11 @@
 # Helix Subconscious Over-Agent
 
+> **Separate design/prototype material.** This directory's architecture and
+> claims do not define the current production Mindscape composition or prove
+> its behavior. See the [current architecture](../documents/architecture_current.md)
+> and [runtime evidence](../documents/audits/2026-10-17-native-body-operational/README.md).
+> The text below is retained as design context.
+
 > **A Continuous Digital Bicameral Mind Architecture for Autonomous AI Agents**
 
 ---

@@ -1,0 +1,38 @@
+{
+  "operational_body_verified": true,
+  "agent": "CedarLive",
+  "entrypoint": "main.py with no arguments",
+  "restart_retained_identity_position_and_goals": true,
+  "current_source_workflow": [
+    "move",
+    "move",
+    "open",
+    "run",
+    "open"
+  ],
+  "compiled_context_consumed_by_declared_native_model_before_actions": true,
+  "nine_production_lanes": [
+    "semantic",
+    "exact",
+    "recent",
+    "subjective",
+    "procedure",
+    "correction",
+    "multi_hop_graph",
+    "y_cipher_depth",
+    "habitus_graph"
+  ],
+  "uploaded_file_readback_verified": true,
+  "native_authorization_and_returns_verified": true,
+  "content_hashes_and_execution_artifact_verified": true,
+  "host_sentinel_unchanged": true,
+  "matching_neural_memory_checkpoint_committed_before_completion": true,
+  "source_hashes_match_running_product": true,
+  "model_policy": "local CPU RWKV; speech has no actuator authority; explicit goal bootstrap, not learned autonomy",
+  "dashboard": "http://127.0.0.1:15219",
+  "processes": {
+    "agent": 2426851,
+    "dashboard": 2424650
+  },
+  "verified_at": 1792228789.3407674
+}

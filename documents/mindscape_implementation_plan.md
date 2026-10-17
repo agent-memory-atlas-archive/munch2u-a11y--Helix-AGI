@@ -1,7 +1,13 @@
 # Unified Helix launcher and gestation adapter
 
+> **Historical October 10 plan.** Status, pause statements and unchecked items
+> below belong to that snapshot. For current wiring use
+> [architecture](architecture_current.md); for the later verified body workflow
+> see the [October 17 record](audits/2026-10-17-native-body-operational/README.md).
+> The original diagnostics and failed results remain preserved.
+
 **Review status, 10 October 2026:** paused at the user's request after completing
-the diagnostic handoff. [Current diagnostics](documents/mindscape_diagnostics_2026-10-10.md)
+the diagnostic handoff. [Current diagnostics](mindscape_diagnostics_2026-10-10.md)
 separate attempt 7's live failures from subsequent v9 context/ability changes.
 Those changes pass 83 focused implementation checks and await live validation.
 Readiness and the unchecked checkpoints below remain unestablished.

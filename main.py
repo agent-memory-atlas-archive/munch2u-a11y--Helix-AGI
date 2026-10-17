@@ -719,7 +719,7 @@ def main_loop(data_dir="data", interactive=False):
     headless = not sys.stdin.isatty() and not interactive
 
     if headless:
-        print("Running in headless/daemon mode (Telegram only).")
+        print("Agent is running through the configured communication channels.")
         try:
             _shutdown_requested.wait()
         except KeyboardInterrupt:
@@ -820,7 +820,8 @@ if __name__ == "__main__":
     # saving its joint state, including when the process has no terminal.
     signal.signal(signal.SIGTERM, lambda *_: _shutdown_requested.set())
     parser = argparse.ArgumentParser(description="Run the configured Helix composition")
-    parser.add_argument("--data-dir", default="data")
+    parser.add_argument("--data-dir", default=_startup_config.get("data_dir", "data"),
+                        help="Agent data directory; defaults to the profile selected during setup")
     parser.add_argument("--check-setup", action="store_true", help="Load the actual composition, sync/checkpoint, then exit")
     parser.add_argument("--interactive", action="store_true", help="Force interactive CLI mode even without TTY")
     args = parser.parse_args()

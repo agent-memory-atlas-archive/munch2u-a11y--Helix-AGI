@@ -1,0 +1,11 @@
+{
+  "case": {
+    "id": "01-move-open-run",
+    "message": "Please go to /workshop then open MotorProbe.py then run it.",
+    "outcome": "each requested target has a verified native return; script writes actual result; host sentinel unchanged; motor status completed"
+  },
+  "http": {
+    "ok": true
+  },
+  "timestamp": 1792227162.8630154
+}

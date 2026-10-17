@@ -1,6 +1,14 @@
 # Helix Event-Driven Task Cognition
 
-**Documentation status:** current focused design · **Last verified against source:** 2026-08-09 · **Canonical system context:** [`architecture_current.md`](architecture_current.md)
+**Scope: separate legacy Helix focus-worker route · Reviewed: 2026-10-17.**
+
+This is not the current native Mindscape motor pipeline. Mindscape normalizes
+its action source to `native_motor`; its supported configuration keeps task
+cognition off. Keep `HELIX_TASK_COGNITION` unset/off because the legacy controller
+honors this override. Generated speech cannot start native actions.
+See the [current action path](action_path.md)
+and [architecture](architecture_current.md). The diagram below describes the
+retained task/focus implementation rather than learned autonomous motor output.
 
 This layer replaces “show the main model every tool and tell it exactly how to
 behave” with a small cognitive kernel and learned runtime structure. It is
@@ -48,6 +56,10 @@ work receive no “You are Helix” line. Identity is included only when the tas
 depends on selfhood, values, personal history, relationships, preferences, or
 characteristic behavior. Local-context focus sessions expose at most four
 capability schemas; 100k+-context sessions expose at most eight.
+
+The capability counts, adaptive focus depths and task/context ceilings in this
+route are inherited implementation policies. They are not justified native
+product constraints; audit their interactions before any full-system evaluation.
 
 ## Lifecycle
 

@@ -651,6 +651,22 @@ def create_app():
 
     # ── Chat Endpoints ────────────────────────────────────────────
 
+    @app.route("/api/motor")
+    def api_motor_state():
+        """Actual body state and returns, independent of a language reply."""
+        cfg = _read_config()
+        data = Path(cfg.get("data_dir", "data"))
+        if not data.is_absolute():
+            data = BASE_DIR / data
+        state_path = data / "mindscape/motor-state.json"
+        if not state_path.exists():
+            return jsonify({"status": "not_started", "jobs": []})
+        state = json.loads(state_path.read_text())
+        health = data / "mindscape/foreground-health.json"
+        if health.exists():
+            state["foreground"] = json.loads(health.read_text())
+        return jsonify(state)
+
     @app.route("/api/messages", methods=["POST"])
     def api_send_message():
         """Browser sends a message to the agent."""
@@ -679,7 +695,7 @@ def create_app():
 
     # ── Safe File Staging Endpoints ──────────────────────────────────────────
 
-    staging_dir = DATA_DIR / "agent_home" / "staging"
+    staging_dir = Path(_read_config().get("mindscape", {}).get("home", DATA_DIR / "agent_home")) / "staging"
     staging_dir.mkdir(parents=True, exist_ok=True)
 
     @app.route("/api/stage_file", methods=["POST"])

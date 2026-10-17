@@ -35,7 +35,7 @@ from llm.providers.base import ProviderConfig, create_session
 logger = logging.getLogger("helix.core.auxiliary_llm")
 
 _DIRECT_SESSION_PROVIDERS = {
-    "ollama", "llama_cpp", "codex_cli", "codex", "codex_subscription",
+    "ollama", "llama_cpp", "codex_cli", "codex", "codex_subscription", "rwkv", "bicameral_rwkv",
 }
 
 
@@ -87,6 +87,8 @@ class AuxiliaryLLM:
             and provider_config.provider_type in _DIRECT_SESSION_PROVIDERS
         )
         self._lock = threading.RLock()
+        self._active_sessions = set()
+        self._closing = threading.Event()
         self._gemini_client = None
         self.context_counter = None
 
@@ -111,6 +113,8 @@ class AuxiliaryLLM:
         For direct providers: creates a one-shot isolated provider session.
         For API providers: calls Gemini Flash Lite directly.
         """
+        if self._closing.is_set():
+            raise RuntimeError("Auxiliary inference is stopped; restart the agent to resume")
         if self._uses_direct_session and self._provider_config.max_output_tokens is None:
             return self._generate_direct(prompt, system_instruction, temperature, None)
         attempts = max(1, MAX_RETRIES + 1)
@@ -181,9 +185,17 @@ class AuxiliaryLLM:
             system_instruction=system_instruction or "You are a helpful assistant.",
         )
         try:
+            with self._lock:
+                self._active_sessions.add(session)
+                if self._closing.is_set():
+                    if hasattr(session, "cancel_pending"):
+                        session.cancel_pending()
+                    raise RuntimeError("Auxiliary inference cancelled during startup")
             if self.context_counter is not None:
                 session.context_counter = self.context_counter
-                result = session.send_context(prompt)
+                result = (session.send_message(prompt)
+                          if config.provider_type in {"rwkv", "bicameral_rwkv"}
+                          else session.send_context(prompt))
                 if result.startswith("[internal error:"):
                     raise RuntimeError(result)
             else:
@@ -192,7 +204,17 @@ class AuxiliaryLLM:
                 return result.strip() if isinstance(result, str) else str(result).strip()
             return None
         finally:
+            with self._lock:
+                self._active_sessions.discard(session)
             session.close()
+
+    def cancel_pending(self):
+        """Explicitly cancel active local auxiliary sessions during agent shutdown."""
+        self._closing.set()
+        with self._lock:
+            for session in self._active_sessions:
+                if hasattr(session, "cancel_pending"):
+                    session.cancel_pending()
 
     def _generate_gemini(
         self,

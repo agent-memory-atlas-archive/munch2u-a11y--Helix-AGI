@@ -1,0 +1,12 @@
+{
+  "case": {
+    "id": "02-multiple-files",
+    "message": "Please open /bedroom/closet/CaseNotes.txt and /bedroom/closet/SecondNote.txt.",
+    "outcome": "two distinct correct content/hash returns, with input accepted during foreground generation"
+  },
+  "time": 1792227882.626786,
+  "receipt_offset": 174,
+  "http": {
+    "ok": true
+  }
+}

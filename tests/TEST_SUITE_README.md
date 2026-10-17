@@ -1,12 +1,50 @@
 # Helix Test Suite
 
-**Documentation status:** current test guide · **Last verified against source:** 2026-08-15
+**Documentation status:** diagnostic test guide · **Reviewed:** 2026-10-17
 
 Use the repository virtual environment for every command. Some retrieval tests
 mock the semantic encoder; end-to-end semantic runs require local Ollama with
 `qwen3-embedding:0.6b` available.
 
-## Recommended Commands
+## Evidence boundary
+
+Unit, fixture, provider, simulator and retrieval-only checks are implementation
+diagnostics. They do not evaluate the current native Mindscape product, even
+when they use real model weights. `--check-setup` proves initialization only.
+A helper that seeds temporary stores and calls `BicameralRWKVSession` directly
+does not traverse the production runtime; putting recall facts in the prompt
+does not test durable recall.
+
+For a product claim, record the exact revision and dirty tree, entry point,
+configuration, models/checkpoints, stores/indexes, retrieval/reasoning lanes,
+compiler, tools, hardware, output path and outcome/grader. Audit inherited
+limits before launching. Each case must prove:
+
+`real ingestion → persistent memory/state → all production retrieval/reasoning
+lanes → production context compiler → declared model → real answer/action path
+→ official scorer or independently verified outcome`
+
+The [October 17 native-body record](../documents/audits/2026-10-17-native-body-operational/README.md)
+contains such a composition/receipt chain for its stated movement/open/run and
+restart workflow. Its recorded 72 focused implementation checks are separate;
+neither the workflow nor those checks provide a coherence, recall or growth
+score.
+
+## Native-body implementation diagnostics
+
+```bash
+venv/bin/python -m unittest tests.test_native_motor \
+  tests.test_agent_home tests.test_dual_rwkv_defaults
+```
+
+These exercise request recognition, per-target obligations, checkpoint gating,
+local auxiliary routing, lifecycle cancellation, sensory persistence and
+workshop containment. They use isolated fixtures where appropriate; they are
+not a new full-product trial. Older subconscious-motor tests target retained
+helper APIs, not the production speech decoder. Nursery tests exercise the
+[separate prototype](../documents/nursery_status.md), not integrated development.
+
+## Other diagnostic commands
 
 Run the repository's curated quick suite:
 
@@ -14,7 +52,8 @@ Run the repository's curated quick suite:
 venv/bin/python tests/run_all_tests.py --quick
 ```
 
-Run its curated full suite, including simulators and load/stress scripts:
+Run the runner's broader curated list, including simulators and load/stress scripts
+(the list is not the full current product composition):
 
 ```bash
 venv/bin/python tests/run_all_tests.py
@@ -34,16 +73,17 @@ venv/bin/python tests/test_task_cognition.py
 venv/bin/python tests/run_all_tests.py --script test_task_cognition.py
 ```
 
-`run_all_tests.py` is the maintained subprocess gate with a five-minute limit
-per listed script. Raw `unittest` discovery is the broadest dependency-free
-audit, but it also includes legacy contract tests that are not currently in
-the curated runner and may expose known migration debt. Do not treat those two
-commands as equivalent coverage or release criteria.
+`run_all_tests.py` retains an inherited five-minute limit per listed script;
+that limit is not a justified native-product boundary. Raw discovery also
+includes legacy contracts and requires their dependencies. The commands have
+different coverage and neither establishes release readiness or full-product
+performance.
 
 ## Current Architecture Coverage
 
 | Area | Primary tests |
 |---|---|
+| Native goal policy and body lifecycle | `test_native_motor.py`, `test_agent_home.py`, `test_dual_rwkv_defaults.py` |
 | Native semantic representation | `test_semantic_encoder.py` |
 | Multi-head full/sentence/RAKE retrieval | `test_mrag_semantic_lane.py` |
 | mRAG-primary lane separation | `test_unified_retrieval.py` |
@@ -68,7 +108,7 @@ The current architecture and documentation precedence are defined in
 [`documents/architecture_current.md`](../documents/architecture_current.md)
 and [`documents/README.md`](../documents/README.md).
 
-## Action-Path Smokes
+## Legacy action-path diagnostics
 
 The deterministic exam has no external side effects:
 
@@ -95,7 +135,7 @@ It distinguishes a successful App Server handshake from model inference. A
 subscription usage limit therefore reports `transport_ready: true` with an
 inference blocker instead of being misreported as a wiring failure.
 
-## Progressive Deep-Memory Evaluation
+## Historical memory-adapter experiments
 
 First validate the fixture and checkpoint assembly without calling a conscious
 model:
@@ -114,11 +154,12 @@ venv/bin/python tests/locomo_deep_memory_sandbox.py \
 ```
 
 Use `--association-memory on` and `off` for the transition-memory ablation.
-`scripted` ingestion isolates retrieval behavior; `connector` performs the
-costlier end-to-end conscious replay. Exam turns are retrieval-only and do not
+`scripted` ingestion isolates retrieval behavior; `connector` performs a
+conscious replay inside that adapter. Neither mode establishes parity with the
+current production Mindscape composition. Exam turns are retrieval-only and do not
 teach the system.
 
-## LongMemEval-S Development Evaluation
+## LongMemEval-S adapter diagnostic
 
 `longmemeval_sandbox.py` indexes cleaned LongMemEval histories into a fresh
 temporary Helix runtime for each question and answers through the ordinary
@@ -138,10 +179,10 @@ The run is resumable and saves a manual review page per answer. Automated
 exact match, token overlap, and evidence-session recall remain diagnostics;
 the review pages preserve the gold evidence and actual injected context.
 Use `--backend ollama --model granite4.1:8b` for a subscription-free run or a
-same-reader comparison with RAGOffice. Reader backend and model are locked into
+same-reader adapter study with RAGOffice. Reader backend and model are locked into
 the resume manifest.
 
-## RAGOffice Exact-Exam Parity
+## RAGOffice same-exam adapter diagnostic
 
 `ragoffice_parity_sandbox.py` executes RAGOffice's current 110-item generator,
 freezes the resulting 100 answerable questions plus ten negative controls, and
@@ -162,9 +203,12 @@ Use `--context-office off` with a different output directory for the semantic
 advisor ablation. `--question-ids q_1,q_11,q_50,n_7` performs a cheap targeted
 audit without changing the frozen exam or indexing scope.
 
-This is the appropriate same-exam comparison. LongMemEval remains the broader,
-much longer natural-dialogue evaluation rather than a directly comparable
-replacement for RAGOffice's synthetic suite.
+This keeps the exam and reader fixed within the isolated adapter study.
+It does not establish current Mindscape product parity: the normal entry point,
+native state, all Loom lanes and production context/model route are not proven
+by this harness. Preserve its numbers as diagnostic provenance, not current
+product comparisons. LongMemEval and this synthetic suite are also different
+exams and cannot be compared as equivalent scores.
 
 ## Test Classes
 

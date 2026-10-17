@@ -575,6 +575,10 @@
     </div>
     <div id="chat-panel" class="chat-panel">
       <div id="chat-messages" class="chat-messages"></div>
+      <details style="padding:8px 12px;max-height:35vh;overflow:auto">
+        <summary>Environment and actions</summary>
+        <pre id="body-observations" style="white-space:pre-wrap">Waiting for body observations.</pre>
+      </details>
       <div class="chat-input-bar">
         <input type="text" id="chat-sender" class="sender-input" placeholder="Name" />
         <input type="text" id="chat-input" placeholder="Say something..." />
@@ -1418,6 +1422,32 @@ function pollChatOutbound() {
     })
     .catch(() => {});
 }
+
+function pollBodyObservations() {
+  fetch('/api/motor').then(r => r.json()).then(state => {
+    const lines = [];
+    if (state.foreground && state.foreground.status === 'failed') {
+      lines.push(`Language is unavailable: ${state.foreground.error}. The body is still receptive.`);
+    }
+    for (const job of state.jobs || []) {
+      lines.push(`${job.status}: ${job.message}`);
+      for (const result of job.receipts || []) {
+        const output = (result.receipt || {}).output || {};
+        lines.push(`${result.action}: /${output.path || output.position || ''}`);
+        if (typeof output.content === 'string') lines.push(output.content);
+        if (typeof output.stdout === 'string') lines.push(output.stdout);
+        if (typeof output.stderr === 'string' && output.stderr) lines.push(output.stderr);
+        if (output.return_code !== undefined) lines.push(`Exit status: ${output.return_code}`);
+      }
+      if (job.error) lines.push(job.error);
+    }
+    document.getElementById('body-observations').textContent = lines.join('\n\n') || 'Observing surroundings; no action requested.';
+  }).catch(() => {
+    document.getElementById('body-observations').textContent = 'Body status is unavailable.';
+  });
+}
+setInterval(pollBodyObservations, 1000);
+pollBodyObservations();
 
 setInterval(pollChatOutbound, 3000);
 

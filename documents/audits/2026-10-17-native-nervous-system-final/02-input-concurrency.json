@@ -1,0 +1,142 @@
+{
+  "time": 1792227882.627205,
+  "foreground_completed_receipts": 0,
+  "body": {
+    "jobs": [
+      {
+        "context_id": "ctx_6859fbf5f54e58bc301af96f",
+        "created_at": 1792227739.339804,
+        "cursor": 2,
+        "error": null,
+        "id": "motor:e70d321913c7456db11b71bcb30222c9",
+        "input_id": "352f6ede74e642cfa7d36e18bed9f96a:receptive:a921ed0b9bde42eb9813d72dae124805:0",
+        "message": "[05:02:11] User is talking to me via dashboard. They said: \"Please go to /workshop then open MotorProbe.py then run it.\"",
+        "receipts": [
+          {
+            "action": "move",
+            "arguments": {
+              "path": "/workshop"
+            },
+            "intent_source": "native_motor_signal",
+            "motor_signal": {
+              "context_id": "ctx_6859fbf5f54e58bc301af96f",
+              "observation_id": "motor-target:bc88c090cd6744608c82c2d889bf1850",
+              "opcode": 1,
+              "request_id": "motor:e70d321913c7456db11b71bcb30222c9",
+              "target_handle": "550da967d6d128d9eb51d72e0b24d46e0959172823ad9e58c952ab2f7ca04d48"
+            },
+            "proposal_pulse": "self-pulse:9dd327d278fa46cba0ef2a6c3c79a818",
+            "receipt": {
+              "arguments": {
+                "path": "/workshop"
+              },
+              "cycle_id": "experience:1d9c81ad627a4d45a86597266172cee2",
+              "elapsed_seconds": 0.010531950974836946,
+              "error": "",
+              "outcome_id": "outcome:402986c914cd40eb9c13b0065281fefa",
+              "output": {
+                "observed": {
+                  "content_opened": false,
+                  "entries": [
+                    {
+                      "extension_hint": ".py",
+                      "kind": "file",
+                      "mode": 436,
+                      "modified_ns": 1792227687165811364,
+                      "name": "MotorProbe.py",
+                      "size_bytes": 439
+                    }
+                  ],
+                  "extension_hint": "",
+                  "interpretation": "filesystem attributes; extension is a hint, not verified content",
+                  "kind": "directory",
+                  "mode": 509,
+                  "modified_ns": 1792227687165776089,
+                  "name": "workshop",
+                  "path": "workshop",
+                  "position": "workshop",
+                  "size_bytes": 4096
+                },
+                "position": "workshop",
+                "position_verified": true,
+                "previous_position": "thinking"
+              },
+              "output_record_id": "record:83ce1457f3b5483b801a6adfc7cc22bd",
+              "receipt_id": "receipt:9ceb9294640a446db74f69ccb48a16e6",
+              "return_record_id": "self-pulse-record:tool-return:receipt:9ceb9294640a446db74f69ccb48a16e6",
+              "status": "success",
+              "tool_id": "ability:helix-workspace-move",
+              "trunk": "DO",
+              "verified": true
+            },
+            "return_pulse": "self-pulse:66cb6a6cfbf14c1ea4c6daf8ee5bf001",
+            "selected_affordance": "ability:helix-workspace-move"
+          },
+          {
+            "action": "open",
+            "arguments": {
+              "path": "/workshop/MotorProbe.py"
+            },
+            "intent_source": "native_motor_signal",
+            "motor_signal": {
+              "context_id": "ctx_6859fbf5f54e58bc301af96f",
+              "observation_id": "motor-target:3a102fbacffb419d81c1a0abfe961e67",
+              "opcode": 3,
+              "request_id": "motor:e70d321913c7456db11b71bcb30222c9",
+              "target_handle": "43482f5cfec1f30c6144225cf97f46b0d2058fba2e712917c638d9fcfe24bbec"
+            },
+            "proposal_pulse": "self-pulse:2d8207c7a00a416d84ca7ed18ce726d3",
+            "receipt": {
+              "arguments": {
+                "path": "/workshop/MotorProbe.py"
+              },
+              "cycle_id": "experience:c392e7b85a104b5a9fcdf16164fb60a4",
+              "elapsed_seconds": 0.015102189965546131,
+              "error": "",
+              "outcome_id": "outcome:7e2a8ecffd9648ec875c07bc971881de",
+              "output": {
+                "complete": true,
+                "content": "from pathlib import Path\nimport time\nPath(\"run-started.txt\").write_text(\"started\")\nwhile not Path(\"release.txt\").exists():\n time.sleep(0.05)\ntry:\n Path('/home/nemo/Helix_AGI (GitHub Repo) (Public)/documents/audits/2026-10-17-native-nervous-system-final/host-sentinel.txt').write_text(\"escaped\")\nexcept OSError:\n print(\"HOST_WRITE_DENIED\")\nPath(\"motor-result.txt\").write_text(\"CEDARMOTOR_BODY_EXECUTED\\n\")\nprint(\"CEDARMOTOR_BODY_EXECUTED\")\n",
+                "content_opened": true,
+                "format": "utf8_text",
+                "path": "workshop/MotorProbe.py",
+                "position": "workshop",
+                "sha256": "492ae16dfa607385b36b9887136392a1ca420874b129b3fa6808c83befee9ad4",
+                "size_bytes": 439,
+                "text_extraction_only": false
+              },
+              "output_record_id": "record:eaa64c2f01b446278fba558c57e95206",
+              "receipt_id": "receipt:02a6b84445a648c095ceecc41ba35fea",
+              "return_record_id": "self-pulse-record:tool-return:receipt:02a6b84445a648c095ceecc41ba35fea",
+              "status": "success",
+              "tool_id": "ability:helix-workspace-open",
+              "trunk": "LOOK",
+              "verified": true
+            },
+            "return_pulse": "self-pulse:43f1b30aeb03489b850bea64bfcb8928",
+            "selected_affordance": "ability:helix-workspace-open"
+          }
+        ],
+        "status": "acting",
+        "steps": [
+          {
+            "opcode": 1,
+            "target": "/workshop"
+          },
+          {
+            "opcode": 3,
+            "target": "MotorProbe.py"
+          },
+          {
+            "opcode": 4,
+            "target": "MotorProbe.py"
+          }
+        ]
+      }
+    ],
+    "last_sensor_sequence": 52,
+    "policy": "explicit-user-goals-v1; integer motor signals; native SELF authorization",
+    "sensory_cadence_seconds": 1.0,
+    "updated_at": 1792227783.2324946
+  }
+}

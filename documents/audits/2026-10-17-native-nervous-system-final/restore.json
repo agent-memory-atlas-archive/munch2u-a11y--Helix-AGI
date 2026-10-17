@@ -1,0 +1,14 @@
+[
+  {
+    "path": "/home/nemo/Helix_AGI (GitHub Repo) (Public)/config/config.json",
+    "backup": "/tmp/helix-cedarmotor-before-yjjmwe90/0",
+    "existed": true,
+    "sha256": "9f7518bad4e2c36320013453a01793dc2d804ed6da10509b68852b72b3be8da5"
+  },
+  {
+    "path": "/home/nemo/.config/helix/credentials.env",
+    "backup": "/tmp/helix-cedarmotor-before-yjjmwe90/1",
+    "existed": true,
+    "sha256": "1d6e4667a72a9fb005fda2a0789c4de6d44a51246303700d4324dd2393c59d2b"
+  }
+]

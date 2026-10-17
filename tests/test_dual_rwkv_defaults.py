@@ -23,8 +23,8 @@ class TestDualRWKVDefaults(unittest.TestCase):
         )
         self.assertIn(
             d["mindscape"].get("action_intent_source"),
-            {"bicameral_rwkv", "rwkv_bicameral"},
-            "Expected action_intent_source to default to 'bicameral_rwkv'"
+            {"native_motor"},
+            "Expected a native motor body independent of language output"
         )
 
     def test_setup_py_defaults_to_dual_rwkv(self):

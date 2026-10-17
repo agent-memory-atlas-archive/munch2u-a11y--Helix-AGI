@@ -375,22 +375,17 @@ def _call_gemini(prompt: str, system: str = "") -> Optional[str]:
     return None
 
 def _call_configured_llm(prompt: str, system: str = "") -> Optional[str]:
-    """Use the configured subconscious provider, then legacy Gemini fallback."""
+    """A configured provider is authoritative, including when it fails."""
+    from core.auxiliary_llm import get_auxiliary_client
+    client = get_auxiliary_client()
+    if client is None:
+        return _call_gemini(prompt, system=system)
     try:
-        from core.auxiliary_llm import get_auxiliary_client
-        client = get_auxiliary_client()
-        if client is not None:
-            result = client.generate(
-                prompt,
-                system_instruction=system,
-                temperature=0.15,
-                max_output_tokens=2048,
-            )
-            if result:
-                return result
+        return client.generate(
+            prompt, system_instruction=system, temperature=0.15, max_output_tokens=2048)
     except Exception as e:
         logger.warning("Configured auxiliary LLM call failed: %s", e)
-    return _call_gemini(prompt, system=system)
+        return None
 
 
 _call_llm = _call_configured_llm

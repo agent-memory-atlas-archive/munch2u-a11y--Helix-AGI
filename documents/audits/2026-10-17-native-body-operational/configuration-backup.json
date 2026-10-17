@@ -1,0 +1,12 @@
+[
+  {
+    "backup": "/tmp/helix-cedarlive-original-onso1buj/0",
+    "path": "/home/nemo/Helix_AGI (GitHub Repo) (Public)/config/config.json",
+    "sha256": "2e6e49c389adaeb14d24559f5a2ae05ffd9b1b68eca282617e6cdda896990738"
+  },
+  {
+    "backup": "/tmp/helix-cedarlive-original-onso1buj/1",
+    "path": "/home/nemo/.config/helix/credentials.env",
+    "sha256": "1d6e4667a72a9fb005fda2a0789c4de6d44a51246303700d4324dd2393c59d2b"
+  }
+]

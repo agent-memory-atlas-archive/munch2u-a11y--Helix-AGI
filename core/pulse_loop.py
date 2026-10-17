@@ -21,6 +21,7 @@ States:
 """
 
 import json
+from contextlib import nullcontext
 import os
 import time
 import threading
@@ -289,6 +290,8 @@ class PulseLoop:
         # Start RESTING — Helix waits for input or hourly pulse (or DORMANT if sleep hours)
         self._state = "RESTING" if not self._is_sleep_hours() else "DORMANT"
         self._last_event_time = time.time()  # Initialize for emergence timer
+        if self.mindscape is not None:
+            self.mindscape.start_motor(lambda: self.wake("native_motor_return"))
         self._thread = threading.Thread(
             target=self._main_loop, daemon=True, name="helix_pulse"
         )
@@ -300,8 +303,15 @@ class PulseLoop:
         self._running = False
         self._wake_event.set()
         self._state = "DORMANT"
+        if self.mindscape is not None:
+            from core.auxiliary_llm import get_auxiliary_client
+            auxiliary = get_auxiliary_client()
+            if auxiliary is not None:
+                auxiliary.cancel_pending()
         if self._chat is not None and hasattr(self._chat, 'cancel_pending'):
             self._chat.cancel_pending()
+        if self.mindscape is not None:
+            self.mindscape.stop_motor()
         if self.mindscape is not None:
             if getattr(self, "_thread", None) is not None and self._thread is not threading.current_thread():
                 self._thread.join()
@@ -368,6 +378,8 @@ class PulseLoop:
         """
         text = self._translate_event(event_type, data)
         if text:
+            if self.mindscape is not None and event_type in {"user_message", "incoming_message", "telegram_message"}:
+                self.mindscape.receive_event(text)
             with self._event_lock:
                 self._event_queue.append(text)
                 if self._office_first_enabled:
@@ -586,6 +598,13 @@ class PulseLoop:
           ACTIVE  — 10s interactive pulses; becomes REGULAR after 2 min idle
         """
         while self._running:
+            if self.mindscape is not None and getattr(self.mindscape, "foreground_failure", None):
+                # A failed language stream cannot take the separate receptive
+                # inbox, filesystem sensor or authorized motor body offline.
+                self._state = "LANGUAGE_FAILED"
+                self._wake_event.wait()
+                self._wake_event.clear()
+                continue
 
             # ── Sleep Schedule (from config/config.json) ──────────
             if self._is_sleep_hours():
@@ -722,12 +741,19 @@ class PulseLoop:
                 try:
                     self._pulse()
                 except Exception as e:
+                    if not self._running:
+                        break
                     logger.error("Pulse crashed due to an unhandled exception", exc_info=True)
                     if self.mindscape is not None:
-                        self._running = False
-                        self._state = "FAILED"
-                        logger.error("Mindscape stopped after an integration failure; inspect its receipts before resuming")
-                        break
+                        self.mindscape.foreground_failure = f"{type(e).__name__}: {e}"
+                        self.mindscape._receipt("foreground_failed", error=self.mindscape.foreground_failure,
+                                               recovery="language is parked until restart; independent body remains receptive")
+                        from core.mindscape_config import write_json
+                        write_json(self.mindscape.directory / "foreground-health.json", {
+                            "status": "failed", "error": self.mindscape.foreground_failure,
+                            "body_receptive": True})
+                        logger.error("Foreground parked after failure; independent body remains receptive")
+                        continue
                 self._check_context_lifecycle()
 
             # ── 3-Tier State Transitions ──────────────────────────
@@ -1015,92 +1041,94 @@ class PulseLoop:
                     office_envelopes.append(TurnEnvelope.from_event(
                         "sensory", {**sensory_data, "source_kind": "sensory"}))
 
-        if self._office_first_enabled:
-            # The Office replaces automatic preconscious injection.  mRAG,
-            # cases, beliefs, affect, continuity, and raw 8D remain available
-            # as independent evidence desks inside the coordinator.
-            annotations, ambient = [], None
-            injected_belief_ids, cluster_centroid = [], None
-            self._newly_engaged_toolsets.clear()
-        else:
-            # 2. Pre-conscious injection
-            #    Returns recalled annotations + ambient state notes.
-            #    Keep their provenance separate from fresh events below.
-            fresh_retrieval_events = retrieval_events(events) if self.mindscape is not None else events
-            carried_thought = self._previous_thoughts[:500]
+        with self.mindscape.perception_lock if self.mindscape is not None else nullcontext():
+            if self._office_first_enabled:
+                # The Office replaces automatic preconscious injection.  mRAG,
+                # cases, beliefs, affect, continuity, and raw 8D remain available
+                # as independent evidence desks inside the coordinator.
+                annotations, ambient = [], None
+                injected_belief_ids, cluster_centroid = [], None
+                self._newly_engaged_toolsets.clear()
+            else:
+                # 2. Pre-conscious injection
+                #    Returns recalled annotations + ambient state notes.
+                #    Keep their provenance separate from fresh events below.
+                fresh_retrieval_events = retrieval_events(events) if self.mindscape is not None else events
+                carried_thought = self._previous_thoughts[:500]
+                if self.mindscape is not None:
+                    # New input owns factual retrieval. Only idle continuation may
+                    # use the last complete PRIVATE thought as its search seed.
+                    carried_thought = (self._private_continuation.text
+                                       if self._private_continuation and not fresh_retrieval_events else "")
+                annotations, ambient, injected_belief_ids, cluster_centroid = self.preconscious.inject(
+                    previous_thought=carried_thought,
+                    incoming_events=fresh_retrieval_events or None,
+                    trigger_type="user_message" if events else "llm_output",
+                    active_toolsets=self._active_toolsets,
+                    newly_engaged_toolsets=self._newly_engaged_toolsets,
+                    structured_context=self.mindscape is not None,
+                )
+                self._newly_engaged_toolsets.clear()
+
+            # 3. Assemble pulse message
+            if self._office_first_enabled and self._office_relay is not None:
+                office_capsule = self._office_relay.prepare(
+                    office_envelopes,
+                    pulse_count=self._pulse_count,
+                )
+                self._last_office_capsule = office_capsule
+                injected_belief_ids = office_capsule.injected_belief_ids
+                pulse_message = office_capsule.rendered_prompt
+            else:
+                pulse_message = self._build_pulse_message(
+                    events=events,
+                    annotations=annotations,
+                    ambient=ambient,
+                    timestamp=timestamp,
+                )
+
+            # Active cognition gets one tiny, provider-neutral view of Helix's
+            # existing affect field on every pulse.  This is self-state, not a
+            # memory-retrieval candidate or proof source, and remains outside
+            # task-worker contexts unless the task is identity/communication based.
+            if self._task_cognition is not None and self._task_cognition.active:
+                try:
+                    from core.self_state import render_affect_capsule
+
+                    self_state = render_affect_capsule()
+                    if self_state:
+                        pulse_message = f"{pulse_message}\n\n{self_state}"
+                        if self.mindscape is not None:
+                            self._last_pulse_context = self._last_pulse_context.extend(
+                                ContextContribution("state", self_state, "affect", kind="internal_state"))
+                except Exception as exc:
+                    logger.debug("Could not render compact self-state: %s", exc)
+
             if self.mindscape is not None:
-                # New input owns factual retrieval. Only idle continuation may
-                # use the last complete PRIVATE thought as its search seed.
-                carried_thought = (self._private_continuation.text
-                                   if self._private_continuation and not fresh_retrieval_events else "")
-            annotations, ambient, injected_belief_ids, cluster_centroid = self.preconscious.inject(
-                previous_thought=carried_thought,
-                incoming_events=fresh_retrieval_events or None,
-                trigger_type="user_message" if events else "llm_output",
-                active_toolsets=self._active_toolsets,
-                newly_engaged_toolsets=self._newly_engaged_toolsets,
-                structured_context=self.mindscape is not None,
-            )
-            self._newly_engaged_toolsets.clear()
-
-        # 3. Assemble pulse message
-        if self._office_first_enabled and self._office_relay is not None:
-            office_capsule = self._office_relay.prepare(
-                office_envelopes,
-                pulse_count=self._pulse_count,
-            )
-            self._last_office_capsule = office_capsule
-            injected_belief_ids = office_capsule.injected_belief_ids
-            pulse_message = office_capsule.rendered_prompt
-        else:
-            pulse_message = self._build_pulse_message(
-                events=events,
-                annotations=annotations,
-                ambient=ambient,
-                timestamp=timestamp,
-            )
-
-        # Active cognition gets one tiny, provider-neutral view of Helix's
-        # existing affect field on every pulse.  This is self-state, not a
-        # memory-retrieval candidate or proof source, and remains outside
-        # task-worker contexts unless the task is identity/communication based.
-        if self._task_cognition is not None and self._task_cognition.active:
-            try:
-                from core.self_state import render_affect_capsule
-
-                self_state = render_affect_capsule()
-                if self_state:
-                    pulse_message = f"{pulse_message}\n\n{self_state}"
-                    if self.mindscape is not None:
-                        self._last_pulse_context = self._last_pulse_context.extend(
-                            ContextContribution("state", self_state, "affect", kind="internal_state"))
-            except Exception as exc:
-                logger.debug("Could not render compact self-state: %s", exc)
-
-        if self.mindscape is not None:
-            self._ensure_session()
-            if self._chat is None or not hasattr(self._chat, "send_context"):
-                raise RuntimeError("Mindscape requires a session with replaceable pulse context")
-            self._chat.context_counter = self.mindscape.token_counter
-            from core.mindscape_intention import foreground_schema, decode_foreground
-            self._chat.context_format = foreground_schema()
-            self._chat.context_decoder = decode_foreground
-            pulse_message = self.mindscape.prepare(events, pulse_message, self._pulse_count,
-                                                  context=self._last_pulse_context,
-                                                  input_allowance=self._chat.pulse_input_allowance(),
-                                                  covered_source_hashes=self._chat.covered_source_hashes())
-            # Match the already-active delivery gate: an explicit workspace
-            # request without an actual return needs an intention, not prose
-            # describing an imagined action. This grants no native authority.
-            self._chat.context_format = foreground_schema(
-                intention_required=self.mindscape.needs_native_observation)
-            if self._provider_config.provider_type in {'rwkv', 'bicameral_rwkv'}:
-                self._chat.options['generation_progress_path'] = str(
-                    self.mindscape.directory / 'foreground-in-progress.json')
-                self._chat.options['current_sensory_items'] = [
-                    dict(self.mindscape.foreground_home_observation)] + [
-                    {'text': event, 'producer': 'native_action_return'} for event in events
-                    if event.startswith('Native action [receipt:')]
+                self._ensure_session()
+                if self._chat is None or not hasattr(self._chat, "send_context"):
+                    raise RuntimeError("Mindscape requires a session with replaceable pulse context")
+                self._chat.context_counter = self.mindscape.token_counter
+                from core.mindscape_intention import decode_speech
+                self._chat.context_format = None
+                self._chat.context_decoder = decode_speech
+                pulse_message = self.mindscape.prepare(events, pulse_message, self._pulse_count,
+                                                      context=self._last_pulse_context,
+                                                      input_allowance=self._chat.pulse_input_allowance(),
+                                                      covered_source_hashes=self._chat.covered_source_hashes())
+                # Match the already-active delivery gate: an explicit workspace
+                # request without an actual return needs an intention, not prose
+                # describing an imagined action. This grants no native authority.
+                self._chat.context_format = None
+                foreground_feeling = dict(self.mindscape.last_sensed_feeling)
+                foreground_motor_ids = set(getattr(self.mindscape, "_observed_motor_ids", ()))
+                if self._provider_config.provider_type in {'rwkv', 'bicameral_rwkv'}:
+                    self._chat.options['generation_progress_path'] = str(
+                        self.mindscape.directory / 'foreground-in-progress.json')
+                    self._chat.options['current_sensory_items'] = [
+                        dict(self.mindscape.foreground_home_observation)] + [
+                        {'text': event, 'producer': 'native_action_return'} for event in events
+                        if event.startswith('Native action [receipt:')]
 
         # 4. Send to LLM
         thought = (
@@ -1312,11 +1340,9 @@ class PulseLoop:
         # Office-first or Mindscape-sensed speaking turns are external responses.
         # Delivery is host-controlled based on RWKV recurrent cortex feeling.
         delivered_external = False
-        native_action = (self.mindscape.act(thought, self._pulse_count)
-                         if self.mindscape is not None
-                         and (getattr(self._chat, "last_context_output_kind", None) == "intention"
-                              or self.mindscape.has_subconscious_motor_impulse()
-                              or thought.strip().startswith("<intention>")) else None)
+        # Speech is never executable. The sensory/motor thread alone dispatches
+        # typed body signals; it can progress throughout language inference.
+        native_action = None
         if native_action is not None and self.sentinel is not None:
             action_status = native_action.get("status") or native_action.get("receipt", {}).get("status")
             if action_status == "completed":
@@ -1326,7 +1352,7 @@ class PulseLoop:
         if office_capsule is not None and office_capsule.response_mode == "respond":
             delivered_external = self._deliver_office_output(office_capsule, thought)
         elif self.mindscape is not None:
-            feeling = getattr(self.mindscape, "last_sensed_feeling", None) or {}
+            feeling = foreground_feeling
             if feeling.get("is_external") and native_action is None:
                 delivered_external = self._deliver_mindscape_output(thought, events, feeling)
 
@@ -1520,7 +1546,8 @@ class PulseLoop:
         )
 
         if self.mindscape is not None:
-            self.mindscape.finish(thought, self._pulse_count, delivered_external=delivered_external)
+            self.mindscape.finish(thought, self._pulse_count, delivered_external=delivered_external,
+                                  observed_motor_ids=foreground_motor_ids)
             if native_action is not None or getattr(self.mindscape, "needs_native_observation", False):
                 self._wake_event.set()
 

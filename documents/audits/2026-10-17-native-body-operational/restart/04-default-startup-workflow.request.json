@@ -1,0 +1,23 @@
+{
+  "case": {
+    "expected_actions": [
+      "move",
+      "move",
+      "open",
+      "run",
+      "open"
+    ],
+    "id": "04-default-startup-workflow",
+    "message": "Please go to /thinking then go to /workshop then open MotorProbe.py then run it then open /staging/RestartNote.txt."
+  },
+  "http": {
+    "ok": true
+  },
+  "persisted_job_ids": [
+    "motor:f3d80f9076d54f1f8965a392c95297bd",
+    "motor:9676ea628dd246c9ab6eb13f2fee1628"
+  ],
+  "position_before_restart": "workshop",
+  "receipt_offset": 263,
+  "time": 1792228629.0024023
+}

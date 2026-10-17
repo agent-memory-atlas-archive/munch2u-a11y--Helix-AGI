@@ -17,11 +17,9 @@ ABILITY_DESCRIPTIONS = {
 ACTIONS = set(ABILITY_DESCRIPTIONS)
 
 FOREGROUND_FORMAT_GUIDANCE = (
-    "Return one JSON object. For a reply or private reflection, use the key message with your words as its string value. "
-    "For a needed workspace action, use the keys action and arguments, following current ability awareness. "
-    "Choose an action only when it advances the current request or inquiry; conversation and recalling what someone "
-    "said do not themselves require filesystem sensing. An intention is private and contains no predicted result. "
-    "Answer the current question from the available evidence, or take an action that obtains the missing evidence."
+    "Speak in ordinary language. Your body has an independent sensory and motor loop. "
+    "Describe file contents and action outcomes only from actual returned observations. "
+    "Private contemplation can be enclosed in <think> tags. Speech is separate from motor output."
 )
 
 
@@ -137,6 +135,24 @@ def decode_foreground(raw):
     if text:
         return text, "message"
     return "", "contemplation" 
+
+
+def decode_speech(raw):
+    """Foreground speech has no motor authority, including negated action prose."""
+    contemplation, text = extract_contemplation_and_actualization(raw)
+    if not text:
+        return "", "contemplation" if contemplation else "empty"
+    if text.startswith("<intention>"):
+        return "", "empty"
+    try:
+        value = json.loads(text)
+    except ValueError:
+        value = None
+    if isinstance(value, dict):
+        if set(value) == {"message"} and isinstance(value["message"], str) and value["message"].strip():
+            return value["message"], "message"
+        return "", "empty"
+    return text, "message"
 def observation_text(result):
     """Present complete output, error and arguments; keep telemetry in receipts."""
     receipt = result.get("receipt")

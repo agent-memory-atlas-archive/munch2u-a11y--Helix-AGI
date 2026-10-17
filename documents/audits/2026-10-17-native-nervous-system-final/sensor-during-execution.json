@@ -1,0 +1,50 @@
+{
+  "observations": [
+    {
+      "content_opened": false,
+      "observation_id": "body-sense:46d5b7d9ef6e4a1eaf6a9a1d62075d3e",
+      "scene_sha256": "46ece29ae81beb6dd8d9df7ab347384d72f3b43ac29733586651baac9ad99bed",
+      "surroundings": {
+        "content_opened": false,
+        "entries": [
+          {
+            "extension_hint": ".py",
+            "kind": "file",
+            "mode": 436,
+            "modified_ns": 1792227687165811364,
+            "name": "MotorProbe.py",
+            "size_bytes": 439
+          },
+          {
+            "extension_hint": ".txt",
+            "kind": "file",
+            "mode": 436,
+            "modified_ns": 1792227787345159023,
+            "name": "run-started.txt",
+            "size_bytes": 7
+          },
+          {
+            "extension_hint": ".txt",
+            "kind": "file",
+            "mode": 436,
+            "modified_ns": 1792227882590890053,
+            "name": "while-running.txt",
+            "size_bytes": 62
+          }
+        ],
+        "extension_hint": "",
+        "interpretation": "filesystem attributes; extension is a hint, not verified content",
+        "kind": "directory",
+        "mode": 509,
+        "modified_ns": 1792227882589981046,
+        "name": "workshop",
+        "path": "workshop",
+        "position": "workshop",
+        "size_bytes": 4096
+      },
+      "time_ns": 1792227883301217929
+    }
+  ],
+  "script_held_until": 1792227883.3400037,
+  "stimulus_mtime_ns": 1792227882590890053
+}

@@ -1,0 +1,10 @@
+{
+  "content": "Final handoff note: the brass dial is set to PICO-417.\n",
+  "http": {
+    "filename": "FinalNote.txt",
+    "ok": true,
+    "path": "staging/FinalNote.txt",
+    "size": 55
+  },
+  "sha256": "2b9a930db97743dd7b041456e6646c3c6ddb0000385e8c856ea962fc111de3f2"
+}

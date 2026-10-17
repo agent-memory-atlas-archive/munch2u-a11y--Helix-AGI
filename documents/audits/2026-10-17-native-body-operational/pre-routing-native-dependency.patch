@@ -1,0 +1,73 @@
+diff --git a/habitus_ai/continual_mind.py b/habitus_ai/continual_mind.py
+index f9d268b..ca65f13 100644
+--- a/habitus_ai/continual_mind.py
++++ b/habitus_ai/continual_mind.py
+@@ -51,7 +51,16 @@ class _NoExternalRenderer:
+ 
+ class ContinualMind(IntegratedMind):
+     def __init__(self, *, model, directory, workspace, corpus_graph=None,
+-                 trainable_blocks=1, chunk_tokens=128, mode="private"):
++                 trainable_blocks=1, chunk_tokens=128, mode="private", gestation_seed=None):
++        if gestation_seed is not None:
++            from .gestation import TASTE_SCHEMAS, _clean_name
++            if set(gestation_seed) != {"human_name", "agent_name", "taste_schema"}:
++                raise ValueError("gestation_seed requires human_name, agent_name and taste_schema")
++            gestation_seed = dict(gestation_seed)
++            for key in ("human_name", "agent_name"):
++                gestation_seed[key] = _clean_name(gestation_seed[key], key)
++            if gestation_seed["taste_schema"] not in TASTE_SCHEMAS:
++                raise ValueError("unknown gestation taste schema")
+         self.directory = Path(directory).resolve()
+         self.directory.mkdir(parents=True, exist_ok=True)
+         self.lock = (self.directory / "writer.lock").open("a")
+@@ -109,8 +118,11 @@ class ContinualMind(IntegratedMind):
+         runtime.mind.graph.recency_strength = 0.0
+         profile = load_profile(runtime.mind)
+         if profile is None:
+-            profile = gestate(runtime.mind, human_name="Human", agent_name="Habitus", taste_schema="builder",
++            seed = gestation_seed or {"human_name": "Human", "agent_name": "Habitus", "taste_schema": "builder"}
++            profile = gestate(runtime.mind, **seed,
+                               model_backend="integrated-rwkv", model_name=self.backend.identity)
++        elif gestation_seed is not None and any(getattr(profile, key) != value for key, value in gestation_seed.items()):
++            raise ValueError("existing native gestation differs from the requested identity or taste schema; use a fresh directory")
+         super().__init__(runtime, _NoExternalRenderer(), workspace=workspace, profile=profile)
+         self.backend.attach(runtime)
+         self.backend.receipt_sink = self._record_learning
+diff --git a/habitus_ai/continual_rwkv.py b/habitus_ai/continual_rwkv.py
+index 6ba6b99..003dde0 100644
+--- a/habitus_ai/continual_rwkv.py
++++ b/habitus_ai/continual_rwkv.py
+@@ -14,6 +14,7 @@ import json
+ import math
+ from pathlib import Path
+ import time
++import threading
+ 
+ from .developmental_cortex import ACTION_IDS, DIRECTION_IDS, pulse_field
+ from .habitus_stream import _NumericSpace, unit
+@@ -59,6 +60,7 @@ class ContinualRwkv(Rwkv7Backend):
+ 
+     def __init__(self, directory, *, trainable_blocks=1, chunk_tokens=128):
+         super().__init__(Path(directory), device=None)
++        self.cancel_event = threading.Event()
+         if not 1 <= trainable_blocks <= len(self.model.rwkv7.blocks):
+             raise ValueError("invalid number of trainable RWKV blocks")
+         if not 2 <= chunk_tokens <= 256:
+@@ -192,11 +194,17 @@ class ContinualRwkv(Rwkv7Backend):
+     def consume(self, ids):
+         result = None
+         for start in range(0, len(ids), self.chunk_tokens):
++            if self.cancel_event.is_set():
++                raise RuntimeError("Native RWKV intake cancelled at an explicit lifecycle stop; unfinished input retained")
+             result = self._forward(ids[start:start + self.chunk_tokens])
+         if result is None:
+             raise ValueError("empty input")
+         return self.sample(result[0, -1])
+ 
++    def cancel_pending(self):
++        """Cooperative shutdown at existing compute-chunk boundaries, not a time cap."""
++        self.cancel_event.set()
++
+     def sample(self, logits):
+         """Use the pinned model's documented nucleus decoding, with saved RNG."""
+         torch = self.torch

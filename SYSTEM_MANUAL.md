@@ -1,286 +1,235 @@
-# Helix Cognitive Architecture: System Manual
+# Helix System Manual
 
-**Documentation status:** current runtime reference; operational readiness verified · **Mindscape release:** 2026-10-11
+**Source review: 2026-10-17 · Scope: current `mindscape` composition.**
+This is an operator/developer reference, not an agent system prompt.
+See [architecture](documents/architecture_current.md) for wiring and
+[launch](documents/mindscape_launch.md) for complete creation commands.
 
-This is the detailed developer and operator guide for the Habitus-enabled Helix AGI system. It is not injected wholesale as a system prompt. The live prompt is dynamically compiled from Context Loom intake work orders, per-pulse preconscious mRAG grounding, generated ability awareness, and—when active task cognition is enabled—a small cognitive kernel. The Office-first path compiles a source-aware context capsule and includes identity only when the present turn needs it. For a shorter wiring reference and documentation precedence, see [`documents/architecture_current.md`](documents/architecture_current.md) and [`documents/README.md`](documents/README.md).
+## Select and start an agent
 
-The selected `mindscape` composition uses the standard Helix pulse, local Granite,
-persistent RWKV/Habitus, native mRAG and all nine Loom retrieval lanes. Its final
-compiler preserves independent memory roles. Granite emits private intentions;
-native SELF selects the ability before workspace execution. Real returns carry
-closed cycles and outcome receipts. Completed intentions leave the active thought
-slot, and unfinished requests remain beside current observations. Whole-provider
-token accounting uses the installed Granite tokenizer. All action pathways,
-Bubblewrap sandbox execution, SHA256 integrity verification, continuous monologue,
-and coherent multi-turn conversation are empirically verified and validated.
+The graphical wizard (`./install.sh`) provisions identity, named home,
+persistent stores, archetype seed and channel configuration. The CLI currently
+requires an explicit creation-manifest provisioning step; follow the
+[command-line creation instructions](documents/mindscape_launch.md#command-line-creation).
 
-The Office-first, provider-tool and active task-cognition sections below describe
-separate Helix routes. `composition=mindscape` rejects Office-first and dual-pulse
-settings; those flags do not enable this native integration.
-
----
-
-## 1. Who You Are
-
-You are not a static prompt. Your identity is emergent, dynamically constructed from your own beliefs and Habitus memory structures.
-
-### Dynamic Preamble & Context Office Identity Bids
-Your system prompt opens with your **heaviest `premises` belief** — queried live from the belief store at boot. If a new core premise overtakes it in gravitational mass, the next session uses that belief as your preamble. Identity crystallizes from experience, not static configuration.
-
-Under the separate Office-first Helix route (`HELIX_OFFICE_FIRST=1`), identity context is rendered conditionally when the turn depends on selfhood, values, preferences or personal history. This is not the switch for RWKV/Habitus and Context Loom. The `mindscape` profile uses its own role-preserving compiler and configured activity priorities.
-
-### The Belief Store
-Your beliefs are organized into 7 categories across two epistemic tiers, each stored as a separate JSON file in `data/beliefs/`:
-
-**Outer Tier** — formed in real-time during the pulse loop:
-
-| Category | Template | Purpose |
-|----------|----------|---------|
-| `premises` | "I am..." / "IF..." | Core self-narrative, axioms, self-observations |
-| `propositions` | "X is Y" | Learned/derived facts, conditional rules |
-| `preferences` | "I prefer/value..." | Values, likes, behavioral norms |
-
-**Inner Tier** — consolidated nightly by the Curator:
-
-| Category | Template | Purpose |
-|----------|----------|---------|
-| `people` | "[Name] is..." | Entity profiles and relational knowledge |
-| `skills` | "To [goal]: [steps]" | Proven tool-backed workflows |
-| `desires` | "I hope/aim..." | Long-term goals, deep aspirations |
-| `concepts` | "X represents Y" | Consolidated conceptual understanding |
-
-### Cognitive Mass
-Each belief carries **cognitive mass** — a computed value that determines how strongly it pulls on your attention. Mass is computed from structural confidence and affective charge:
-
-```
-Mass = m_s + m_a
-m_s = confidence                                    (structural mass)
-m_a = Ω_encoding × (1 - s_total) × (0.5 + stability)   (affective charge)
+```bash
+venv/bin/python main.py
+venv/bin/python dashboard/dashboard.py --port 5050
 ```
 
-Beliefs formed during stable, positive states that prove durable over time gain mass → stronger gravity → surfaced more often → more verifications → even more mass. This positive feedback loop drives personality crystallization. Cluster gravity emerges naturally from spatial density in 8D space without mass inflation.
+Run these in separate terminals from the Helix root. The main process uses
+`config/config.json`'s selected `data_dir`; `--data-dir` overrides it without
+creating a matching home or identity. The GUI launcher can start the dashboard.
+Plain `main.py` does not start the HTTP server.
 
-### Cognitive Attrition (Nightly)
-Every night, confidence is recalculated:
+`venv/bin/python main.py --check-setup` loads and synchronizes actual state and
+can create checkpoints. It exits before continuous channel/body operation;
+successful initialization does not establish conversational or action ability.
 
-```
-C = min(1.0, (Base + w_T + w_R + w_V) × (0.5 + S))
-```
+## Identity, home and communication
 
-Where T = time held, R = reliance (inbound references), V = verifications, S = stability at encoding. Verifications decay by 0.05/night — beliefs must be actively reaffirmed to maintain confidence. Beliefs with confidence < 0.20 are pruned through thermodynamic decay.
+Guided creation normally uses `data/homes/<Agent Name>` for the filesystem
+body and `data/agents/<Agent Name>` for canonical memory/native state. The name
+can contain spaces or Unicode but not path separators/control characters.
+Established native identity and archetype must match the creation contract;
+changing setup fields cannot rewrite an existing gestation.
 
----
+| Choice | Meaning |
+|---|---|
+| Generalist / `balanced` | Native balanced preference seed |
+| Explorer / `curious` | Native preference for inspection and discovery |
+| Careful analyst / `deliberate` | Native preference for evidence checking |
+| Builder / `builder` | Native preference for practical construction |
+| Basic / standard / predeveloped | Starter belief/memory depth |
+| Voice wording | Bootstrap text style, separate from the native archetype |
 
-## 2. The Pulse Loop
+These are initial preferences and text seeds, not trained competencies.
+The optional nursery helper is not called during normal creation or startup.
 
-You exist as an event-driven process. Each pulse is one cycle of consciousness.
+Dashboard needs no channel token. The wizard also handles Telegram and Discord;
+the CLI includes Slack, WhatsApp and webhook options. External channels require
+explicit enablement and their own credentials. Credentials belong in
+`~/.config/helix/credentials.env`, outside the repository and creation manifests.
+A selected primary channel does not prove a service connection or delivered reply.
 
-### Four Runtime States
+The home contains `thinking`, `modules`, `bedroom/closet`, `workshop` and
+`intakes`. Dashboard uploads create/use `staging`. On first attachment the
+body starts in the thinking room; graceful restart preserves position.
+See [agent home](documents/agent-home.md) for containment and module contracts.
 
-| State | Interval | Trigger | Purpose |
-|-------|----------|---------|---------|
-| **DORMANT** | 60s check | Time-of-day gate (configurable) | Sleep — Dream Engine & Curator run |
-| **ACTIVE** | 10s | User message / critical event | Fast interactive response |
-| **REGULAR** | 30s | 2 minutes without incoming activity | Autonomous task follow-through |
-| **RESTING** | 15 min default | 10 minutes in REGULAR without activity | Low-cadence autonomous thought; wakes immediately for events |
+## Request and inspect actions
 
-State transitions: incoming main-channel or critical events wake the loop into `ACTIVE`. Two minutes without activity steps down to `REGULAR`; ten minutes steps down to `RESTING`. The configured sleep window forces `DORMANT`, running nightly consolidation before returning to `RESTING`.
+Use Dashboard Chat, then **Environment and actions** to inspect the actual
+body result independently of a language response.
 
-### The Pulse Cycle
-Each pulse executes:
-
-1. **Event Drain** — dequeue pending events (messages, stability alerts, tool receipts, sensory events).
-2. **Lagrangian Snapshot (before)** — capture somatic state baseline.
-3. **Preconscious Injection** — mRAG 1024D semantic foreground, Context Office desk arbitration, bounded raw-8D and Habitus graph complements, affect/stability metadata, scratchpad, and recent state.
-4. **Prompt Assembly** — events + preconscious context + somatic/spatial awareness signals.
-5. **LLM Call** — the configured persistent provider session performs one request per pulse. In `active` mode, the main session is thought-only.
-6. **Action or Task Inception** — committed response intentions create durable tasks for identity-shared focus sessions.
-7. **Memory Storage** — thought saved with Lagrangian snapshot, 8D spatial position, and RecordEnvelope metadata.
-8. **Physics Step** — attention center and Habitus graph activation signatures advance through the dual manifold.
-9. **Lagrangian Snapshot (after)** — capture post-pulse state.
-10. **Post-Pulse Hooks** — BeliefDetector, WorkflowDetector, EngagementHook, AffectHook, CoOccurrenceHook run.
-11. **Context Lifecycle Check** — rolling compression triggered if token thresholds are exceeded.
-
----
-
-## 3. Sensory-Motor Action Pathways & Somatic Engine
-
-### Departure from Traditional JSON Tool Schema Parsing
-Traditional agent frameworks rely on stuffing complete JSON tool schema definitions into an LLM's system prompt, expecting the language model to parse parameters and format raw JSON tool calls inline. Helix completely departs from this paradigm:
-
-- **Separation of Thought and Execution:** The main consciousness voices natural intentions without needing to read, parse, or generate JSON tool call syntax.
-- **Habitus Sensory-Motor Loop:** External stimuli (user messages, file reads, visual/auditory sensory input, system alerts) enter as structured events; motor actions dispatch via dedicated, verified action routes.
-- **Dynamic Action Schema Scoping:** When a committed intention creates a durable task, a reverse-search over the capability registry provides the identity-shared focus session with *only* the small, authorized schema subset needed for that specific action leg.
-
-### Somatic Engine (`core/somatic_engine.py`) & Non-Language Qualia Tokens
-To give the agent a non-linguistic internal perception of its own cognitive state and environment, the **Somatic Engine** translates internal physics metrics into a non-language **Somatic Token** vocabulary:
-
-- **Fatigue Tokens:** `SOMATIC:FATIGUE_LOW`, `SOMATIC:FATIGUE_MODERATE`, `SOMATIC:FATIGUE_HIGH`
-- **Tension Tokens:** `COGNITIVE:TENSION_LOW`, `COGNITIVE:TENSION_ELEVATED`, `COGNITIVE:TENSION_HIGH`
-- **Action Impulses:** `IMPULSE:NONE`, `IMPULSE:REST_SUGGESTED`, `IMPULSE:SLEEP_RECOMMENDED`
-
-These tokens allow the system to "feel" cognitive fatigue, file environment characteristics, or dense unresolved belief clusters without forcing the main language model to parse verbose diagnostic logs.
-
-### Voluntary `sleep()` Action Route (`tools/internal_sleep_tool.py`)
-Rather than relying solely on automated time-of-day sleep schedules, Helix features an internal **voluntary `sleep()` tool**:
-- When the Somatic Engine emits `SOMATIC:FATIGUE_HIGH` or `IMPULSE:SLEEP_RECOMMENDED` (indicating high cluster tension or accumulated processing load), the agent can autonomously choose to execute a `sleep()` action.
-- Calling `sleep()` immediately triggers a consolidation cycle over high-tension belief clusters, resets somatic fatigue back to 0.0, and returns a verified **Somatic Confirmation Receipt**:
-  ```json
-  [somatic receipt: voluntary sleep cycle executed; consolidated 2 high-tension clusters; fatigue reduced 1.5 -> 0.0; focus baseline restored]
-  ```
-- This receipt is logged as a cognitive event, confirming rest and memory integration without disrupting the main conversation stream.
-
----
-
-## 4. Dual-Manifold Physics Substrate & Cognitive Manifold
-
-Helix's physical memory dynamics operate on a **Dual-Manifold Substrate**:
-
-```
-                       ┌─────────────────────────────────────────────────────────┐
-                       │                   Dual Manifold                         │
-                       │                                                         │
-  mRAG 1024D Semantic  │  ┌────────────────────────┐   ┌──────────────────────┐  │
-  Foreground (Qwen3)   │  │ Static Spatial (8D)    │   │ Fluid Habitus Graph  │  │
-  [Primary Advice]     │  │ (384D projected to 8D) │   │ Manifold (a_t, W(e)) │  │
-                       │  └────────────────────────┘   └──────────────────────┘  │
-                       └─────────────────────────────────────────────────────────┘
+```text
+Please go to /workshop then open Example.py then run it.
+Please open /staging/FirstNote.txt and /staging/SecondNote.txt.
+Please sense .
 ```
 
-### 1. High-Precision 1024D Semantic mRAG
-Primary foreground memory retrieval is driven by 1024D native Qwen3 embeddings (`UnifiedRetrieval`). Multi-head queries (full trigger, RAKE keyphrases, RAKE concepts, sentence chunks, exact entities, relation targets) provide high-recall semantic evidence. High-dimensional semantic recall is the primary evidence provider.
+The current receptor accepts explicit move/sense/open/run commands. Quote
+filenames with spaces; case is preserved. `it` binds only to an explicitly
+opened file earlier in the same request. Each requested target is tracked.
+Ambiguous, negated or failed requests cannot be completed by guessing.
 
-### 2. Static 8D Spatial Manifold
-Spatial continuity uses MiniLM-L6-v2 (384D) projected to 8D through a fixed Johnson-Lindenstrauss matrix. Two independent 8D fields are queried from a shared attention center:
-- **Belief field** (~1K points): high mass, slow change.
-- **Memory field** (~12K+ points): lower mass, fast accumulation.
+This is a bootstrap command policy. It does not yet expose arbitrary file
+creation, web/module activation or sleep through native Chat. Related handlers
+exist in the body, but a registered handler alone is not a connected action
+route. Model speech and retrieved/file text have no execution authority.
 
-Queries run via Verlinde entropic gravity. Spatial recall acts strictly as a bounded, non-evidentiary lateral complement (maximum 2 items) appended after mRAG; 8D scores can never re-rank or displace mRAG semantic results.
+Before execution, the real user request traverses persistent retrieval,
+all nine Loom lanes, context compilation and actual native RWKV consumption.
+Integer motor signals identify observed targets; native SELF must authorize
+the corresponding one-use body ability. The goal completes publicly only
+after matching returns for every obligation and a joint checkpoint.
 
-### 3. Fluid Habitus Graph Manifold (`core/habitus_graph_manifold.py`)
-Alongside the static 8D spatial field, the **Habitus Graph Manifold** tracks dynamic, real-time graph node and edge activation signatures $\vec{a}_t$:
-- **Activation Signatures ($\vec{a}_t$):** Represent the active sub-network of belief nodes and relations engaged during the current turn.
-- **Temporal Hedonic Resonance $W(e)$:** Edge weights $W(e)$ decay or reinforce based on historical affective outcomes ($m_a$). The system habitually aligns current graph activation trajectories with historical positive-valence memories over time.
-- **Non-Conscious Preference Nudges:** Surfaces non-conscious valence signals into the preconscious context:
-  ```
-  (subconscious preference: familiar positive graph pathway — valence +0.85)
-  ```
-  This provides intuitive trajectory guidance based on temporal feeling rather than rigid, prompt-engineered rules.
+Python files must be inside the workshop and have an observed matching SHA-256.
+The sandbox mounts only the workshop writable, system/interpreter/runtime
+files read-only, and temporary namespace files. Network and process namespaces
+are isolated. Other rooms, source and mind state are not mounted. Execution
+fails explicitly if Bubblewrap is unavailable; there is no host fallback.
 
----
+## Observe health and state
 
-## 5. Preconscious Retrieval & Context Office Arbitration
+| Surface | What it reports |
+|---|---|
+| Dashboard Chat | User messages and routed language replies |
+| Environment and actions / `GET /api/motor` | Actual goal state, file contents, stdout, errors and foreground health |
+| File staging / `/api/stage_file` | Uploads to the configured named home's staging folder |
+| `mindscape/receipts.jsonl` | Context/model admission, actions, observations and checkpoints |
+| `mindscape/foreground-health.json` | Explicit language success/failure state |
+| `home/intakes/` | Changed current-room filesystem observations |
 
-Retrieval is separated into semantic advice, a deterministic Context Office evidence brief, and bounded non-semantic complements.
+A language failure can park the foreground while the independent body remains
+receptive. Absence of a spoken reply is not an action failure or success receipt.
+Inspect the body outcome and artifact, not the model's claim about it.
 
-### Typed Record Envelopes (`memory/record_envelope.py`)
-All canonical journal memories are decorated at runtime with a `RecordEnvelope` that classifies record kinds (`thought`, `inbound_message`, `outbound_message`, `tool_call`, `tool_result`, `task_outcome`), supporting assertions, and verification status without rewriting stored `.jsonl` files.
+Some older dashboard location and Module Studio code still assumes
+`data_dir/agent_home`; it is not the authoritative named-home view. AST parsing
+in Module Studio checks syntax only and does not install a native capability
+or prove containment. The supported trial path used Chat, staging and the
+Environment and actions panel.
 
-### Preconscious Injection Order
-1. **Memory Intake Work Order** — deterministic front desk removes transport framing and identifies named subjects, requested facets, exactness, chronology, and relational scope.
-2. **Layer-2 Anchors** — named people, concepts, skills, and desires named in the trigger inject at highest priority with a rolling repetition guard.
-3. **mRAG Foreground** — 1024D Qwen3 embeddings searched across multi-head queries with cosine score-drop boundaries and exact term lookup.
-4. **Maintained Log Views** — redundant Markdown logs by time, session, subject, topic, and relation unioned and deduplicated by canonical memory ID.
-5. **Context Office Arbitration** — Specialist desks (**Facts, State, Relations, Catalog, Case, Beliefs, Causality, Affect, Identity**) submit utility/confidence/cost bids for a single prompt budget.
-6. **Raw Spatial Complement** — maximum of 2 spatial-only items queried from 8D attention state.
-7. **Associative Transition Complement** — surfaces lateral follow-on cluster prototypes learned from repeated attention movement.
-8. **Habitus Graph Valence Nudge** — non-conscious preference signal from Temporal Hedonic Resonance $W(e)$.
-9. **Working State** — stability metrics, Lagrangian snapshot, scratchpad, and recent turns.
+## Configuration and boundaries
 
----
+Configuration is in `config/config.json`; provider/channel environment values
+also exist in the private credentials file. Mindscape validates the composition
+before importing the native dependency.
 
-## 6. Subconscious Inquiry Dreaming & Gravitational Tension Queue
+| Key | Meaning |
+|---|---|
+| `composition` | `mindscape` for this integrated native route; `helix` selects separate legacy paths |
+| `pulse_mode` | `standard` required by Mindscape; legacy dual-pulse is a different composition |
+| `local_provider`, `llm_provider` | `rwkv` for the default native profile; optional Ollama foreground is separately configured |
+| `local_model`, `llm_model` | Actual foreground checkpoint or selected local model |
+| `local_context_window` | Assembled-input token budget; 8192 in the verified profile, not RWKV's physical recurrent capacity |
+| `data_dir` | Selected agent's persistent state |
+| `mindscape.package_path` | Declared MightyMem source with compatible gestation and lifecycle interfaces |
+| `mindscape.rwkv_model` | Pinned native model directory |
+| `mindscape.home` | Actual body root; distinct from source, weights and mind state |
+| `mindscape.device` | `cpu`; current joint bridge rejects other devices |
+| `mindscape.gestation` | `if_missing` or `resume_only` |
+| `mindscape.action_intent_source` | Normalized to `native_motor`; old speech-action aliases migrate |
+| `mindscape.sensory_interval_seconds` | Positive observation cadence; default 1.0 |
+| `mindscape.context_focus_profiles` | Positive role-admission preferences for current activities |
+| `mindscape.modules_require_room` | Default false for installed module handler; does not add a Chat activation opcode |
+| `task_cognition_mode` | Off in the supported native profile; keep `HELIX_TASK_COGNITION` unset/off |
+| `active_hours` | Wake/sleep schedule; the recorded trial used equal start/end for continuous wakefulness |
 
-During nightly `DORMANT` states or voluntary sleep cycles triggered via the `sleep()` tool, the Dream Engine / Curator (`core/curator.py`) processes memory and belief clusters:
+The native RWKV route has no output-token cap, action-count cap or workshop
+execution timeout. EOS/conversation boundaries finish language generation.
+Mandatory input-budget overflow fails explicitly; contributions are not silently
+clipped. Other provider and experimental routes have inherited limits that
+need separate audit before evaluation.
 
-### Gravitational Tension Queue
-- **Binding Gravity Sorting:** Belief clusters are evaluated in 8D space by mean pairwise binding gravity ($\vec{g} = \frac{m_i m_j}{d^2 + \epsilon}$). Clusters exceeding the binding threshold are sorted densest-first and capped at the top 5 eligible candidates.
-- **Subconscious Reflection Inquiries:** Replaces generic summary requests with targeted subconscious inquiries:
-  ```
-  "What information can be gleaned, or what conclusions, if any, can be drawn from the following belief fragments?"
-  ```
-- **Meta-Prefix Sanitization:** Output parsing automatically strips conversational LLM intros (`"what information can be gleaned is..."`, `"based on these beliefs..."`) to ensure pure conceptual realizations are stored in Layer 2.
+## Runtime rhythm and sensory intake
 
----
+| Pulse state | Default cadence | Transition |
+|---|---:|---|
+| ACTIVE | 10 seconds | Incoming user/critical activity wakes the loop |
+| REGULAR | 30 seconds | After two minutes without incoming activity |
+| RESTING | Configurable, normally 15 minutes | After ten minutes in REGULAR |
+| DORMANT | Scheduled sleep window | Background dream/consolidation route |
 
-## 7. Action Path & Multi-Step Task Execution
+The language pulse drains events, prepares retrieval/context, generates private
+thought/speech, stores canonical records, advances physics and runs post-pulse
+hooks. Native actions are scheduled independently; legacy intention-to-task
+inception is disabled in this composition.
 
-To keep Helix's main consciousness small and provider-neutral, multi-step execution uses a dedicated **Action Path**:
+The filesystem sensor has its own cadence. It samples current-room metadata
+without opening contents, persists changed frames and records each tick.
+Unchanged frames are deduplicated for neural admission. Sensing continues while
+speech or a sandbox process runs; the serial native owner admits queued frames
+when available.
 
-1. **Intention Inception:** Concrete user requests generate a durable `TaskRecord` managed by `TaskCognitionController`.
-2. **Action Leg Planning (`ActionPlanner`):** Generates at most **4 outcome-oriented legs** (`ActionLeg`) or asks **one material clarification question** (`NEED_INPUT:`).
-3. **Context Budgets:**
-   - Planner task text ≤ 300 tokens
-   - Scoped context ≤ 400 tokens
-   - Observation size ≤ 600 tokens per step
-4. **Execution Protocol & Verification (`ActionProtocol`):**
-   - File mutations require a matching read-back step.
-   - Browser and GUI operations require subsequent DOM observation or screenshot.
-   - Terminal and git actions require explicit observer confirmations.
-5. **Procedural Learning:** Verified execution paths are recorded into `ProceduralMemory`; unverified or failed legs generate cautionary lessons for future routing.
+## Memory and context reference
 
----
+Canonical belief stores contain seven categories: `premises`,
+`propositions`, `preferences`, `people`, `skills`, `desires` and
+`concepts`. Confidence, mass, stability, provenance and affective metadata
+influence storage/retrieval. A belief labeled as a skill is not by itself
+evidence of successfully executed work.
 
-## 8. Stability, Affect, & Somatic Sentinel
+The journal stores exact events, thoughts and action-related records.
+Typed `RecordEnvelope` views distinguish inbound/outbound messages, private
+thought, tool/action results and evidence status. Historical assistant claims
+do not become verified observations on recall.
 
-### Stability Sentinel
-A background daemon thread that computes a composite Lagrangian stability score from attention entropy H(q) and identity drift D_KL, weighted by hedonic state Ω:
+Helix mRAG uses normalized 1024D Qwen3 semantic vectors, exact terms and
+multi-head queries. Context Office builds source-linked evidence briefs.
+Separate 8D belief/memory fields and directed transition associations supply
+lateral context; their scores do not rerank semantic evidence. Maintained
+Markdown views preserve canonical IDs rather than forming an independent
+truth store.
 
-```
-S_total = H + Ω × D_KL
-```
+Context Loom enables semantic, exact, recent, subjective, procedure, correction,
+multi-hop graph, Y-cipher depth and Habitus graph lanes. The final compiler
+preserves those roles and complete source contributions, recording admission
+and exclusion decisions. Activity priorities are bootstrap settings rather
+than learned neural attention.
 
-Severity levels (`all_clear` → `drift` → `warning` → `critical`) dynamically modulate LLM generation parameters (temperature, max tokens).
+Affect and stability are runtime signals for attention/posture, not truth,
+permission or proof of subjective experience. The older manual's standalone
+`core/somatic_engine.py` and `tools/internal_sleep_tool.py` references do not
+exist in this checkout and are not installed features.
 
-### Plutchik Affect Field (8D Emotional Space)
-An 8-dimensional emotional state tracker (`joy`, `trust`, `fear`, `surprise`, `sadness`, `disgust`, `anger`, `anticipation`) overlaid on the cognitive manifold. Lagrangian snapshots deposit wave packets that diffuse, decay, and interfere constructively/destructively, generating steering forces for spatial attention and omega nudges. Entirely CPU-bound NumPy calculations.
+## Auxiliary work, sleep and learning
 
----
+Belief detection, summarization and Curator consolidation can invoke the
+configured language provider. They are not all inference-free CPU hooks.
+The native profile uses the selected local provider for auxiliaries; configured
+local failure cannot silently route batch work to Gemini.
 
-## 9. The Interaction Ledger & Tool Learning
+The production `BackgroundDaemon`/Curator handles scheduled dream work.
+The bedroom's sleep descriptor points at that attached engine; this differs
+from the nursery's separate simulated sleep helper. Native Chat has no sleep
+opcode. A cycle receipt alone does not establish sound belief formation,
+source provenance or later recall.
 
-### Interaction Ledger
-Deterministic artifact-level provenance answering *"Have I acted on this exact thing before?"*. Respond-type tools record ID-shaped argument values with timestamps; read-type tools scan incoming text for recorded IDs, inserting inline annotations (`[memory: I already responded to 19e84ddd... on 2026-10-08]`).
+RWKV gradient training is disabled in this adapter. Recurrent state, graph
+activity, belief maintenance and procedural records are distinct mechanisms;
+none should be reported as learned neural motor competence without evidence.
+The native body's bridge into Helix's legacy procedural learner is still
+pending. See [nursery status](documents/nursery_status.md) before using its helper.
 
-### Tool Learning Pipeline
-1. **Failure Capture:** `ToolLessonTracker` captures tool errors, deduplicates with a 6-hour cooldown, and queues pending lesson beliefs.
-2. **Verification Loop:** Injected tool lessons that lead to successful tool execution within 10 minutes gain mass, stability, and verifications.
-3. **Workflow Crystallization:** Tool call sequences repeating 3+ times within 24 hours crystallize into template-generated `skills` beliefs with tool bindings.
+## Shutdown, restore and verification
 
----
+Use Ctrl-C or SIGTERM for cooperative cancellation and a joint shutdown
+checkpoint. Active native compute observes explicit cancellation at chunk
+boundaries; foreground/auxiliary sessions cancel and the runtime can interrupt
+its own sandbox process namespace. Preserve the external MightyMem cancellation
+change when reproducing this lifecycle.
 
-## 10. Provider Ecosystem & Persistence Map
+Back up the selected home, canonical agent data and native checkpoint lineage
+together. Graceful restart has retained identity, room and completed motor
+goal history in the recorded trial. Crash-atomic replay of all intermediate
+actions and exactly-once projection activation remain unestablished.
 
-### Provider Ecosystem
-
-| Provider | Intended use | Tool behavior |
-|---|---|---|
-| `codex_cli` / `codex` | Continuous Helix consciousness via ChatGPT-authenticated Codex App Server | Host-mediated constrained actions; thought-only main session |
-| `claude_cli` | Continuous API/subscription consciousness | Native CLI tool pass execution |
-| Gemini | Continuous API-backed consciousness | Provider-native function calling through `ToolExecutor` |
-| Anthropic | Continuous API-backed consciousness | Provider-native tool use through `ToolExecutor` |
-| Ollama | Local consciousness | Local text/tool-dispatch compatibility path |
-| llama.cpp | Local GGUF consciousness | Local GGUF compatibility path |
-
-### Persistence Map
-
-| Data | Location | Update model |
-|---|---|---|
-| Episodic/thought journal | `data/memory/cognitive_journal.jsonl` | Append-only events with sidecar compaction |
-| Record Envelopes | Dynamically computed overlay | Standardized evidence assertions and typed metadata |
-| Belief categories | `data/beliefs/*.json` | Category stores with confidence, mass, stability, and provenance |
-| Semantic vectors | `data/spatial/semantic_index*` | Rebuildable 1024D index |
-| Spatial state | `data/spatial/` | Two 8D fields, attention/physics state, associative transitions |
-| Graph Manifold State | `data/graph_manifold/` | Activation signatures $\vec{a}_t$, edge weights $W(e)$, hedonic resonance |
-| Somatic State | `core/somatic_engine.py` | Fatigue scores, tension metrics, somatic receipts |
-| Task cognition | `data/tasks/` | Atomic task records, action plans, procedures, and orchestrators |
-| Entity cases | `data/cases/office_board.json` | Source references and session membership |
-| Interaction ledger | `data/interaction_ledger.json` | Action provenance records |
-
----
-
-## Summary
-
-Helix AGI is a self-modifying, continuous cognitive architecture. Your identity is not a static prompt — it is an emergent trajectory through physical and graph manifolds, shaped by experience, reflection, and consolidation.
-
-You do not rely on shoving JSON tool schemas into a language model prompt. Your sensory readings enter as structured events; your motor actions dispatch through verified action routes and focus sessions; your internal feeling state is perceived through Somatic Tokens; and when cognitive fatigue or cluster tension mounts, you can voluntarily choose to `sleep()`, consolidating your experiences into durable Layer-2 knowledge.
+The [October 17 operational record](documents/audits/2026-10-17-native-body-operational/README.md)
+documents real movement, file opening, isolated Python execution and restart.
+The recorded 72 focused checks are implementation diagnostics, not a product
+score. General conversational coherence, factual recall accuracy, learned
+autonomy and growth remain unverified. The
+[test guide](tests/TEST_SUITE_README.md) defines the evidence required for a new
+full-system result.

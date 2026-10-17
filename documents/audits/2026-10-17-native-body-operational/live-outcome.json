@@ -1,0 +1,17 @@
+{
+  "body_jobs_completed": 2,
+  "actual_actions": [
+    "move",
+    "open",
+    "run",
+    "open",
+    "open"
+  ],
+  "hashes_and_contents_verified": true,
+  "host_sentinel_unchanged": true,
+  "sensory_intake_during_execution": true,
+  "negative_request_produced_no_motor_job": true,
+  "foreground_model_receipts_at_body_completion": 0,
+  "policy": "explicit user-goal bootstrap; not learned autonomy",
+  "finished_at": 1792228443.7478013
+}

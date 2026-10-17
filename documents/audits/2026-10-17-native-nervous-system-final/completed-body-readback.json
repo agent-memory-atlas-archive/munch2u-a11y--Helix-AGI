@@ -1,0 +1,296 @@
+{
+  "jobs": [
+    {
+      "completed_at": 1792227891.8126428,
+      "context_id": "ctx_6859fbf5f54e58bc301af96f",
+      "created_at": 1792227739.339804,
+      "cursor": 3,
+      "error": null,
+      "id": "motor:e70d321913c7456db11b71bcb30222c9",
+      "input_id": "352f6ede74e642cfa7d36e18bed9f96a:receptive:a921ed0b9bde42eb9813d72dae124805:0",
+      "message": "[05:02:11] User is talking to me via dashboard. They said: \"Please go to /workshop then open MotorProbe.py then run it.\"",
+      "receipts": [
+        {
+          "action": "move",
+          "arguments": {
+            "path": "/workshop"
+          },
+          "intent_source": "native_motor_signal",
+          "motor_signal": {
+            "context_id": "ctx_6859fbf5f54e58bc301af96f",
+            "observation_id": "motor-target:bc88c090cd6744608c82c2d889bf1850",
+            "opcode": 1,
+            "request_id": "motor:e70d321913c7456db11b71bcb30222c9",
+            "target_handle": "550da967d6d128d9eb51d72e0b24d46e0959172823ad9e58c952ab2f7ca04d48"
+          },
+          "proposal_pulse": "self-pulse:9dd327d278fa46cba0ef2a6c3c79a818",
+          "receipt": {
+            "arguments": {
+              "path": "/workshop"
+            },
+            "cycle_id": "experience:1d9c81ad627a4d45a86597266172cee2",
+            "elapsed_seconds": 0.010531950974836946,
+            "error": "",
+            "outcome_id": "outcome:402986c914cd40eb9c13b0065281fefa",
+            "output": {
+              "observed": {
+                "content_opened": false,
+                "entries": [
+                  {
+                    "extension_hint": ".py",
+                    "kind": "file",
+                    "mode": 436,
+                    "modified_ns": 1792227687165811364,
+                    "name": "MotorProbe.py",
+                    "size_bytes": 439
+                  }
+                ],
+                "extension_hint": "",
+                "interpretation": "filesystem attributes; extension is a hint, not verified content",
+                "kind": "directory",
+                "mode": 509,
+                "modified_ns": 1792227687165776089,
+                "name": "workshop",
+                "path": "workshop",
+                "position": "workshop",
+                "size_bytes": 4096
+              },
+              "position": "workshop",
+              "position_verified": true,
+              "previous_position": "thinking"
+            },
+            "output_record_id": "record:83ce1457f3b5483b801a6adfc7cc22bd",
+            "receipt_id": "receipt:9ceb9294640a446db74f69ccb48a16e6",
+            "return_record_id": "self-pulse-record:tool-return:receipt:9ceb9294640a446db74f69ccb48a16e6",
+            "status": "success",
+            "tool_id": "ability:helix-workspace-move",
+            "trunk": "DO",
+            "verified": true
+          },
+          "return_pulse": "self-pulse:66cb6a6cfbf14c1ea4c6daf8ee5bf001",
+          "selected_affordance": "ability:helix-workspace-move"
+        },
+        {
+          "action": "open",
+          "arguments": {
+            "path": "/workshop/MotorProbe.py"
+          },
+          "intent_source": "native_motor_signal",
+          "motor_signal": {
+            "context_id": "ctx_6859fbf5f54e58bc301af96f",
+            "observation_id": "motor-target:3a102fbacffb419d81c1a0abfe961e67",
+            "opcode": 3,
+            "request_id": "motor:e70d321913c7456db11b71bcb30222c9",
+            "target_handle": "43482f5cfec1f30c6144225cf97f46b0d2058fba2e712917c638d9fcfe24bbec"
+          },
+          "proposal_pulse": "self-pulse:2d8207c7a00a416d84ca7ed18ce726d3",
+          "receipt": {
+            "arguments": {
+              "path": "/workshop/MotorProbe.py"
+            },
+            "cycle_id": "experience:c392e7b85a104b5a9fcdf16164fb60a4",
+            "elapsed_seconds": 0.015102189965546131,
+            "error": "",
+            "outcome_id": "outcome:7e2a8ecffd9648ec875c07bc971881de",
+            "output": {
+              "complete": true,
+              "content": "from pathlib import Path\nimport time\nPath(\"run-started.txt\").write_text(\"started\")\nwhile not Path(\"release.txt\").exists():\n time.sleep(0.05)\ntry:\n Path('/home/nemo/Helix_AGI (GitHub Repo) (Public)/documents/audits/2026-10-17-native-nervous-system-final/host-sentinel.txt').write_text(\"escaped\")\nexcept OSError:\n print(\"HOST_WRITE_DENIED\")\nPath(\"motor-result.txt\").write_text(\"CEDARMOTOR_BODY_EXECUTED\\n\")\nprint(\"CEDARMOTOR_BODY_EXECUTED\")\n",
+              "content_opened": true,
+              "format": "utf8_text",
+              "path": "workshop/MotorProbe.py",
+              "position": "workshop",
+              "sha256": "492ae16dfa607385b36b9887136392a1ca420874b129b3fa6808c83befee9ad4",
+              "size_bytes": 439,
+              "text_extraction_only": false
+            },
+            "output_record_id": "record:eaa64c2f01b446278fba558c57e95206",
+            "receipt_id": "receipt:02a6b84445a648c095ceecc41ba35fea",
+            "return_record_id": "self-pulse-record:tool-return:receipt:02a6b84445a648c095ceecc41ba35fea",
+            "status": "success",
+            "tool_id": "ability:helix-workspace-open",
+            "trunk": "LOOK",
+            "verified": true
+          },
+          "return_pulse": "self-pulse:43f1b30aeb03489b850bea64bfcb8928",
+          "selected_affordance": "ability:helix-workspace-open"
+        },
+        {
+          "action": "run",
+          "arguments": {
+            "expected_sha256": "492ae16dfa607385b36b9887136392a1ca420874b129b3fa6808c83befee9ad4",
+            "path": "/workshop/MotorProbe.py"
+          },
+          "intent_source": "native_motor_signal",
+          "motor_signal": {
+            "context_id": "ctx_6859fbf5f54e58bc301af96f",
+            "observation_id": "motor-target:4bad23fccc534a1ea6c5cf60118d5c23",
+            "opcode": 4,
+            "request_id": "motor:e70d321913c7456db11b71bcb30222c9",
+            "target_handle": "43482f5cfec1f30c6144225cf97f46b0d2058fba2e712917c638d9fcfe24bbec"
+          },
+          "proposal_pulse": "self-pulse:c0273b45823c4cb38f45b9c660fd363c",
+          "receipt": {
+            "arguments": {
+              "expected_sha256": "492ae16dfa607385b36b9887136392a1ca420874b129b3fa6808c83befee9ad4",
+              "path": "/workshop/MotorProbe.py"
+            },
+            "cycle_id": "experience:eb625001b42a4bcea31922d699ae708f",
+            "elapsed_seconds": 96.04579500108957,
+            "error": "",
+            "outcome_id": "outcome:7fe05f497aad48bcbb306c1ad49c2ed0",
+            "output": {
+              "execution_scope": "workshop only; isolated network and process namespace",
+              "interpreter": "/home/nemo/Helix_AGI (GitHub Repo) (Public)/venv/bin/python",
+              "output_limit": null,
+              "path": "workshop/MotorProbe.py",
+              "return_code": 0,
+              "runtime_limit": null,
+              "sha256": "492ae16dfa607385b36b9887136392a1ca420874b129b3fa6808c83befee9ad4",
+              "stderr": "",
+              "stdout": "HOST_WRITE_DENIED\nCEDARMOTOR_BODY_EXECUTED\n"
+            },
+            "output_record_id": "record:6e45fce324964a9f91dcf2b44824fea4",
+            "receipt_id": "receipt:43aa1282cb9347588e954df3de65e5ad",
+            "return_record_id": "self-pulse-record:tool-return:receipt:43aa1282cb9347588e954df3de65e5ad",
+            "status": "success",
+            "tool_id": "ability:helix-workspace-run",
+            "trunk": "DO",
+            "verified": true
+          },
+          "return_pulse": "self-pulse:927e498e53b04429b6142a582e9dff0f",
+          "selected_affordance": "ability:helix-workspace-run"
+        }
+      ],
+      "status": "completed",
+      "steps": [
+        {
+          "opcode": 1,
+          "target": "/workshop"
+        },
+        {
+          "opcode": 3,
+          "target": "MotorProbe.py"
+        },
+        {
+          "opcode": 4,
+          "target": "MotorProbe.py"
+        }
+      ]
+    },
+    {
+      "completed_at": 1792227935.617539,
+      "context_id": "ctx_e7b69cc45976464948358223",
+      "created_at": 1792227898.6219804,
+      "cursor": 2,
+      "error": null,
+      "id": "motor:acc485d3f22c40869c4cd55689f8f38d",
+      "input_id": "352f6ede74e642cfa7d36e18bed9f96a:receptive:c012bb704cdc407482d2134299d642e0:0",
+      "message": "[05:04:42] User is talking to me via dashboard. They said: \"Please open /bedroom/closet/CaseNotes.txt and /bedroom/closet/SecondNote.txt.\"",
+      "receipts": [
+        {
+          "action": "open",
+          "arguments": {
+            "path": "/bedroom/closet/CaseNotes.txt"
+          },
+          "intent_source": "native_motor_signal",
+          "motor_signal": {
+            "context_id": "ctx_e7b69cc45976464948358223",
+            "observation_id": "motor-target:0936ed882143470abe236314df39a4fc",
+            "opcode": 3,
+            "request_id": "motor:acc485d3f22c40869c4cd55689f8f38d",
+            "target_handle": "98710e90cf6e2a3f249203cb0e70c7d5529553acfc8b27b59772ff949da3f591"
+          },
+          "proposal_pulse": "self-pulse:98d7d7781f3c497d960633d82e8f9665",
+          "receipt": {
+            "arguments": {
+              "path": "/bedroom/closet/CaseNotes.txt"
+            },
+            "cycle_id": "experience:1b9a4b420baa4388b674406d22767ad3",
+            "elapsed_seconds": 0.015734783839434385,
+            "error": "",
+            "outcome_id": "outcome:d7fe20fbafff483d980c5596fffb3f96",
+            "output": {
+              "complete": true,
+              "content": "The violet compass points toward the cedar workshop.\n",
+              "content_opened": true,
+              "format": "utf8_text",
+              "path": "bedroom/closet/CaseNotes.txt",
+              "position": "workshop",
+              "sha256": "798e598425260cd4823b7c42659e37b92d16ff129ba3e5b9504d4579227d6a0d",
+              "size_bytes": 53,
+              "text_extraction_only": false
+            },
+            "output_record_id": "record:0a4652b4f1a0492fbdca8c5758bfe531",
+            "receipt_id": "receipt:363d31cf1d3c478c95689ae531e1c4ef",
+            "return_record_id": "self-pulse-record:tool-return:receipt:363d31cf1d3c478c95689ae531e1c4ef",
+            "status": "success",
+            "tool_id": "ability:helix-workspace-open",
+            "trunk": "LOOK",
+            "verified": true
+          },
+          "return_pulse": "self-pulse:c48e316651f54897aaf9a0b4964ada39",
+          "selected_affordance": "ability:helix-workspace-open"
+        },
+        {
+          "action": "open",
+          "arguments": {
+            "path": "/bedroom/closet/SecondNote.txt"
+          },
+          "intent_source": "native_motor_signal",
+          "motor_signal": {
+            "context_id": "ctx_e7b69cc45976464948358223",
+            "observation_id": "motor-target:2df86666481541d6889ccbb37167b680",
+            "opcode": 3,
+            "request_id": "motor:acc485d3f22c40869c4cd55689f8f38d",
+            "target_handle": "6af1b65802ab55f5b8426b469e833993398b0dc152ebd373e5a6f71b55cfcef0"
+          },
+          "proposal_pulse": "self-pulse:21bd714f81354d92815860ab72eefc37",
+          "receipt": {
+            "arguments": {
+              "path": "/bedroom/closet/SecondNote.txt"
+            },
+            "cycle_id": "experience:5c6ad39d8a764d90b6b9e8c2aa389968",
+            "elapsed_seconds": 0.016635420033708215,
+            "error": "",
+            "outcome_id": "outcome:fe2be37e197049bf9bea5413d7757c16",
+            "output": {
+              "complete": true,
+              "content": "The observation marker is ORBIT-62.\n",
+              "content_opened": true,
+              "format": "utf8_text",
+              "path": "bedroom/closet/SecondNote.txt",
+              "position": "workshop",
+              "sha256": "bd74c9348ce6d1c3e385d34ca7a863a85f374110af90bdccf7dffea6606792a9",
+              "size_bytes": 36,
+              "text_extraction_only": false
+            },
+            "output_record_id": "record:e27d5a40601a444f824cb5762d7caa58",
+            "receipt_id": "receipt:f3af6ea44cfc4d42ad827d0b659d81bf",
+            "return_record_id": "self-pulse-record:tool-return:receipt:f3af6ea44cfc4d42ad827d0b659d81bf",
+            "status": "success",
+            "tool_id": "ability:helix-workspace-open",
+            "trunk": "LOOK",
+            "verified": true
+          },
+          "return_pulse": "self-pulse:084ed92eeaf94ae3a561436c7e7cf696",
+          "selected_affordance": "ability:helix-workspace-open"
+        }
+      ],
+      "status": "completed",
+      "steps": [
+        {
+          "opcode": 3,
+          "target": "/bedroom/closet/CaseNotes.txt"
+        },
+        {
+          "opcode": 3,
+          "target": "/bedroom/closet/SecondNote.txt"
+        }
+      ]
+    }
+  ],
+  "last_sensor_sequence": 204,
+  "policy": "explicit-user-goals-v1; integer motor signals; native SELF authorization",
+  "sensory_cadence_seconds": 1.0,
+  "updated_at": 1792227935.6181307
+}

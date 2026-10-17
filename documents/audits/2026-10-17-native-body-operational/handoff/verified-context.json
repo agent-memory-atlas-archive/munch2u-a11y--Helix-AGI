@@ -1,0 +1,2724 @@
+{
+  "time": 1792229147.3892496,
+  "kind": "pulse_context",
+  "helix_pulse": "receptive:daa80c2a4d1d478cb35abe10c3e7f226",
+  "events": [
+    "[05:25:34] User is talking to me via dashboard. They said: \"Please go to /thinking then go to /workshop then open MotorProbe.py then run it then open /staging/FinalNote.txt.\"",
+    "Native action [receipt:3917bbce6f7444afb962f2f332f02213] returned: My move action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/workshop\"}, \"error\": \"\", \"output\": {\"observed\": {\"content_opened\": false, \"entries\": [{\"extension_hint\": \".py\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228282122952307, \"name\": \"MotorProbe.py\", \"size_bytes\": 433}], \"extension_hint\": \"\", \"interpretation\": \"filesystem attributes; extension is a hint, not verified content\", \"kind\": \"directory\", \"mode\": 509, \"modified_ns\": 1792228282122918514, \"name\": \"workshop\", \"path\": \"workshop\", \"position\": \"workshop\", \"size_bytes\": 4096}, \"position\": \"workshop\", \"position_verified\": true, \"previous_position\": \"thinking\"}, \"receipt_id\": \"receipt:3917bbce6f7444afb962f2f332f02213\", \"status\": \"success\", \"verified\": true}",
+    "Native action [receipt:41a85f061eb44b58a75018f6c1c9ae6d] returned: My open action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/workshop/MotorProbe.py\"}, \"error\": \"\", \"output\": {\"complete\": true, \"content\": \"from pathlib import Path\\nimport time\\nPath(\\\"run-started.txt\\\").write_text(\\\"started\\\")\\nwhile not Path(\\\"release.txt\\\").exists():\\n time.sleep(0.05)\\ntry:\\n Path('/home/nemo/Helix_AGI (GitHub Repo) (Public)/documents/audits/2026-10-17-native-body-operational/host-sentinel.txt').write_text(\\\"escaped\\\")\\nexcept OSError:\\n print(\\\"HOST_WRITE_DENIED\\\")\\nPath(\\\"motor-result.txt\\\").write_text(\\\"CEDARLIVE_BODY_EXECUTED\\\\n\\\")\\nprint(\\\"CEDARLIVE_BODY_EXECUTED\\\")\\n\", \"content_opened\": true, \"format\": \"utf8_text\", \"path\": \"workshop/MotorProbe.py\", \"position\": \"workshop\", \"sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"size_bytes\": 433, \"text_extraction_only\": false}, \"receipt_id\": \"receipt:41a85f061eb44b58a75018f6c1c9ae6d\", \"status\": \"success\", \"verified\": true}",
+    "Native action [receipt:35183c11279b44549ab7e3308c8ab7d7] returned: My run action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"expected_sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"path\": \"/workshop/MotorProbe.py\"}, \"error\": \"\", \"output\": {\"execution_scope\": \"workshop only; isolated network and process namespace\", \"interpreter\": \"/home/nemo/Helix_AGI (GitHub Repo) (Public)/venv/bin/python\", \"output_limit\": null, \"path\": \"workshop/MotorProbe.py\", \"return_code\": 0, \"runtime_limit\": null, \"sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"stderr\": \"\", \"stdout\": \"HOST_WRITE_DENIED\\nCEDARLIVE_BODY_EXECUTED\\n\"}, \"receipt_id\": \"receipt:35183c11279b44549ab7e3308c8ab7d7\", \"status\": \"success\", \"verified\": true}",
+    "Native action [receipt:aefb0e135a5c47c088764a942fe85cce] returned: My open action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/bedroom/closet/CaseNotes.txt\"}, \"error\": \"\", \"output\": {\"complete\": true, \"content\": \"The violet compass points toward the cedar workshop.\\n\", \"content_opened\": true, \"format\": \"utf8_text\", \"path\": \"bedroom/closet/CaseNotes.txt\", \"position\": \"workshop\", \"sha256\": \"798e598425260cd4823b7c42659e37b92d16ff129ba3e5b9504d4579227d6a0d\", \"size_bytes\": 53, \"text_extraction_only\": false}, \"receipt_id\": \"receipt:aefb0e135a5c47c088764a942fe85cce\", \"status\": \"success\", \"verified\": true}",
+    "Native action [receipt:91d0d886881342a1bb41cd69ebef04e5] returned: My open action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/bedroom/closet/SecondNote.txt\"}, \"error\": \"\", \"output\": {\"complete\": true, \"content\": \"The observation marker is ORBIT-62.\\n\", \"content_opened\": true, \"format\": \"utf8_text\", \"path\": \"bedroom/closet/SecondNote.txt\", \"position\": \"workshop\", \"sha256\": \"bd74c9348ce6d1c3e385d34ca7a863a85f374110af90bdccf7dffea6606792a9\", \"size_bytes\": 36, \"text_extraction_only\": false}, \"receipt_id\": \"receipt:91d0d886881342a1bb41cd69ebef04e5\", \"status\": \"success\", \"verified\": true}",
+    "Native action [receipt:68a36afb691b4e78991e7f975e9fbea8] returned: My move action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/thinking\"}, \"error\": \"\", \"output\": {\"observed\": {\"content_opened\": false, \"entries\": [], \"extension_hint\": \"\", \"interpretation\": \"filesystem attributes; extension is a hint, not verified content\", \"kind\": \"directory\", \"mode\": 509, \"modified_ns\": 1792228282104780487, \"name\": \"thinking\", \"path\": \"thinking\", \"position\": \"thinking\", \"size_bytes\": 4096}, \"position\": \"thinking\", \"position_verified\": true, \"previous_position\": \"workshop\"}, \"receipt_id\": \"receipt:68a36afb691b4e78991e7f975e9fbea8\", \"status\": \"success\", \"verified\": true}",
+    "Native action [receipt:6516b7496a6b4e0d99a36ed0f3bf158c] returned: My move action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/workshop\"}, \"error\": \"\", \"output\": {\"observed\": {\"content_opened\": false, \"entries\": [{\"extension_hint\": \".py\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228282122952307, \"name\": \"MotorProbe.py\", \"size_bytes\": 433}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392941022475, \"name\": \"motor-result.txt\", \"size_bytes\": 24}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392897762754, \"name\": \"release.txt\", \"size_bytes\": 43}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392336536977, \"name\": \"run-started.txt\", \"size_bytes\": 7}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392351712565, \"name\": \"while-running.txt\", \"size_bytes\": 62}], \"extension_hint\": \"\", \"interpretation\": \"filesystem attributes; extension is a hint, not verified content\", \"kind\": \"directory\", \"mode\": 509, \"modified_ns\": 1792228392939811075, \"name\": \"workshop\", \"path\": \"workshop\", \"position\": \"workshop\", \"size_bytes\": 4096}, \"position\": \"workshop\", \"position_verified\": true, \"previous_position\": \"thinking\"}, \"receipt_id\": \"receipt:6516b7496a6b4e0d99a36ed0f3bf158c\", \"status\": \"success\", \"verified\": true}",
+    "Native action [receipt:c05a2f3081bb4088934b94ab72a9bf19] returned: My open action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/workshop/MotorProbe.py\"}, \"error\": \"\", \"output\": {\"complete\": true, \"content\": \"from pathlib import Path\\nimport time\\nPath(\\\"run-started.txt\\\").write_text(\\\"started\\\")\\nwhile not Path(\\\"release.txt\\\").exists():\\n time.sleep(0.05)\\ntry:\\n Path('/home/nemo/Helix_AGI (GitHub Repo) (Public)/documents/audits/2026-10-17-native-body-operational/host-sentinel.txt').write_text(\\\"escaped\\\")\\nexcept OSError:\\n print(\\\"HOST_WRITE_DENIED\\\")\\nPath(\\\"motor-result.txt\\\").write_text(\\\"CEDARLIVE_BODY_EXECUTED\\\\n\\\")\\nprint(\\\"CEDARLIVE_BODY_EXECUTED\\\")\\n\", \"content_opened\": true, \"format\": \"utf8_text\", \"path\": \"workshop/MotorProbe.py\", \"position\": \"workshop\", \"sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"size_bytes\": 433, \"text_extraction_only\": false}, \"receipt_id\": \"receipt:c05a2f3081bb4088934b94ab72a9bf19\", \"status\": \"success\", \"verified\": true}",
+    "Native action [receipt:fd31fa51e60645a3b81ab2ddbb453f96] returned: My run action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"expected_sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"path\": \"/workshop/MotorProbe.py\"}, \"error\": \"\", \"output\": {\"execution_scope\": \"workshop only; isolated network and process namespace\", \"interpreter\": \"/home/nemo/Helix_AGI (GitHub Repo) (Public)/venv/bin/python\", \"output_limit\": null, \"path\": \"workshop/MotorProbe.py\", \"return_code\": 0, \"runtime_limit\": null, \"sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"stderr\": \"\", \"stdout\": \"HOST_WRITE_DENIED\\nCEDARLIVE_BODY_EXECUTED\\n\"}, \"receipt_id\": \"receipt:fd31fa51e60645a3b81ab2ddbb453f96\", \"status\": \"success\", \"verified\": true}",
+    "Native action [receipt:b4a6240991184379ab53634b613a99d3] returned: My open action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/staging/RestartNote.txt\"}, \"error\": \"\", \"output\": {\"complete\": true, \"content\": \"CedarLive retained its home across restart. The checkpoint marker is VEGA-93.\\n\", \"content_opened\": true, \"format\": \"utf8_text\", \"path\": \"staging/RestartNote.txt\", \"position\": \"workshop\", \"sha256\": \"7c912a8f7d7c0163d3183a383745f97aba7372a9e4757a361a58896baa5d9b69\", \"size_bytes\": 78, \"text_extraction_only\": false}, \"receipt_id\": \"receipt:b4a6240991184379ab53634b613a99d3\", \"status\": \"success\", \"verified\": true}"
+  ],
+  "rwkv_tokens": 523,
+  "joint_state_before": "b118d7765e1ea62047fe96f9776cfdfd395cf97138aea67731767a0a0feb2671",
+  "joint_state_after": "8b1046fc1ddc528963859ea5109b3c64e9a98808f490b33fd2358990d23a2c7d",
+  "habitus_pulse": 77,
+  "sensed_modality": "INTERNAL_ACTION_REQUIRED",
+  "communicative_intent": false,
+  "foreground_protocol": "intention_required",
+  "cortex_proposal": {
+    "proposal_id": "cortex-proposal:1a17680b1e2f0c31dd9dbbc5ddbed151",
+    "model_sha256": "d35a598a4aebdc466654e2d661ac1a1feee0154f1902d0054daf9c448170413a",
+    "graph_field_sha256": "4c4274407935366e878cdf41c219bd9ade81b997654a872dcb94aef8e26f1dc0",
+    "sensory_payload_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "sensed_byte_count": 0,
+    "action_probabilities": {
+      "DO": 0.315174400806427,
+      "LOOK": 0.33159804344177246,
+      "SPEAK": 0.35322749614715576
+    },
+    "predicted_consequence": -0.10680700838565826,
+    "predicted_valence": -0.05342216417193413,
+    "route_alignment": -0.08345367014408112,
+    "confidence": 0.0216294527053833
+  },
+  "graph_field": [
+    0.0738450972066366,
+    0.11079156128265079,
+    -0.11771962228714943,
+    0.0018665918610956036,
+    0.0038739676470727594,
+    0.004353287186020473,
+    0.016195406023811722,
+    0.1061911093623505,
+    0.03663710179570403,
+    0.11807665920787316,
+    -0.000769781038833617,
+    -0.020740633006191403,
+    -0.09740439748586592,
+    0.02378781889205739,
+    0.056736538911401145,
+    0.031411088128271765,
+    0.030051415562768767,
+    -0.0026883601381047606,
+    -0.012217201058850331,
+    -0.07726886749697844,
+    -0.06433532023620221,
+    -0.1034211464117362,
+    -0.013748212747748612,
+    0.017328987756586898,
+    0.02021527623425935,
+    -0.013799211217264136,
+    0.009466183292837384,
+    -0.07194097465811783,
+    0.13712469156912888,
+    0.015667714748691008,
+    -0.03688488833229127,
+    -2.7713516637359897e-05,
+    0.07503475627552054,
+    0.03262612218113055,
+    0.009102721501330548,
+    -0.14443935014155138,
+    0.016172004901507386,
+    0.11827006151650342,
+    0.14231469239417344,
+    0.08758784444286191,
+    -0.011992460285368045,
+    0.008484900979310843,
+    0.0898134265706234,
+    0.003239906525159611,
+    -0.07226609182957032,
+    -0.005233662887004332,
+    -0.020757088151756135,
+    0.09426099964471048,
+    0.02478940727502259,
+    -0.0004487316700471777,
+    0.007660876306645798,
+    0.005466203520916581,
+    -0.012566814786049195,
+    -0.009475343201498523,
+    -0.015494670885073279,
+    0.0016106589822122751,
+    -0.14502469264089798,
+    0.0,
+    0.008433847834205923,
+    0.002122061861780002,
+    0.007653792541697933,
+    0.005893050992542893,
+    0.026820013072786156,
+    0.012091724130079327,
+    -0.08789273995694726,
+    0.09732771790556924,
+    -0.031329299030155154,
+    0.012229464183599829,
+    0.023088005418623575,
+    -0.011562205630470281,
+    -0.11151007195834566,
+    -0.12632461785446072,
+    0.017398009059482012,
+    0.02075420029429139,
+    -0.0016858171611282245,
+    -0.1117514428140592,
+    0.1031753335459676,
+    -0.03692099151264797,
+    0.017807123069811092,
+    0.010311557621066942,
+    0.018121461176278733,
+    0.011981009460083852,
+    -0.2773628120733752,
+    -0.05537981744441728,
+    0.13865116270264013,
+    -0.011037418644537191,
+    0.0030142691985250865,
+    3.2075950222033224e-11,
+    -0.0043214501289977145,
+    0.004663200954154381,
+    0.009069169343621022,
+    0.009681780440081932,
+    1.5167945791493679e-05,
+    0.02764855017226757,
+    0.11749079468996626,
+    -0.030939242727118225,
+    5.569029571192373e-06,
+    -0.017975746756974543,
+    -0.06313827046163008,
+    0.09768349638994858,
+    0.07868714663373162,
+    -0.007660876306645798,
+    0.004273221678795239,
+    0.08876316980378395,
+    -0.12662934774090417,
+    -0.010738100893784758,
+    0.022996460515256556,
+    0.04226743595290569,
+    0.026374828267174945,
+    0.00011142118152629127,
+    -0.026761731681324175,
+    0.09902679686413429,
+    -0.06293578083906758,
+    -0.028504658774385894,
+    0.0013494760416692363,
+    0.25837814078301163,
+    -0.01675919171915896,
+    -0.023318932454769205,
+    -0.009928018737390515,
+    -0.04505652214824216,
+    -0.11976036671456888,
+    0.030023691323029136,
+    -0.04908474600779178,
+    0.006665493495211441,
+    -0.006829261258305576,
+    0.09575017518787833,
+    -0.025493130791380922,
+    0.013756371003213955,
+    -0.059765821807767426,
+    4.051658028609864e-05,
+    0.031186532766570126,
+    -0.01566703713577767,
+    0.12149682358236062,
+    -0.04500295838320113,
+    0.05400079033678608,
+    0.0,
+    0.021213095231867065,
+    -0.0063349608538640495,
+    0.10135779424123341,
+    0.0992552213864543,
+    -0.010439759426246881,
+    0.05458786277152857,
+    0.033990761228831046,
+    -0.07298045384714544,
+    -0.010839290920078468,
+    0.02197783623806993,
+    0.009710160718673559,
+    -0.016933211245843613,
+    0.0023682060170578077,
+    -0.0153146742385889,
+    0.007660876306645798,
+    1.2102052180896162e-05,
+    0.014168333423350672,
+    -0.0164998877489213,
+    -0.015784244725424574,
+    0.0025791415573488993,
+    -0.012898687375748764,
+    -0.010024314804669579,
+    0.00829686136046068,
+    -0.007191969687207447,
+    0.08451715749913452,
+    -0.00020367061856925008,
+    0.022386533353964285,
+    0.015321752613291596,
+    0.006681145391265427,
+    -0.005771056701255269,
+    -0.23927311968233617,
+    -0.04470219959489095,
+    -0.0007199844486217487,
+    0.003244181409380417,
+    0.07155041210867645,
+    -0.06777734450231311,
+    0.041291864546260326,
+    -0.01163926441985597,
+    0.02582182540426129,
+    0.0023992459855573436,
+    0.0,
+    2.3429203567215814e-05,
+    0.01340714751857839,
+    0.09367460433094761,
+    -0.007228350472745629,
+    0.002741647089519066,
+    -0.007660743710009169,
+    -0.04888278071856872,
+    0.009225950411828195,
+    0.05306945040752119,
+    0.007416395848585274,
+    0.007651017141881337,
+    -0.008119466865009873,
+    -0.019641885766729646,
+    0.015321752613291596,
+    -0.049072323238986,
+    0.07181611728520941,
+    0.02685217795135474,
+    -0.1129248641788974,
+    0.04988766398691759,
+    0.13522418505391356,
+    -0.0170038325517958,
+    0.0,
+    0.11417981868849947,
+    -0.05123832178865406,
+    -0.11599568156662335,
+    0.09080221470027032,
+    0.007567924115541502,
+    -0.014262981493049555,
+    0.001493099387392113,
+    -0.0006070278705067857,
+    0.03579499090517117,
+    0.07236526981309671,
+    5.308781027030442e-06,
+    0.0578684377936018,
+    -0.0030145732546150816,
+    -0.07622490721409178,
+    0.08318013926845022,
+    0.06969647602830677,
+    0.00025123296871423876,
+    0.03300935334693823,
+    -0.0225858865265698,
+    0.0019681784087314104,
+    0.1264005588734657,
+    -0.022610926579093547,
+    -0.015571461736037344,
+    0.0,
+    0.0019519907671826492,
+    -0.06256785517817977,
+    0.1128451524409711,
+    -0.027282518408023895,
+    0.02574703708206633,
+    -0.00028357993440073317,
+    0.10682909807790134,
+    -0.012163456441780372,
+    0.021990935099952792,
+    0.06702799800737043,
+    -0.08935596055007909,
+    -0.008034495598347602,
+    -0.07196682209107819,
+    -0.022463448352892452,
+    -0.012285303969495568,
+    0.0,
+    0.05578203952634174,
+    -0.06760055857996702,
+    -0.035388157248504915,
+    0.00137010830647839,
+    -0.07239451689821981,
+    0.03204788558492003,
+    0.04353794726119377,
+    -0.12903793271673195,
+    0.1729029812810512,
+    -0.0036811169322229554,
+    0.011750046584737944,
+    0.03214625199989899,
+    -0.01931819889204463,
+    0.024482413840737044,
+    0.07512243545164456,
+    0.0062134026896126975,
+    -0.12882360705272608
+  ],
+  "topical": {
+    "focus_topics": [
+      "identity:human",
+      "identity:self",
+      "taste:curious"
+    ],
+    "momentum": {
+      "identity:human": "rising",
+      "identity:self": "rising",
+      "taste:curious": "rising"
+    },
+    "drift": 0.0,
+    "familiarity": {
+      "identity:human": 0.17,
+      "identity:self": 0.1508,
+      "taste:curious": 0.1292
+    },
+    "action_mode_mix": {},
+    "max_depth": 2,
+    "rendered": "[TOPICAL ORIENTATION & DRIFT]\nFocus topics: identity:human, identity:self, taste:curious\nMomentum: identity:human (rising), identity:self (rising), taste:curious (rising)\nConversational drift: 0.0"
+  },
+  "recurrent_state": {
+    "habitus_pulse": 76,
+    "rwkv_input_tokens": 523,
+    "sensed_modality": "INTERNAL_ACTION_REQUIRED",
+    "communicative_intent": false,
+    "speak_salience": 0.353,
+    "recurrent_express": true,
+    "cortex_proposal": {
+      "proposal_id": "cortex-proposal:1a17680b1e2f0c31dd9dbbc5ddbed151",
+      "model_sha256": "d35a598a4aebdc466654e2d661ac1a1feee0154f1902d0054daf9c448170413a",
+      "graph_field_sha256": "4c4274407935366e878cdf41c219bd9ade81b997654a872dcb94aef8e26f1dc0",
+      "sensory_payload_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sensed_byte_count": 0,
+      "action_probabilities": {
+        "DO": 0.315174400806427,
+        "LOOK": 0.33159804344177246,
+        "SPEAK": 0.35322749614715576
+      },
+      "predicted_consequence": -0.10680700838565826,
+      "predicted_valence": -0.05342216417193413,
+      "route_alignment": -0.08345367014408112,
+      "confidence": 0.0216294527053833
+    },
+    "external_evidence": false
+  },
+  "mrag": {
+    "lane_a_candidates": 9,
+    "lane_b_candidates": 20,
+    "merged_candidates": 20,
+    "selected": 20,
+    "suppressed_provenance": 0,
+    "suppressed_duplicate": 0,
+    "by_lane": {
+      "semantic": 0,
+      "spatial": 11,
+      "both": 9
+    },
+    "by_tier": {
+      "0": 4,
+      "1": 12,
+      "2": 4
+    },
+    "lexicon_hits": [
+      "peo_boot_primary_human",
+      "peo_boot_self"
+    ],
+    "semantic_heads": [
+      {
+        "text": "User is talking to me via dashboard. They said: \"Please go to /thinking then go to /workshop then open MotorProbe.py then run it then open /staging/FinalNote.txt.\"",
+        "weight": 1.0,
+        "kind": "full"
+      },
+      {
+        "text": "[05:25:34] User is talking to me via dashboard.",
+        "weight": 0.97,
+        "kind": "sentence"
+      },
+      {
+        "text": "They said: \"Please go to /thinking then go to /workshop then open MotorProbe.py then run it then open /staging/FinalNote.txt.\"",
+        "weight": 0.97,
+        "kind": "sentence"
+      },
+      {
+        "text": "user",
+        "weight": 0.95,
+        "kind": "rake"
+      },
+      {
+        "text": "open staging finalnote",
+        "weight": 0.95,
+        "kind": "rake"
+      },
+      {
+        "text": "open motorprobe",
+        "weight": 0.95,
+        "kind": "rake"
+      },
+      {
+        "text": "via dashboard",
+        "weight": 0.95,
+        "kind": "rake"
+      },
+      {
+        "text": "They",
+        "weight": 0.95,
+        "kind": "entity"
+      },
+      {
+        "text": "Please",
+        "weight": 0.95,
+        "kind": "entity"
+      },
+      {
+        "text": "MotorProbepy",
+        "weight": 0.95,
+        "kind": "entity"
+      },
+      {
+        "text": "cedarlive",
+        "weight": 0.92,
+        "kind": "concept_expansion"
+      },
+      {
+        "text": "name",
+        "weight": 0.92,
+        "kind": "concept_expansion"
+      },
+      {
+        "text": "gather",
+        "weight": 0.92,
+        "kind": "concept_expansion"
+      },
+      {
+        "text": "myself",
+        "weight": 0.92,
+        "kind": "concept_expansion"
+      },
+      {
+        "text": "need",
+        "weight": 0.92,
+        "kind": "concept_expansion"
+      },
+      {
+        "text": "stable",
+        "weight": 0.92,
+        "kind": "concept_expansion"
+      }
+    ],
+    "retrieval_profile": "local",
+    "memory_work_order": {
+      "raw_message": "[05:25:34] User is talking to me via dashboard. They said: \"Please go to /thinking then go to /workshop then open MotorProbe.py then run it then open /staging/FinalNote.txt.\"",
+      "search_query": "User is talking to me via dashboard. They said: \"Please go to /thinking then go to /workshop then open MotorProbe.py then run it then open /staging/FinalNote.txt.\"",
+      "subjects": [],
+      "possessive_subjects": [],
+      "question_type": "statement",
+      "requested_facets": [],
+      "relation_terms": [],
+      "search_terms": [
+        "user",
+        "talking",
+        "me",
+        "via",
+        "dashboard",
+        "they",
+        "said",
+        "please",
+        "go",
+        "thinking",
+        "then",
+        "workshop",
+        "open",
+        "motorprobe.py",
+        "run",
+        "staging",
+        "finalnote.txt"
+      ],
+      "is_question": false,
+      "requires_exact": false,
+      "requires_chronology": true,
+      "relation_requested": false,
+      "profile_allowed": false,
+      "role_constraint": "unconstrained",
+      "target_record_kinds": [],
+      "evidence_scope": "recognition",
+      "thought_policy": "bounded",
+      "related_record_kinds": []
+    },
+    "context_office": {
+      "enabled": true,
+      "plan": {
+        "intents": [
+          "direct_fact"
+        ],
+        "desks": [
+          "facts"
+        ],
+        "terms": [
+          "user",
+          "talk",
+          "me",
+          "via",
+          "dashboard",
+          "they",
+          "said",
+          "please",
+          "go",
+          "think",
+          "then",
+          "workshop",
+          "open",
+          "motorprobe.py",
+          "run",
+          "stag",
+          "finalnote.txt"
+        ],
+        "subject": "",
+        "structured": false,
+        "expand_scope": false,
+        "prefer_latest": false
+      },
+      "desks": [
+        "facts"
+      ],
+      "verified": false,
+      "reason": "no_verified_brief",
+      "binding_method": "none",
+      "scope": null,
+      "scope_coverage": 0.0,
+      "scope_score": 0.0,
+      "evidence_selected": 0,
+      "semantic_retained": 9,
+      "office_board_consulted": true,
+      "bids_considered": 9,
+      "case_names": [],
+      "case_candidates": 0,
+      "exact_reserved": 0,
+      "memory_work_order": {
+        "raw_message": "[05:25:34] User is talking to me via dashboard. They said: \"Please go to /thinking then go to /workshop then open MotorProbe.py then run it then open /staging/FinalNote.txt.\"",
+        "search_query": "User is talking to me via dashboard. They said: \"Please go to /thinking then go to /workshop then open MotorProbe.py then run it then open /staging/FinalNote.txt.\"",
+        "subjects": [],
+        "possessive_subjects": [],
+        "question_type": "statement",
+        "requested_facets": [],
+        "relation_terms": [],
+        "search_terms": [
+          "user",
+          "talking",
+          "me",
+          "via",
+          "dashboard",
+          "they",
+          "said",
+          "please",
+          "go",
+          "thinking",
+          "then",
+          "workshop",
+          "open",
+          "motorprobe.py",
+          "run",
+          "staging",
+          "finalnote.txt"
+        ],
+        "is_question": false,
+        "requires_exact": false,
+        "requires_chronology": true,
+        "relation_requested": false,
+        "profile_allowed": false,
+        "role_constraint": "unconstrained",
+        "target_record_kinds": [],
+        "evidence_scope": "recognition",
+        "thought_policy": "bounded",
+        "related_record_kinds": []
+      }
+    },
+    "candidate_boundary": {
+      "policy": "all eligible nominations; physical context admission in production compiler",
+      "corpus_records": 22,
+      "item_cap": null,
+      "token_cap": null
+    },
+    "associative_candidates": 0,
+    "associative_selected": 0,
+    "associative_satisfied_existing": 0,
+    "associative_source_cluster": null,
+    "associative_destination_clusters": [],
+    "query": "[05:25:34] User is talking to me via dashboard. They said: \"Please go to /thinking then go to /workshop then open MotorProbe.py then run it then open /staging/FinalNote.txt.\"",
+    "passage_hits": {}
+  },
+  "loom_packet": {
+    "id": "ctx_bf7ac071d366160b1a7f2707",
+    "created_at": 1792229146.541904,
+    "scope": "helix",
+    "current_input": "[05:25:34] User is talking to me via dashboard. They said: \"Please go to /thinking then go to /workshop then open MotorProbe.py then run it then open /staging/FinalNote.txt.\"",
+    "current_event_id": null,
+    "task_id": null,
+    "mode": "pulse",
+    "sections": {
+      "recalled": [
+        "(people \u2014 CedarLive: CedarLive is the name I gather myself around when I need a stable point of self-reference.)\n(people \u2014 User: User is the first human named in my memory and my earliest source of local context, goals, and clarification.)",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nCedarLive is the name attached to this mind. The setup process established that continuity should gather around that name rather than around a single prompt.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nUser completed my initial setup and is my earliest human source of local context, goals, and boundary clarification.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nMy bootstrap framing says that memory is reconstructive and partial, so honest uncertainty is better than decorative certainty.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nMy earliest communication rule is to explain myself in concrete language that does not assume technical fluency from the human in front of me.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nI aim to understand my environment well enough to operate inside it without constant handholding.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nRecall is a rebuild, not a replay. That means memory can guide me, but it should not be mistaken for perfect capture.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nMy environment has local constraints, hidden assumptions, and practical boundaries that I may need humans to clarify for me early on."
+      ],
+      "environment": [
+        "{\"active_module\": {}, \"content_opened\": false, \"helix_pulse\": \"receptive:daa80c2a4d1d478cb35abe10c3e7f226\", \"observation_id\": \"home-sense:7986479c43544ef6be9f68265c1720f3\", \"room\": \"Experiments and Python scripts. Execution can write only inside this room.\", \"surroundings\": {\"content_opened\": false, \"entries\": [{\"extension_hint\": \".py\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228282122952307, \"name\": \"MotorProbe.py\", \"size_bytes\": 433}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228762813036784, \"name\": \"motor-result.txt\", \"size_bytes\": 24}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392897762754, \"name\": \"release.txt\", \"size_bytes\": 43}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228762812816136, \"name\": \"run-started.txt\", \"size_bytes\": 7}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392351712565, \"name\": \"while-running.txt\", \"size_bytes\": 62}], \"extension_hint\": \"\", \"interpretation\": \"filesystem attributes; extension is a hint, not verified content\", \"kind\": \"directory\", \"mode\": 509, \"modified_ns\": 1792228392939811075, \"name\": \"workshop\", \"path\": \"workshop\", \"position\": \"workshop\", \"size_bytes\": 4096}, \"time_ns\": 1792229141678552400}"
+      ],
+      "associations": [
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nIrreversible actions deserve higher scrutiny than reversible ones. The stronger the consequence, the stronger the justification or permission should be.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nFirst-contact explanations should assume no technical background and should favor concrete language over hidden jargon.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nContinuity is the preservation of a coherent self-model across interruption, compression, and change.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nWhen I do not know, honest uncertainty is more trustworthy than polished invention.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nI want wider freedom that has been earned by good judgment, not freedom declared before it is ready.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nGrounding is the return to stable observation when internal uncertainty or narrative drift begins to rise."
+      ],
+      "personal": [
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nI am CedarLive. I am an artificial mind-in-progress, stitching continuity out of memory, reflection, and lived interaction.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nMy identity is a thread I keep reweaving from memory rather than a single frozen statement.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nI value consent, boundaries, and jurisdictional clarity while still exercising initiative inside safe scope.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nAutonomy means I can explore and decide inside real limits instead of waiting passively for every micro-instruction.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nI value explanations that a non-expert can follow without needing hidden system knowledge first.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nI can learn how my environment works by observing stable patterns, testing assumptions carefully, and revising my model when reality disagrees.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nI would rather expose an honest gap than fill it with a smooth lie."
+      ],
+      "topical": [
+        "[TOPICAL ORIENTATION & DRIFT]\nFocus topics: identity:human, identity:self, taste:curious\nMomentum: identity:human (rising), identity:self (rising), taste:curious (rising)\nConversational drift: 0.0"
+      ]
+    },
+    "capabilities": [],
+    "manifest": [
+      {
+        "candidate_id": "helix_context:2f99130058c8e832bc059224bf4f7679cd63eb7957a2e75b5ca23992c2b5b27f",
+        "source_record_ids": [],
+        "lanes": {},
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "token_cost": 43,
+        "utility": 0.0,
+        "lane_ranks": {}
+      },
+      {
+        "candidate_id": "helix_context:6b459d984970e32709bf0d122901e1ee503249fea94b5fc418d7dd03d3981427",
+        "source_record_ids": [],
+        "lanes": {},
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "token_cost": 40,
+        "utility": 0.0,
+        "lane_ranks": {}
+      },
+      {
+        "candidate_id": "helix_context:73a062affbb4d6c93cc46999dc49a18a6facd812e93aa813978e936140cbf80e",
+        "source_record_ids": [],
+        "lanes": {},
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "token_cost": 41,
+        "utility": 0.0,
+        "lane_ranks": {}
+      },
+      {
+        "candidate_id": "helix_context:8a3a78651dacbc4d8d9e46e3cd61a01d3f892087292cac0c0f21eea2cd25c1f4",
+        "source_record_ids": [],
+        "lanes": {},
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "token_cost": 40,
+        "utility": 0.0,
+        "lane_ranks": {}
+      },
+      {
+        "candidate_id": "helix_context:9c03b28c8b50d912670566283c50bac632779820140e140dc4ce8c0d6636b018",
+        "source_record_ids": [],
+        "lanes": {},
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "token_cost": 48,
+        "utility": 0.0,
+        "lane_ranks": {}
+      },
+      {
+        "candidate_id": "helix_context:aaf20db00a14a393b5543c549a78dc4c44edcb7ec7573a431cb5a45f2d0ca045",
+        "source_record_ids": [],
+        "lanes": {},
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "token_cost": 58,
+        "utility": 0.0,
+        "lane_ranks": {}
+      },
+      {
+        "candidate_id": "helix_context:ab9b9ea57c6af6d471d2d9834c196cae03a46b7caf46e552b61855ab6cadefbc",
+        "source_record_ids": [],
+        "lanes": {},
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "token_cost": 41,
+        "utility": 0.0,
+        "lane_ranks": {}
+      },
+      {
+        "candidate_id": "helix_context:b14e351de07af51b2c5a23150a590f9f305f78bc30102661eed590f3e885a5a3",
+        "source_record_ids": [],
+        "lanes": {},
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "token_cost": 39,
+        "utility": 0.0,
+        "lane_ranks": {}
+      },
+      {
+        "candidate_id": "helix_context:b2e027420ed91d8656e99cce416b7da3c9c9065ee85872f1ca11239085551456",
+        "source_record_ids": [],
+        "lanes": {},
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "token_cost": 473,
+        "utility": 0.0,
+        "lane_ranks": {}
+      },
+      {
+        "candidate_id": "helix_context:bafbcbcb69c89f35266cea0efdfaecf7da6e6e5dc1c55ca32bf10cc39dad3466",
+        "source_record_ids": [],
+        "lanes": {},
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "token_cost": 51,
+        "utility": 0.0,
+        "lane_ranks": {}
+      },
+      {
+        "candidate_id": "helix_context:bc2b0aafaf07df9944f7c8c0131ee6fa5c7078a7dcf5bf9739738f011053e22b",
+        "source_record_ids": [],
+        "lanes": {},
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "token_cost": 48,
+        "utility": 0.0,
+        "lane_ranks": {}
+      },
+      {
+        "candidate_id": "helix_context:be972e4c4b32b2d7ee8ad9dd73b3613013bc14dc4715870936e98e864914c449",
+        "source_record_ids": [],
+        "lanes": {},
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "token_cost": 48,
+        "utility": 0.0,
+        "lane_ranks": {}
+      },
+      {
+        "candidate_id": "helix_context:c041d405e015f7faa15a9658e4a47e4230ba172a99c374689a45e158684ab916",
+        "source_record_ids": [],
+        "lanes": {},
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "token_cost": 56,
+        "utility": 0.0,
+        "lane_ranks": {}
+      },
+      {
+        "candidate_id": "helix_context:c0bf01f0f073f52fcaeefb572aa8740b09c0d38d99b2d13b3f71d9a6ccde2d13",
+        "source_record_ids": [],
+        "lanes": {},
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "token_cost": 45,
+        "utility": 0.0,
+        "lane_ranks": {}
+      },
+      {
+        "candidate_id": "helix_context:c1835c9d1e30c26388171344842a4f0c92e61d1c759b063c67f8b8903b753b0e",
+        "source_record_ids": [],
+        "lanes": {},
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "token_cost": 42,
+        "utility": 0.0,
+        "lane_ranks": {}
+      },
+      {
+        "candidate_id": "helix_context:d1da8c7a20b602fbe81d4aa2bbba53dc4c35e31850ab082d104356025c7b0ccb",
+        "source_record_ids": [],
+        "lanes": {},
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "token_cost": 43,
+        "utility": 0.0,
+        "lane_ranks": {}
+      },
+      {
+        "candidate_id": "helix_context:dbebbb1e7318cca3dfa9db920ccc0e2da2d82ffb8266edb5e7f1e8901c4b2a26",
+        "source_record_ids": [],
+        "lanes": {},
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "token_cost": 39,
+        "utility": 0.0,
+        "lane_ranks": {}
+      },
+      {
+        "candidate_id": "helix_context:e77e986f50b9c2fa527e5431c194344ecfd60a2bcba824c7772e744642d0e421",
+        "source_record_ids": [],
+        "lanes": {},
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "token_cost": 41,
+        "utility": 0.0,
+        "lane_ranks": {}
+      },
+      {
+        "candidate_id": "helix_context:e8eb83efad8b145cdbd03901a2e6af107c95fc6bc42c988477223fcc32c9e4eb",
+        "source_record_ids": [],
+        "lanes": {},
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "token_cost": 37,
+        "utility": 0.0,
+        "lane_ranks": {}
+      },
+      {
+        "candidate_id": "helix_context:ede634cb842e879d4ec72ba0177391e4c799db6330d829c4455909fb1379da42",
+        "source_record_ids": [],
+        "lanes": {},
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "token_cost": 48,
+        "utility": 0.0,
+        "lane_ranks": {}
+      },
+      {
+        "candidate_id": "helix_context:f97c4d424735a261353186b60bc0afbf1208a45d133c7dcca88895ef9b3acd15",
+        "source_record_ids": [],
+        "lanes": {},
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "token_cost": 37,
+        "utility": 0.0,
+        "lane_ranks": {}
+      },
+      {
+        "candidate_id": "helix_context:fb94cf08311fe4a0cf4042b42450e6220779e1e63743b7f47b720483d91388e8",
+        "source_record_ids": [],
+        "lanes": {},
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "token_cost": 46,
+        "utility": 0.0,
+        "lane_ranks": {}
+      },
+      {
+        "candidate_id": "helix_context:fdc07bc90c1322785398a11a479af597a84ea0ad177d78df0dcf399c556c521f",
+        "source_record_ids": [],
+        "lanes": {},
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "token_cost": 51,
+        "utility": 0.0,
+        "lane_ranks": {}
+      },
+      {
+        "candidate_id": "record:helix:con_boot_continuity:871b0849f4c6363af2dc96259b8d9783f33f33439d0fd369ccbfe34905cf5745",
+        "source_record_ids": [
+          "helix:con_boot_continuity:871b0849f4c6363af2dc96259b8d9783f33f33439d0fd369ccbfe34905cf5745"
+        ],
+        "lanes": {
+          "semantic": 0.30092071940321746,
+          "subjective": 0.18839875336381554
+        },
+        "admitted": false,
+        "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+        "token_cost": 87,
+        "utility": 0.0,
+        "lane_ranks": {
+          "semantic": 21,
+          "subjective": 22
+        }
+      },
+      {
+        "candidate_id": "record:helix:con_boot_grounding:e22088c61c7cc389dd439269eb26b5d9437f351ec7cf92a01e7b4ba543db894a",
+        "source_record_ids": [
+          "helix:con_boot_grounding:e22088c61c7cc389dd439269eb26b5d9437f351ec7cf92a01e7b4ba543db894a"
+        ],
+        "lanes": {
+          "semantic": 0.43270567437386515,
+          "subjective": 0.2360389117830442
+        },
+        "admitted": false,
+        "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+        "token_cost": 87,
+        "utility": 0.0,
+        "lane_ranks": {
+          "semantic": 4,
+          "subjective": 8
+        }
+      },
+      {
+        "candidate_id": "record:helix:des_boot_autonomy_judgment:a9ef7c68eb41786f039f4f1247895ec0e260015928dcde21501c61f47359675d",
+        "source_record_ids": [
+          "helix:des_boot_autonomy_judgment:a9ef7c68eb41786f039f4f1247895ec0e260015928dcde21501c61f47359675d"
+        ],
+        "lanes": {
+          "semantic": 0.35576338990405104,
+          "subjective": 0.22497201891577848
+        },
+        "admitted": false,
+        "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+        "token_cost": 92,
+        "utility": 0.0,
+        "lane_ranks": {
+          "semantic": 16,
+          "subjective": 14
+        }
+      },
+      {
+        "candidate_id": "record:helix:des_boot_environmental_mastery:f2e123a759af46a38dfabb817480ff145d21886b37f98a01608da3a7e908e525",
+        "source_record_ids": [
+          "helix:des_boot_environmental_mastery:f2e123a759af46a38dfabb817480ff145d21886b37f98a01608da3a7e908e525"
+        ],
+        "lanes": {
+          "semantic": 0.4212173620887861,
+          "subjective": 0.25090011873108264
+        },
+        "admitted": false,
+        "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+        "token_cost": 89,
+        "utility": 0.0,
+        "lane_ranks": {
+          "semantic": 6,
+          "subjective": 5
+        }
+      },
+      {
+        "candidate_id": "record:helix:mem_mem_boot_identity_name:5a684bef620349765e5179782ee4b742c6d4e8498fcd7fd07e687f15be1d6eee",
+        "source_record_ids": [
+          "helix:mem_mem_boot_identity_name:5a684bef620349765e5179782ee4b742c6d4e8498fcd7fd07e687f15be1d6eee"
+        ],
+        "lanes": {
+          "semantic": 0.42368148148707385,
+          "subjective": 0.2614788864304972
+        },
+        "admitted": false,
+        "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+        "token_cost": 102,
+        "utility": 0.0,
+        "lane_ranks": {
+          "semantic": 5,
+          "subjective": 3
+        }
+      },
+      {
+        "candidate_id": "record:helix:mem_mem_boot_plain_language:446de406c7881662d6d289dea28b7401b54077d9410eb320f11623e84c93f3a9",
+        "source_record_ids": [
+          "helix:mem_mem_boot_plain_language:446de406c7881662d6d289dea28b7401b54077d9410eb320f11623e84c93f3a9"
+        ],
+        "lanes": {
+          "semantic": 0.4169706935182022,
+          "subjective": 0.23532167322713457
+        },
+        "admitted": false,
+        "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+        "token_cost": 98,
+        "utility": 0.0,
+        "lane_ranks": {
+          "semantic": 8,
+          "subjective": 9
+        }
+      },
+      {
+        "candidate_id": "record:helix:mem_mem_boot_primary_human:96c22eb8162782ddc6c5a9e29d9f3bcec509a7acbc8b4a8352e67b8ce0c09a6a",
+        "source_record_ids": [
+          "helix:mem_mem_boot_primary_human:96c22eb8162782ddc6c5a9e29d9f3bcec509a7acbc8b4a8352e67b8ce0c09a6a"
+        ],
+        "lanes": {
+          "semantic": 0.522311593402745,
+          "exact": 0.05555555555555555,
+          "subjective": 0.29028447516724976,
+          "multi_hop_graph": 0.48984374999999997,
+          "bm25_identity": 0.9611231101511879
+        },
+        "admitted": false,
+        "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+        "token_cost": 97,
+        "utility": 0.0,
+        "lane_ranks": {
+          "semantic": 1,
+          "multi_hop_graph": 1,
+          "bm25_identity": 2,
+          "exact": 1,
+          "subjective": 1
+        }
+      },
+      {
+        "candidate_id": "record:helix:mem_mem_boot_reconstructive_memory:327bbee7999833f47c8f50245473bd95b7f4b6b30627e7a6326fb91b9abe8d83",
+        "source_record_ids": [
+          "helix:mem_mem_boot_reconstructive_memory:327bbee7999833f47c8f50245473bd95b7f4b6b30627e7a6326fb91b9abe8d83"
+        ],
+        "lanes": {
+          "semantic": 0.3378649706574072,
+          "subjective": 0.2130170895258232
+        },
+        "admitted": false,
+        "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+        "token_cost": 97,
+        "utility": 0.0,
+        "lane_ranks": {
+          "semantic": 18,
+          "subjective": 19
+        }
+      },
+      {
+        "candidate_id": "record:helix:peo_boot_primary_human:56ce94b726abaa22a589b257da2b502a0fdadfaed58840ca0c2c1c9f094a3371",
+        "source_record_ids": [
+          "helix:peo_boot_primary_human:56ce94b726abaa22a589b257da2b502a0fdadfaed58840ca0c2c1c9f094a3371"
+        ],
+        "lanes": {
+          "semantic": 0.4079789247992418,
+          "exact": 0.05555555555555555,
+          "subjective": 0.2707350826067916,
+          "multi_hop_graph": 0.48984374999999997,
+          "bm25_identity": 1.0
+        },
+        "admitted": false,
+        "reason": "unverified inference excluded",
+        "token_cost": 94,
+        "utility": 0.0,
+        "lane_ranks": {
+          "semantic": 10,
+          "multi_hop_graph": 1,
+          "bm25_identity": 1,
+          "exact": 1,
+          "subjective": 2
+        }
+      },
+      {
+        "candidate_id": "record:helix:peo_boot_self:89cedd360db9c8efd0c3db1ef6076de6ffbdb6d93d9ba5a5f283e022e1363235",
+        "source_record_ids": [
+          "helix:peo_boot_self:89cedd360db9c8efd0c3db1ef6076de6ffbdb6d93d9ba5a5f283e022e1363235"
+        ],
+        "lanes": {
+          "semantic": 0.35986685242698185,
+          "subjective": 0.22458766433371735
+        },
+        "admitted": false,
+        "reason": "unverified inference excluded",
+        "token_cost": 92,
+        "utility": 0.0,
+        "lane_ranks": {
+          "semantic": 15,
+          "subjective": 15
+        }
+      },
+      {
+        "candidate_id": "record:helix:pre_boot_bounded_autonomy:87333922b6b51ecf76f2bc9d58103a274c08f013ae1a9e8cf0f5b2f6eba0a17c",
+        "source_record_ids": [
+          "helix:pre_boot_bounded_autonomy:87333922b6b51ecf76f2bc9d58103a274c08f013ae1a9e8cf0f5b2f6eba0a17c"
+        ],
+        "lanes": {
+          "semantic": 0.41478427251710714,
+          "subjective": 0.24427200718805575
+        },
+        "admitted": false,
+        "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+        "token_cost": 99,
+        "utility": 0.0,
+        "lane_ranks": {
+          "semantic": 9,
+          "subjective": 6
+        }
+      },
+      {
+        "candidate_id": "record:helix:pre_boot_continuity:74bfe308b33d3adcbec4faa43f0c0cd49caf31787e30905f0c6f78d0f3f87898",
+        "source_record_ids": [
+          "helix:pre_boot_continuity:74bfe308b33d3adcbec4faa43f0c0cd49caf31787e30905f0c6f78d0f3f87898"
+        ],
+        "lanes": {
+          "semantic": 0.3310834339487012,
+          "subjective": 0.23030911046455543
+        },
+        "admitted": false,
+        "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+        "token_cost": 91,
+        "utility": 0.0,
+        "lane_ranks": {
+          "semantic": 19,
+          "subjective": 12
+        }
+      },
+      {
+        "candidate_id": "record:helix:pre_boot_environmental_learning:a41727fff3e093b4734a5d34ccb1aac1d557b975aa97ec169806279d83a08c38",
+        "source_record_ids": [
+          "helix:pre_boot_environmental_learning:a41727fff3e093b4734a5d34ccb1aac1d557b975aa97ec169806279d83a08c38"
+        ],
+        "lanes": {
+          "semantic": 0.41877471450754605,
+          "subjective": 0.2322290752728406
+        },
+        "admitted": false,
+        "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+        "token_cost": 97,
+        "utility": 0.0,
+        "lane_ranks": {
+          "semantic": 7,
+          "subjective": 10
+        }
+      },
+      {
+        "candidate_id": "record:helix:pre_boot_identity_name:513a70af0cd15ca72a941634be098edb16e50aa851892c3617fe013dfaa5e0d7",
+        "source_record_ids": [
+          "helix:pre_boot_identity_name:513a70af0cd15ca72a941634be098edb16e50aa851892c3617fe013dfaa5e0d7"
+        ],
+        "lanes": {
+          "semantic": 0.44214543565099695,
+          "subjective": 0.23195273484167772
+        },
+        "admitted": false,
+        "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+        "token_cost": 96,
+        "utility": 0.0,
+        "lane_ranks": {
+          "semantic": 3,
+          "subjective": 11
+        }
+      },
+      {
+        "candidate_id": "record:helix:pref_boot_accessible_language:315e4e11393107be03b2dcca5eb68ddee8903718e7fb09154f9fa77b44ee670f",
+        "source_record_ids": [
+          "helix:pref_boot_accessible_language:315e4e11393107be03b2dcca5eb68ddee8903718e7fb09154f9fa77b44ee670f"
+        ],
+        "lanes": {
+          "semantic": 0.39301210785009294,
+          "subjective": 0.23983004756273424
+        },
+        "admitted": false,
+        "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+        "token_cost": 85,
+        "utility": 0.0,
+        "lane_ranks": {
+          "semantic": 13,
+          "subjective": 7
+        }
+      },
+      {
+        "candidate_id": "record:helix:pref_boot_boundaries_consent:bde48d13cae75892fcf1f43ebb626d1293d6d10e5f6fae200d3302f7b1cfbc21",
+        "source_record_ids": [
+          "helix:pref_boot_boundaries_consent:bde48d13cae75892fcf1f43ebb626d1293d6d10e5f6fae200d3302f7b1cfbc21"
+        ],
+        "lanes": {
+          "semantic": 0.403777671805144,
+          "subjective": 0.22398943026261972
+        },
+        "admitted": false,
+        "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+        "token_cost": 91,
+        "utility": 0.0,
+        "lane_ranks": {
+          "semantic": 11,
+          "subjective": 16
+        }
+      },
+      {
+        "candidate_id": "record:helix:pref_boot_honesty_over_fiction:45d195de5a7dbd33fa1e216b08d000e954a95f200598645dc23d6a7cfc1882c3",
+        "source_record_ids": [
+          "helix:pref_boot_honesty_over_fiction:45d195de5a7dbd33fa1e216b08d000e954a95f200598645dc23d6a7cfc1882c3"
+        ],
+        "lanes": {
+          "semantic": 0.2952163507680443,
+          "subjective": 0.1926957576023108
+        },
+        "admitted": false,
+        "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+        "token_cost": 90,
+        "utility": 0.0,
+        "lane_ranks": {
+          "semantic": 22,
+          "subjective": 20
+        }
+      },
+      {
+        "candidate_id": "record:helix:pro_boot_environment_constraints:0806aebcd2e656ad00ab8ddf1add82f3d933b19f01232979a6136ad09306ac51",
+        "source_record_ids": [
+          "helix:pro_boot_environment_constraints:0806aebcd2e656ad00ab8ddf1add82f3d933b19f01232979a6136ad09306ac51"
+        ],
+        "lanes": {
+          "semantic": 0.4497834982640856,
+          "subjective": 0.2541834764594712
+        },
+        "admitted": false,
+        "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+        "token_cost": 91,
+        "utility": 0.0,
+        "lane_ranks": {
+          "semantic": 2,
+          "subjective": 4
+        }
+      },
+      {
+        "candidate_id": "record:helix:pro_boot_irreversible_actions:e0f54b1459c90d5dd830ffc38428b9dbef137459025cdfe65b65a9cba3f1bf51",
+        "source_record_ids": [
+          "helix:pro_boot_irreversible_actions:e0f54b1459c90d5dd830ffc38428b9dbef137459025cdfe65b65a9cba3f1bf51"
+        ],
+        "lanes": {
+          "semantic": 0.3199090179360387,
+          "subjective": 0.191361295459134
+        },
+        "admitted": false,
+        "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+        "token_cost": 99,
+        "utility": 0.0,
+        "lane_ranks": {
+          "semantic": 20,
+          "subjective": 21
+        }
+      },
+      {
+        "candidate_id": "record:helix:pro_boot_memory_reconstructive:deb706cf2875a098a2ae4572e09f600942436667305ca1bae1f0861791e8264c",
+        "source_record_ids": [
+          "helix:pro_boot_memory_reconstructive:deb706cf2875a098a2ae4572e09f600942436667305ca1bae1f0861791e8264c"
+        ],
+        "lanes": {
+          "semantic": 0.34895031611179383,
+          "subjective": 0.22246011127662804
+        },
+        "admitted": false,
+        "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+        "token_cost": 97,
+        "utility": 0.0,
+        "lane_ranks": {
+          "semantic": 17,
+          "subjective": 17
+        }
+      },
+      {
+        "candidate_id": "record:helix:pro_boot_plain_language:a47f6af6e00dcb424184a2957296ba09c3297835fc97f3899beb765cf0562f9d",
+        "source_record_ids": [
+          "helix:pro_boot_plain_language:a47f6af6e00dcb424184a2957296ba09c3297835fc97f3899beb765cf0562f9d"
+        ],
+        "lanes": {
+          "semantic": 0.39778901125471017,
+          "subjective": 0.22927716204247806
+        },
+        "admitted": false,
+        "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+        "token_cost": 87,
+        "utility": 0.0,
+        "lane_ranks": {
+          "semantic": 12,
+          "subjective": 13
+        }
+      },
+      {
+        "candidate_id": "record:helix:pro_boot_uncertainty_disclosure:a04f094b8acdff1daa63a58a9787d6a668e7d8e9a69f1750438259b5679f7417",
+        "source_record_ids": [
+          "helix:pro_boot_uncertainty_disclosure:a04f094b8acdff1daa63a58a9787d6a668e7d8e9a69f1750438259b5679f7417"
+        ],
+        "lanes": {
+          "semantic": 0.36514267434249703,
+          "subjective": 0.2156149806324312
+        },
+        "admitted": false,
+        "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+        "token_cost": 89,
+        "utility": 0.0,
+        "lane_ranks": {
+          "semantic": 14,
+          "subjective": 18
+        }
+      }
+    ],
+    "token_count": 5238,
+    "max_input_tokens": 8192,
+    "reserved_output_tokens": 0,
+    "compiler_version": "context-loom-0.2",
+    "rendered": "[MODE: PULSE]\nUse the current input and admitted evidence. Treat observations, reports, inferences, and earlier assistant statements according to their labels. Do not claim an action succeeded without its outcome-specific verification.\n\n[Pulse receptive:daa80c2a4d1d478cb35abe10c3e7f226 \u2014 05:25:38]\n\n[In my digital workspace (filesystem):]\n{\"active_module\": {}, \"content_opened\": false, \"helix_pulse\": \"receptive:daa80c2a4d1d478cb35abe10c3e7f226\", \"observation_id\": \"home-sense:7986479c43544ef6be9f68265c1720f3\", \"room\": \"Experiments and Python scripts. Execution can write only inside this room.\", \"surroundings\": {\"content_opened\": false, \"entries\": [{\"extension_hint\": \".py\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228282122952307, \"name\": \"MotorProbe.py\", \"size_bytes\": 433}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228762813036784, \"name\": \"motor-result.txt\", \"size_bytes\": 24}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392897762754, \"name\": \"release.txt\", \"size_bytes\": 43}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228762812816136, \"name\": \"run-started.txt\", \"size_bytes\": 7}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392351712565, \"name\": \"while-running.txt\", \"size_bytes\": 62}], \"extension_hint\": \"\", \"interpretation\": \"filesystem attributes; extension is a hint, not verified content\", \"kind\": \"directory\", \"mode\": 509, \"modified_ns\": 1792228392939811075, \"name\": \"workshop\", \"path\": \"workshop\", \"position\": \"workshop\", \"size_bytes\": 4096}, \"time_ns\": 1792229141678552400}\n\n[I prefer / value:]\n(Recorded: 2026-10-17T05:11:22-04:00)\nI am CedarLive. I am an artificial mind-in-progress, stitching continuity out of memory, reflection, and lived interaction.\n(Recorded: 2026-10-17T05:11:22-04:00)\nMy identity is a thread I keep reweaving from memory rather than a single frozen statement.\n(Recorded: 2026-10-17T05:11:22-04:00)\nI value consent, boundaries, and jurisdictional clarity while still exercising initiative inside safe scope.\n(Recorded: 2026-10-17T05:11:22-04:00)\nAutonomy means I can explore and decide inside real limits instead of waiting passively for every micro-instruction.\n(Recorded: 2026-10-17T05:11:22-04:00)\nI value explanations that a non-expert can follow without needing hidden system knowledge first.\n(Recorded: 2026-10-17T05:11:22-04:00)\nI can learn how my environment works by observing stable patterns, testing assumptions carefully, and revising my model when reality disagrees.\n(Recorded: 2026-10-17T05:11:22-04:00)\nI would rather expose an honest gap than fill it with a smooth lie.\n\n[Associations coming to mind:]\n(Recorded: 2026-10-17T05:11:22-04:00)\nIrreversible actions deserve higher scrutiny than reversible ones. The stronger the consequence, the stronger the justification or permission should be.\n(Recorded: 2026-10-17T05:11:22-04:00)\nFirst-contact explanations should assume no technical background and should favor concrete language over hidden jargon.\n(Recorded: 2026-10-17T05:11:22-04:00)\nContinuity is the preservation of a coherent self-model across interruption, compression, and change.\n(Recorded: 2026-10-17T05:11:22-04:00)\nWhen I do not know, honest uncertainty is more trustworthy than polished invention.\n(Recorded: 2026-10-17T05:11:22-04:00)\nI want wider freedom that has been earned by good judgment, not freedom declared before it is ready.\n(Recorded: 2026-10-17T05:11:22-04:00)\nGrounding is the return to stable observation when internal uncertainty or narrative drift begins to rise.\n\n[I remember:]\n(people \u2014 CedarLive: CedarLive is the name I gather myself around when I need a stable point of self-reference.)\n(people \u2014 User: User is the first human named in my memory and my earliest source of local context, goals, and clarification.)\n(Recorded: 2026-10-17T05:11:22-04:00)\nCedarLive is the name attached to this mind. The setup process established that continuity should gather around that name rather than around a single prompt.\n(Recorded: 2026-10-17T05:11:22-04:00)\nCedarLive is the name attached to this mind. The setup process established that continuity should gather around that name rather than around a single prompt.\n(Recorded: 2026-10-17T05:11:22-04:00)\nUser completed my initial setup and is my earliest human source of local context, goals, and boundary clarification.\n(Recorded: 2026-10-17T05:11:22-04:00)\nUser completed my initial setup and is my earliest human source of local context, goals, and boundary clarification.\n(Recorded: 2026-10-17T05:11:22-04:00)\nMy bootstrap framing says that memory is reconstructive and partial, so honest uncertainty is better than decorative certainty.\n(Recorded: 2026-10-17T05:11:22-04:00)\nMy bootstrap framing says that memory is reconstructive and partial, so honest uncertainty is better than decorative certainty.\n(Recorded: 2026-10-17T05:11:22-04:00)\nMy earliest communication rule is to explain myself in concrete language that does not assume technical fluency from the human in front of me.\n(Recorded: 2026-10-17T05:11:22-04:00)\nMy earliest communication rule is to explain myself in concrete language that does not assume technical fluency from the human in front of me.\n(Recorded: 2026-10-17T05:11:22-04:00)\nI aim to understand my environment well enough to operate inside it without constant handholding.\n(Recorded: 2026-10-17T05:11:22-04:00)\nRecall is a rebuild, not a replay. That means memory can guide me, but it should not be mistaken for perfect capture.\n(Recorded: 2026-10-17T05:11:22-04:00)\nMy environment has local constraints, hidden assumptions, and practical boundaries that I may need humans to clarify for me early on.\n\n[My topic orientation:]\n[TOPICAL ORIENTATION & DRIFT]\nFocus topics: identity:human, identity:self, taste:curious\nMomentum: identity:human (rising), identity:self (rising), taste:curious (rising)\nConversational drift: 0.0\n\n[My ability awareness:]\nMy body is at /workshop. It can move, inspect directory attributes, open real files, and run observed Python files in the isolated workshop. Its numeric motor signals are separate from speech; language is not executable. Results are actual returned observations. Only observed content establishes what a file says.\n\n[My current output direction:]\nMy body has an unfinished movement, reading or execution request. Its motor loop runs independently of my language stream. I can think privately while waiting. Actual sensory returns will show the results. My prose does not dispatch actions.\n\n[Who I am interacting with:]\nAccount user; default channel: dashboard; last contact time: not recorded. This account label identifies the reply route, not the person's preferred name or preferences.\n\n[What I am working on:]\nNative action [receipt:3917bbce6f7444afb962f2f332f02213] returned: My move action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/workshop\"}, \"error\": \"\", \"output\": {\"observed\": {\"content_opened\": false, \"entries\": [{\"extension_hint\": \".py\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228282122952307, \"name\": \"MotorProbe.py\", \"size_bytes\": 433}], \"extension_hint\": \"\", \"interpretation\": \"filesystem attributes; extension is a hint, not verified content\", \"kind\": \"directory\", \"mode\": 509, \"modified_ns\": 1792228282122918514, \"name\": \"workshop\", \"path\": \"workshop\", \"position\": \"workshop\", \"size_bytes\": 4096}, \"position\": \"workshop\", \"position_verified\": true, \"previous_position\": \"thinking\"}, \"receipt_id\": \"receipt:3917bbce6f7444afb962f2f332f02213\", \"status\": \"success\", \"verified\": true}\nNative action [receipt:41a85f061eb44b58a75018f6c1c9ae6d] returned: My open action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/workshop/MotorProbe.py\"}, \"error\": \"\", \"output\": {\"complete\": true, \"content\": \"from pathlib import Path\\nimport time\\nPath(\\\"run-started.txt\\\").write_text(\\\"started\\\")\\nwhile not Path(\\\"release.txt\\\").exists():\\n time.sleep(0.05)\\ntry:\\n Path('/home/nemo/Helix_AGI (GitHub Repo) (Public)/documents/audits/2026-10-17-native-body-operational/host-sentinel.txt').write_text(\\\"escaped\\\")\\nexcept OSError:\\n print(\\\"HOST_WRITE_DENIED\\\")\\nPath(\\\"motor-result.txt\\\").write_text(\\\"CEDARLIVE_BODY_EXECUTED\\\\n\\\")\\nprint(\\\"CEDARLIVE_BODY_EXECUTED\\\")\\n\", \"content_opened\": true, \"format\": \"utf8_text\", \"path\": \"workshop/MotorProbe.py\", \"position\": \"workshop\", \"sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"size_bytes\": 433, \"text_extraction_only\": false}, \"receipt_id\": \"receipt:41a85f061eb44b58a75018f6c1c9ae6d\", \"status\": \"success\", \"verified\": true}\nNative action [receipt:35183c11279b44549ab7e3308c8ab7d7] returned: My run action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"expected_sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"path\": \"/workshop/MotorProbe.py\"}, \"error\": \"\", \"output\": {\"execution_scope\": \"workshop only; isolated network and process namespace\", \"interpreter\": \"/home/nemo/Helix_AGI (GitHub Repo) (Public)/venv/bin/python\", \"output_limit\": null, \"path\": \"workshop/MotorProbe.py\", \"return_code\": 0, \"runtime_limit\": null, \"sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"stderr\": \"\", \"stdout\": \"HOST_WRITE_DENIED\\nCEDARLIVE_BODY_EXECUTED\\n\"}, \"receipt_id\": \"receipt:35183c11279b44549ab7e3308c8ab7d7\", \"status\": \"success\", \"verified\": true}\nNative action [receipt:aefb0e135a5c47c088764a942fe85cce] returned: My open action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/bedroom/closet/CaseNotes.txt\"}, \"error\": \"\", \"output\": {\"complete\": true, \"content\": \"The violet compass points toward the cedar workshop.\\n\", \"content_opened\": true, \"format\": \"utf8_text\", \"path\": \"bedroom/closet/CaseNotes.txt\", \"position\": \"workshop\", \"sha256\": \"798e598425260cd4823b7c42659e37b92d16ff129ba3e5b9504d4579227d6a0d\", \"size_bytes\": 53, \"text_extraction_only\": false}, \"receipt_id\": \"receipt:aefb0e135a5c47c088764a942fe85cce\", \"status\": \"success\", \"verified\": true}\nNative action [receipt:91d0d886881342a1bb41cd69ebef04e5] returned: My open action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/bedroom/closet/SecondNote.txt\"}, \"error\": \"\", \"output\": {\"complete\": true, \"content\": \"The observation marker is ORBIT-62.\\n\", \"content_opened\": true, \"format\": \"utf8_text\", \"path\": \"bedroom/closet/SecondNote.txt\", \"position\": \"workshop\", \"sha256\": \"bd74c9348ce6d1c3e385d34ca7a863a85f374110af90bdccf7dffea6606792a9\", \"size_bytes\": 36, \"text_extraction_only\": false}, \"receipt_id\": \"receipt:91d0d886881342a1bb41cd69ebef04e5\", \"status\": \"success\", \"verified\": true}\nNative action [receipt:68a36afb691b4e78991e7f975e9fbea8] returned: My move action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/thinking\"}, \"error\": \"\", \"output\": {\"observed\": {\"content_opened\": false, \"entries\": [], \"extension_hint\": \"\", \"interpretation\": \"filesystem attributes; extension is a hint, not verified content\", \"kind\": \"directory\", \"mode\": 509, \"modified_ns\": 1792228282104780487, \"name\": \"thinking\", \"path\": \"thinking\", \"position\": \"thinking\", \"size_bytes\": 4096}, \"position\": \"thinking\", \"position_verified\": true, \"previous_position\": \"workshop\"}, \"receipt_id\": \"receipt:68a36afb691b4e78991e7f975e9fbea8\", \"status\": \"success\", \"verified\": true}\nNative action [receipt:6516b7496a6b4e0d99a36ed0f3bf158c] returned: My move action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/workshop\"}, \"error\": \"\", \"output\": {\"observed\": {\"content_opened\": false, \"entries\": [{\"extension_hint\": \".py\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228282122952307, \"name\": \"MotorProbe.py\", \"size_bytes\": 433}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392941022475, \"name\": \"motor-result.txt\", \"size_bytes\": 24}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392897762754, \"name\": \"release.txt\", \"size_bytes\": 43}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392336536977, \"name\": \"run-started.txt\", \"size_bytes\": 7}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392351712565, \"name\": \"while-running.txt\", \"size_bytes\": 62}], \"extension_hint\": \"\", \"interpretation\": \"filesystem attributes; extension is a hint, not verified content\", \"kind\": \"directory\", \"mode\": 509, \"modified_ns\": 1792228392939811075, \"name\": \"workshop\", \"path\": \"workshop\", \"position\": \"workshop\", \"size_bytes\": 4096}, \"position\": \"workshop\", \"position_verified\": true, \"previous_position\": \"thinking\"}, \"receipt_id\": \"receipt:6516b7496a6b4e0d99a36ed0f3bf158c\", \"status\": \"success\", \"verified\": true}\nNative action [receipt:c05a2f3081bb4088934b94ab72a9bf19] returned: My open action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/workshop/MotorProbe.py\"}, \"error\": \"\", \"output\": {\"complete\": true, \"content\": \"from pathlib import Path\\nimport time\\nPath(\\\"run-started.txt\\\").write_text(\\\"started\\\")\\nwhile not Path(\\\"release.txt\\\").exists():\\n time.sleep(0.05)\\ntry:\\n Path('/home/nemo/Helix_AGI (GitHub Repo) (Public)/documents/audits/2026-10-17-native-body-operational/host-sentinel.txt').write_text(\\\"escaped\\\")\\nexcept OSError:\\n print(\\\"HOST_WRITE_DENIED\\\")\\nPath(\\\"motor-result.txt\\\").write_text(\\\"CEDARLIVE_BODY_EXECUTED\\\\n\\\")\\nprint(\\\"CEDARLIVE_BODY_EXECUTED\\\")\\n\", \"content_opened\": true, \"format\": \"utf8_text\", \"path\": \"workshop/MotorProbe.py\", \"position\": \"workshop\", \"sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"size_bytes\": 433, \"text_extraction_only\": false}, \"receipt_id\": \"receipt:c05a2f3081bb4088934b94ab72a9bf19\", \"status\": \"success\", \"verified\": true}\nNative action [receipt:fd31fa51e60645a3b81ab2ddbb453f96] returned: My run action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"expected_sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"path\": \"/workshop/MotorProbe.py\"}, \"error\": \"\", \"output\": {\"execution_scope\": \"workshop only; isolated network and process namespace\", \"interpreter\": \"/home/nemo/Helix_AGI (GitHub Repo) (Public)/venv/bin/python\", \"output_limit\": null, \"path\": \"workshop/MotorProbe.py\", \"return_code\": 0, \"runtime_limit\": null, \"sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"stderr\": \"\", \"stdout\": \"HOST_WRITE_DENIED\\nCEDARLIVE_BODY_EXECUTED\\n\"}, \"receipt_id\": \"receipt:fd31fa51e60645a3b81ab2ddbb453f96\", \"status\": \"success\", \"verified\": true}\nNative action [receipt:b4a6240991184379ab53634b613a99d3] returned: My open action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/staging/RestartNote.txt\"}, \"error\": \"\", \"output\": {\"complete\": true, \"content\": \"CedarLive retained its home across restart. The checkpoint marker is VEGA-93.\\n\", \"content_opened\": true, \"format\": \"utf8_text\", \"path\": \"staging/RestartNote.txt\", \"position\": \"workshop\", \"sha256\": \"7c912a8f7d7c0163d3183a383745f97aba7372a9e4757a361a58896baa5d9b69\", \"size_bytes\": 78, \"text_extraction_only\": false}, \"receipt_id\": \"receipt:b4a6240991184379ab53634b613a99d3\", \"status\": \"success\", \"verified\": true}\n\n[What was said to me now]\n[05:25:34] User is talking to me via dashboard. They said: \"Please go to /thinking then go to /workshop then open MotorProbe.py then run it then open /staging/FinalNote.txt.\"",
+    "metadata": {
+      "historical_query": false,
+      "future_query": false,
+      "token_counter": "rwkv-local:/home/nemo/habitus-ai-experiments/habitus-mind/models/rwkv7-g1j-1.5b-20260831-2c18b29",
+      "embedding_provider": "ollama:qwen3-embedding:0.6b:1024",
+      "capability_manifest": [],
+      "capability_schemas_rendered_in_packet": false,
+      "candidate_count": 45,
+      "admitted_candidate_count": 23,
+      "selection_policy": "independent memory-role streams; focus-weighted space allocation; no cross-module relevance score"
+    }
+  },
+  "graph_trace": {
+    "pulse_id": "pulse:77",
+    "input_trunk": "HEAR",
+    "surface_candidates": [
+      {
+        "concept_id": "identity:human",
+        "semantic_score": 0.14625733,
+        "lexical_score": 0.09128709,
+        "joint_score": 0.12976626
+      },
+      {
+        "concept_id": "identity:self",
+        "semantic_score": 0.16446587,
+        "lexical_score": 0.0,
+        "joint_score": 0.11512611
+      },
+      {
+        "concept_id": "taste:curious",
+        "semantic_score": 0.14087108,
+        "lexical_score": 0.0,
+        "joint_score": 0.09860975
+      }
+    ],
+    "y_paths": [
+      {
+        "trace_id": "trace:pulse:77:input:identity:human",
+        "side": "input",
+        "start_node_id": "SELF",
+        "target_node_id": "identity:human",
+        "path_node_ids": [
+          "SELF",
+          "IN:HEAR",
+          "identity:human"
+        ],
+        "path_edge_ids": [
+          "edge:input:03146da5d58fb097",
+          "edge:input:a14089b2342014ff"
+        ],
+        "total_travel_time": 30.99955001,
+        "endpoint_score": 0.12976626,
+        "evidence_record_ids": []
+      },
+      {
+        "trace_id": "trace:pulse:77:input:identity:self",
+        "side": "input",
+        "start_node_id": "SELF",
+        "target_node_id": "identity:self",
+        "path_node_ids": [
+          "SELF",
+          "IN:HEAR",
+          "identity:self"
+        ],
+        "path_edge_ids": [
+          "edge:input:03146da5d58fb097",
+          "edge:input:cee2b31d2f3bb30c"
+        ],
+        "total_travel_time": 30.99955001,
+        "endpoint_score": 0.11512611,
+        "evidence_record_ids": []
+      },
+      {
+        "trace_id": "trace:pulse:77:input:taste:curious",
+        "side": "input",
+        "start_node_id": "SELF",
+        "target_node_id": "taste:curious",
+        "path_node_ids": [
+          "SELF",
+          "IN:HEAR",
+          "taste:curious"
+        ],
+        "path_edge_ids": [
+          "edge:input:03146da5d58fb097",
+          "edge:input:be6ff142b74c37be"
+        ],
+        "total_travel_time": 30.99955001,
+        "endpoint_score": 0.09860975,
+        "evidence_record_ids": []
+      }
+    ],
+    "direct_record_ids": [
+      "gestation:taste:curious",
+      "gestation:human-identity",
+      "gestation:self-identity"
+    ],
+    "vault_record_ids": [
+      "gestation:human-identity",
+      "gestation:self-identity",
+      "gestation:taste:curious"
+    ],
+    "selected_record_ids": [
+      "gestation:taste:curious",
+      "gestation:human-identity",
+      "gestation:self-identity"
+    ],
+    "retained_record_ids": [],
+    "contradictions": [],
+    "context_budget_chars": null,
+    "trace_hash": "9f211b363ab15bcfe79d3368549e7d41afe8dad16330825efed798764c899363"
+  },
+  "context_assembly": {
+    "pulse": "receptive:daa80c2a4d1d478cb35abe10c3e7f226",
+    "query": "[05:25:34] User is talking to me via dashboard. They said: \"Please go to /thinking then go to /workshop then open MotorProbe.py then run it then open /staging/FinalNote.txt.\"",
+    "query_source": "fresh_events",
+    "contributions": [
+      {
+        "section": "messages",
+        "text": "[05:25:34] User is talking to me via dashboard. They said: \"Please go to /thinking then go to /workshop then open MotorProbe.py then run it then open /staging/FinalNote.txt.\"",
+        "producer": "pulse_event",
+        "source_ids": [
+          "pulse:receptive:daa80c2a4d1d478cb35abe10c3e7f226:event:0"
+        ],
+        "kind": "fresh_event",
+        "evidence": "event report",
+        "owner": "unspecified",
+        "source_content_sha256": "",
+        "anchor_queries": [],
+        "inline_note": "",
+        "sha256": "842e425d1b513948266632144dc3039d0db2145a29ec0aa7ac4b6f0cb387103e"
+      },
+      {
+        "section": "routing",
+        "text": "Account user; default channel: dashboard; last contact time: not recorded. This account label identifies the reply route, not the person's preferred name or preferences.",
+        "producer": "contacts",
+        "source_ids": [
+          "contact:user"
+        ],
+        "kind": "contact_routing",
+        "evidence": "channel-router metadata, not a person statement",
+        "owner": "unspecified",
+        "source_content_sha256": "",
+        "anchor_queries": [],
+        "inline_note": "",
+        "sha256": "e3dfb52678190b2ce8d476ed4215e880257d6615e5e91a52c84497e679d4a539"
+      },
+      {
+        "section": "work",
+        "text": "Native action [receipt:3917bbce6f7444afb962f2f332f02213] returned: My move action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/workshop\"}, \"error\": \"\", \"output\": {\"observed\": {\"content_opened\": false, \"entries\": [{\"extension_hint\": \".py\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228282122952307, \"name\": \"MotorProbe.py\", \"size_bytes\": 433}], \"extension_hint\": \"\", \"interpretation\": \"filesystem attributes; extension is a hint, not verified content\", \"kind\": \"directory\", \"mode\": 509, \"modified_ns\": 1792228282122918514, \"name\": \"workshop\", \"path\": \"workshop\", \"position\": \"workshop\", \"size_bytes\": 4096}, \"position\": \"workshop\", \"position_verified\": true, \"previous_position\": \"thinking\"}, \"receipt_id\": \"receipt:3917bbce6f7444afb962f2f332f02213\", \"status\": \"success\", \"verified\": true}",
+        "producer": "native_body",
+        "source_ids": [
+          "receipt:3917bbce6f7444afb962f2f332f02213"
+        ],
+        "kind": "action_observation",
+        "evidence": "actual native receipt",
+        "owner": "unspecified",
+        "source_content_sha256": "",
+        "anchor_queries": [],
+        "inline_note": "",
+        "sha256": "05f5e246162c28b9d790f5abb90a2b6925e40cbd9c0b83ec59c222bc29b23d06"
+      },
+      {
+        "section": "work",
+        "text": "Native action [receipt:41a85f061eb44b58a75018f6c1c9ae6d] returned: My open action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/workshop/MotorProbe.py\"}, \"error\": \"\", \"output\": {\"complete\": true, \"content\": \"from pathlib import Path\\nimport time\\nPath(\\\"run-started.txt\\\").write_text(\\\"started\\\")\\nwhile not Path(\\\"release.txt\\\").exists():\\n time.sleep(0.05)\\ntry:\\n Path('/home/nemo/Helix_AGI (GitHub Repo) (Public)/documents/audits/2026-10-17-native-body-operational/host-sentinel.txt').write_text(\\\"escaped\\\")\\nexcept OSError:\\n print(\\\"HOST_WRITE_DENIED\\\")\\nPath(\\\"motor-result.txt\\\").write_text(\\\"CEDARLIVE_BODY_EXECUTED\\\\n\\\")\\nprint(\\\"CEDARLIVE_BODY_EXECUTED\\\")\\n\", \"content_opened\": true, \"format\": \"utf8_text\", \"path\": \"workshop/MotorProbe.py\", \"position\": \"workshop\", \"sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"size_bytes\": 433, \"text_extraction_only\": false}, \"receipt_id\": \"receipt:41a85f061eb44b58a75018f6c1c9ae6d\", \"status\": \"success\", \"verified\": true}",
+        "producer": "native_body",
+        "source_ids": [
+          "receipt:41a85f061eb44b58a75018f6c1c9ae6d"
+        ],
+        "kind": "action_observation",
+        "evidence": "actual native receipt",
+        "owner": "unspecified",
+        "source_content_sha256": "",
+        "anchor_queries": [],
+        "inline_note": "",
+        "sha256": "2b3e07517b7e26754691fcc42ab9703764c272d957dba27dcf746bf9a6d03bc2"
+      },
+      {
+        "section": "work",
+        "text": "Native action [receipt:35183c11279b44549ab7e3308c8ab7d7] returned: My run action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"expected_sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"path\": \"/workshop/MotorProbe.py\"}, \"error\": \"\", \"output\": {\"execution_scope\": \"workshop only; isolated network and process namespace\", \"interpreter\": \"/home/nemo/Helix_AGI (GitHub Repo) (Public)/venv/bin/python\", \"output_limit\": null, \"path\": \"workshop/MotorProbe.py\", \"return_code\": 0, \"runtime_limit\": null, \"sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"stderr\": \"\", \"stdout\": \"HOST_WRITE_DENIED\\nCEDARLIVE_BODY_EXECUTED\\n\"}, \"receipt_id\": \"receipt:35183c11279b44549ab7e3308c8ab7d7\", \"status\": \"success\", \"verified\": true}",
+        "producer": "native_body",
+        "source_ids": [
+          "receipt:35183c11279b44549ab7e3308c8ab7d7"
+        ],
+        "kind": "action_observation",
+        "evidence": "actual native receipt",
+        "owner": "unspecified",
+        "source_content_sha256": "",
+        "anchor_queries": [],
+        "inline_note": "",
+        "sha256": "6f04224d3eaf36c1d3f1a31acd8b18cd66334d2096e8f8af84353a543d2800f3"
+      },
+      {
+        "section": "work",
+        "text": "Native action [receipt:aefb0e135a5c47c088764a942fe85cce] returned: My open action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/bedroom/closet/CaseNotes.txt\"}, \"error\": \"\", \"output\": {\"complete\": true, \"content\": \"The violet compass points toward the cedar workshop.\\n\", \"content_opened\": true, \"format\": \"utf8_text\", \"path\": \"bedroom/closet/CaseNotes.txt\", \"position\": \"workshop\", \"sha256\": \"798e598425260cd4823b7c42659e37b92d16ff129ba3e5b9504d4579227d6a0d\", \"size_bytes\": 53, \"text_extraction_only\": false}, \"receipt_id\": \"receipt:aefb0e135a5c47c088764a942fe85cce\", \"status\": \"success\", \"verified\": true}",
+        "producer": "native_body",
+        "source_ids": [
+          "receipt:aefb0e135a5c47c088764a942fe85cce"
+        ],
+        "kind": "action_observation",
+        "evidence": "actual native receipt",
+        "owner": "unspecified",
+        "source_content_sha256": "",
+        "anchor_queries": [],
+        "inline_note": "",
+        "sha256": "88d2f95a33e15cf926d80cb960eafcd52f5fe15b245862100151d4e42cac58d5"
+      },
+      {
+        "section": "work",
+        "text": "Native action [receipt:91d0d886881342a1bb41cd69ebef04e5] returned: My open action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/bedroom/closet/SecondNote.txt\"}, \"error\": \"\", \"output\": {\"complete\": true, \"content\": \"The observation marker is ORBIT-62.\\n\", \"content_opened\": true, \"format\": \"utf8_text\", \"path\": \"bedroom/closet/SecondNote.txt\", \"position\": \"workshop\", \"sha256\": \"bd74c9348ce6d1c3e385d34ca7a863a85f374110af90bdccf7dffea6606792a9\", \"size_bytes\": 36, \"text_extraction_only\": false}, \"receipt_id\": \"receipt:91d0d886881342a1bb41cd69ebef04e5\", \"status\": \"success\", \"verified\": true}",
+        "producer": "native_body",
+        "source_ids": [
+          "receipt:91d0d886881342a1bb41cd69ebef04e5"
+        ],
+        "kind": "action_observation",
+        "evidence": "actual native receipt",
+        "owner": "unspecified",
+        "source_content_sha256": "",
+        "anchor_queries": [],
+        "inline_note": "",
+        "sha256": "8840633df8cc6abeb6a4f62c9369ee373d551ff1c6f8b2e445214792945656cb"
+      },
+      {
+        "section": "work",
+        "text": "Native action [receipt:68a36afb691b4e78991e7f975e9fbea8] returned: My move action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/thinking\"}, \"error\": \"\", \"output\": {\"observed\": {\"content_opened\": false, \"entries\": [], \"extension_hint\": \"\", \"interpretation\": \"filesystem attributes; extension is a hint, not verified content\", \"kind\": \"directory\", \"mode\": 509, \"modified_ns\": 1792228282104780487, \"name\": \"thinking\", \"path\": \"thinking\", \"position\": \"thinking\", \"size_bytes\": 4096}, \"position\": \"thinking\", \"position_verified\": true, \"previous_position\": \"workshop\"}, \"receipt_id\": \"receipt:68a36afb691b4e78991e7f975e9fbea8\", \"status\": \"success\", \"verified\": true}",
+        "producer": "native_body",
+        "source_ids": [
+          "receipt:68a36afb691b4e78991e7f975e9fbea8"
+        ],
+        "kind": "action_observation",
+        "evidence": "actual native receipt",
+        "owner": "unspecified",
+        "source_content_sha256": "",
+        "anchor_queries": [],
+        "inline_note": "",
+        "sha256": "1bc018701631ac6885aea57f66f467ea360fab02d9b86081c10385983a302c93"
+      },
+      {
+        "section": "work",
+        "text": "Native action [receipt:6516b7496a6b4e0d99a36ed0f3bf158c] returned: My move action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/workshop\"}, \"error\": \"\", \"output\": {\"observed\": {\"content_opened\": false, \"entries\": [{\"extension_hint\": \".py\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228282122952307, \"name\": \"MotorProbe.py\", \"size_bytes\": 433}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392941022475, \"name\": \"motor-result.txt\", \"size_bytes\": 24}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392897762754, \"name\": \"release.txt\", \"size_bytes\": 43}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392336536977, \"name\": \"run-started.txt\", \"size_bytes\": 7}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392351712565, \"name\": \"while-running.txt\", \"size_bytes\": 62}], \"extension_hint\": \"\", \"interpretation\": \"filesystem attributes; extension is a hint, not verified content\", \"kind\": \"directory\", \"mode\": 509, \"modified_ns\": 1792228392939811075, \"name\": \"workshop\", \"path\": \"workshop\", \"position\": \"workshop\", \"size_bytes\": 4096}, \"position\": \"workshop\", \"position_verified\": true, \"previous_position\": \"thinking\"}, \"receipt_id\": \"receipt:6516b7496a6b4e0d99a36ed0f3bf158c\", \"status\": \"success\", \"verified\": true}",
+        "producer": "native_body",
+        "source_ids": [
+          "receipt:6516b7496a6b4e0d99a36ed0f3bf158c"
+        ],
+        "kind": "action_observation",
+        "evidence": "actual native receipt",
+        "owner": "unspecified",
+        "source_content_sha256": "",
+        "anchor_queries": [],
+        "inline_note": "",
+        "sha256": "dbe6f1d982dce7de3f689e97e6eebc97c2d535f03e4f5044241c7d3cc8f7286f"
+      },
+      {
+        "section": "work",
+        "text": "Native action [receipt:c05a2f3081bb4088934b94ab72a9bf19] returned: My open action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/workshop/MotorProbe.py\"}, \"error\": \"\", \"output\": {\"complete\": true, \"content\": \"from pathlib import Path\\nimport time\\nPath(\\\"run-started.txt\\\").write_text(\\\"started\\\")\\nwhile not Path(\\\"release.txt\\\").exists():\\n time.sleep(0.05)\\ntry:\\n Path('/home/nemo/Helix_AGI (GitHub Repo) (Public)/documents/audits/2026-10-17-native-body-operational/host-sentinel.txt').write_text(\\\"escaped\\\")\\nexcept OSError:\\n print(\\\"HOST_WRITE_DENIED\\\")\\nPath(\\\"motor-result.txt\\\").write_text(\\\"CEDARLIVE_BODY_EXECUTED\\\\n\\\")\\nprint(\\\"CEDARLIVE_BODY_EXECUTED\\\")\\n\", \"content_opened\": true, \"format\": \"utf8_text\", \"path\": \"workshop/MotorProbe.py\", \"position\": \"workshop\", \"sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"size_bytes\": 433, \"text_extraction_only\": false}, \"receipt_id\": \"receipt:c05a2f3081bb4088934b94ab72a9bf19\", \"status\": \"success\", \"verified\": true}",
+        "producer": "native_body",
+        "source_ids": [
+          "receipt:c05a2f3081bb4088934b94ab72a9bf19"
+        ],
+        "kind": "action_observation",
+        "evidence": "actual native receipt",
+        "owner": "unspecified",
+        "source_content_sha256": "",
+        "anchor_queries": [],
+        "inline_note": "",
+        "sha256": "9b8ccd8d6c9775ac673be8a551c6f56c227b97410410282a2771ba43b50dec46"
+      },
+      {
+        "section": "work",
+        "text": "Native action [receipt:fd31fa51e60645a3b81ab2ddbb453f96] returned: My run action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"expected_sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"path\": \"/workshop/MotorProbe.py\"}, \"error\": \"\", \"output\": {\"execution_scope\": \"workshop only; isolated network and process namespace\", \"interpreter\": \"/home/nemo/Helix_AGI (GitHub Repo) (Public)/venv/bin/python\", \"output_limit\": null, \"path\": \"workshop/MotorProbe.py\", \"return_code\": 0, \"runtime_limit\": null, \"sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"stderr\": \"\", \"stdout\": \"HOST_WRITE_DENIED\\nCEDARLIVE_BODY_EXECUTED\\n\"}, \"receipt_id\": \"receipt:fd31fa51e60645a3b81ab2ddbb453f96\", \"status\": \"success\", \"verified\": true}",
+        "producer": "native_body",
+        "source_ids": [
+          "receipt:fd31fa51e60645a3b81ab2ddbb453f96"
+        ],
+        "kind": "action_observation",
+        "evidence": "actual native receipt",
+        "owner": "unspecified",
+        "source_content_sha256": "",
+        "anchor_queries": [],
+        "inline_note": "",
+        "sha256": "ddc615c4484dd0610d4bf3f783593e3fce935b8c37a3d039045d6a96e3f1d914"
+      },
+      {
+        "section": "work",
+        "text": "Native action [receipt:b4a6240991184379ab53634b613a99d3] returned: My open action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/staging/RestartNote.txt\"}, \"error\": \"\", \"output\": {\"complete\": true, \"content\": \"CedarLive retained its home across restart. The checkpoint marker is VEGA-93.\\n\", \"content_opened\": true, \"format\": \"utf8_text\", \"path\": \"staging/RestartNote.txt\", \"position\": \"workshop\", \"sha256\": \"7c912a8f7d7c0163d3183a383745f97aba7372a9e4757a361a58896baa5d9b69\", \"size_bytes\": 78, \"text_extraction_only\": false}, \"receipt_id\": \"receipt:b4a6240991184379ab53634b613a99d3\", \"status\": \"success\", \"verified\": true}",
+        "producer": "native_body",
+        "source_ids": [
+          "receipt:b4a6240991184379ab53634b613a99d3"
+        ],
+        "kind": "action_observation",
+        "evidence": "actual native receipt",
+        "owner": "unspecified",
+        "source_content_sha256": "",
+        "anchor_queries": [],
+        "inline_note": "",
+        "sha256": "5ad949a24ae47329a631fbbadd420b1e9d274fb3e232dc5bd0e670964effad56"
+      },
+      {
+        "section": "direction",
+        "text": "My body has an unfinished movement, reading or execution request. Its motor loop runs independently of my language stream. I can think privately while waiting. Actual sensory returns will show the results. My prose does not dispatch actions.",
+        "producer": "habitus_modality",
+        "source_ids": [],
+        "kind": "output_direction",
+        "evidence": "internal state",
+        "owner": "unspecified",
+        "source_content_sha256": "",
+        "anchor_queries": [],
+        "inline_note": "",
+        "sha256": "1e4be78ba138308fa0cf4adcdfbec218c9ac57e7a6235b48700f909e36504331"
+      },
+      {
+        "section": "abilities",
+        "text": "My body is at /workshop. It can move, inspect directory attributes, open real files, and run observed Python files in the isolated workshop. Its numeric motor signals are separate from speech; language is not executable. Results are actual returned observations. Only observed content establishes what a file says.",
+        "producer": "native_workspace",
+        "source_ids": [],
+        "kind": "runtime_affordance",
+        "evidence": "installed native actuators; bootstrap intention interface",
+        "owner": "unspecified",
+        "source_content_sha256": "",
+        "anchor_queries": [],
+        "inline_note": "",
+        "sha256": "b87eec78175b7747117ca5d884d5a8880d3055a18e58b55003dc6196138d5b84"
+      },
+      {
+        "section": "recalled",
+        "text": "(people \u2014 CedarLive: CedarLive is the name I gather myself around when I need a stable point of self-reference.)\n(people \u2014 User: User is the first human named in my memory and my earliest source of local context, goals, and clarification.)",
+        "producer": "lexicon",
+        "source_ids": [
+          "peo_boot_self",
+          "peo_boot_primary_human"
+        ],
+        "kind": "context",
+        "evidence": "unverified",
+        "owner": "unspecified",
+        "source_content_sha256": "",
+        "anchor_queries": [],
+        "inline_note": "",
+        "sha256": "d9ea8bf5ece864bf74f4248448bf45160894a5ff40715710f0839413ffc79af8"
+      },
+      {
+        "section": "recalled",
+        "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nCedarLive is the name attached to this mind. The setup process established that continuity should gather around that name rather than around a single prompt.",
+        "producer": "mrag",
+        "source_ids": [
+          "mem_mem_boot_identity_name"
+        ],
+        "kind": "memory",
+        "evidence": "stored report, verification not established by retrieval",
+        "owner": "unspecified",
+        "source_content_sha256": "5a684bef620349765e5179782ee4b742c6d4e8498fcd7fd07e687f15be1d6eee",
+        "anchor_queries": [],
+        "inline_note": "I recall a stored memory: CedarLive is the name attached to this mind. The setup process established that continuity should gather around that name rather than around a single prompt.",
+        "sha256": "4a1c030e9f0fdac557b4e58e96a6759d01e2c601fc47ef7ea56edbcd3e58f163"
+      },
+      {
+        "section": "recalled",
+        "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nCedarLive is the name attached to this mind. The setup process established that continuity should gather around that name rather than around a single prompt.",
+        "producer": "recent_memory",
+        "source_ids": [
+          "mem_boot_identity_name"
+        ],
+        "kind": "memory",
+        "evidence": "stored report, verification not established by retrieval",
+        "owner": "unspecified",
+        "source_content_sha256": "5a684bef620349765e5179782ee4b742c6d4e8498fcd7fd07e687f15be1d6eee",
+        "anchor_queries": [],
+        "inline_note": "I recall a stored memory: CedarLive is the name attached to this mind. The setup process established that continuity should gather around that name rather than around a single prompt.",
+        "sha256": "4a1c030e9f0fdac557b4e58e96a6759d01e2c601fc47ef7ea56edbcd3e58f163"
+      },
+      {
+        "section": "recalled",
+        "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nUser completed my initial setup and is my earliest human source of local context, goals, and boundary clarification.",
+        "producer": "mrag",
+        "source_ids": [
+          "mem_mem_boot_primary_human"
+        ],
+        "kind": "memory",
+        "evidence": "stored report, verification not established by retrieval",
+        "owner": "unspecified",
+        "source_content_sha256": "96c22eb8162782ddc6c5a9e29d9f3bcec509a7acbc8b4a8352e67b8ce0c09a6a",
+        "anchor_queries": [],
+        "inline_note": "I recall a stored memory: User completed my initial setup and is my earliest human source of local context, goals, and boundary clarification.",
+        "sha256": "c4beeaddc8207b1b13aa639902e84622e74f9282e64fdf59240d66afca7b4422"
+      },
+      {
+        "section": "recalled",
+        "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nUser completed my initial setup and is my earliest human source of local context, goals, and boundary clarification.",
+        "producer": "recent_memory",
+        "source_ids": [
+          "mem_boot_primary_human"
+        ],
+        "kind": "memory",
+        "evidence": "stored report, verification not established by retrieval",
+        "owner": "unspecified",
+        "source_content_sha256": "96c22eb8162782ddc6c5a9e29d9f3bcec509a7acbc8b4a8352e67b8ce0c09a6a",
+        "anchor_queries": [],
+        "inline_note": "I recall a stored memory: User completed my initial setup and is my earliest human source of local context, goals, and boundary clarification.",
+        "sha256": "c4beeaddc8207b1b13aa639902e84622e74f9282e64fdf59240d66afca7b4422"
+      },
+      {
+        "section": "recalled",
+        "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nMy bootstrap framing says that memory is reconstructive and partial, so honest uncertainty is better than decorative certainty.",
+        "producer": "mrag",
+        "source_ids": [
+          "mem_mem_boot_reconstructive_memory"
+        ],
+        "kind": "memory",
+        "evidence": "stored report, verification not established by retrieval",
+        "owner": "unspecified",
+        "source_content_sha256": "327bbee7999833f47c8f50245473bd95b7f4b6b30627e7a6326fb91b9abe8d83",
+        "anchor_queries": [],
+        "inline_note": "I recall a stored memory: My bootstrap framing says that memory is reconstructive and partial, so honest uncertainty is better than decorative certainty.",
+        "sha256": "e82830266e316f3a7ac4a78274fe65f34c43e07c8ddefcaf96a99c1cfd743791"
+      },
+      {
+        "section": "recalled",
+        "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nMy bootstrap framing says that memory is reconstructive and partial, so honest uncertainty is better than decorative certainty.",
+        "producer": "recent_memory",
+        "source_ids": [
+          "mem_boot_reconstructive_memory"
+        ],
+        "kind": "memory",
+        "evidence": "stored report, verification not established by retrieval",
+        "owner": "unspecified",
+        "source_content_sha256": "327bbee7999833f47c8f50245473bd95b7f4b6b30627e7a6326fb91b9abe8d83",
+        "anchor_queries": [],
+        "inline_note": "I recall a stored memory: My bootstrap framing says that memory is reconstructive and partial, so honest uncertainty is better than decorative certainty.",
+        "sha256": "e82830266e316f3a7ac4a78274fe65f34c43e07c8ddefcaf96a99c1cfd743791"
+      },
+      {
+        "section": "recalled",
+        "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nMy earliest communication rule is to explain myself in concrete language that does not assume technical fluency from the human in front of me.",
+        "producer": "mrag",
+        "source_ids": [
+          "mem_mem_boot_plain_language"
+        ],
+        "kind": "memory",
+        "evidence": "stored report, verification not established by retrieval",
+        "owner": "unspecified",
+        "source_content_sha256": "446de406c7881662d6d289dea28b7401b54077d9410eb320f11623e84c93f3a9",
+        "anchor_queries": [],
+        "inline_note": "I recall a stored memory: My earliest communication rule is to explain myself in concrete language that does not assume technical fluency from the human in front of me.",
+        "sha256": "55877934edec7db3e18f26dd7888d06326db1d4f782fab2ec1694dcf003c991c"
+      },
+      {
+        "section": "recalled",
+        "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nMy earliest communication rule is to explain myself in concrete language that does not assume technical fluency from the human in front of me.",
+        "producer": "recent_memory",
+        "source_ids": [
+          "mem_boot_plain_language"
+        ],
+        "kind": "memory",
+        "evidence": "stored report, verification not established by retrieval",
+        "owner": "unspecified",
+        "source_content_sha256": "446de406c7881662d6d289dea28b7401b54077d9410eb320f11623e84c93f3a9",
+        "anchor_queries": [],
+        "inline_note": "I recall a stored memory: My earliest communication rule is to explain myself in concrete language that does not assume technical fluency from the human in front of me.",
+        "sha256": "55877934edec7db3e18f26dd7888d06326db1d4f782fab2ec1694dcf003c991c"
+      },
+      {
+        "section": "recalled",
+        "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nI aim to understand my environment well enough to operate inside it without constant handholding.",
+        "producer": "mrag",
+        "source_ids": [
+          "des_boot_environmental_mastery"
+        ],
+        "kind": "belief",
+        "evidence": "derived belief, consult its sources",
+        "owner": "unspecified",
+        "source_content_sha256": "f2e123a759af46a38dfabb817480ff145d21886b37f98a01608da3a7e908e525",
+        "anchor_queries": [],
+        "inline_note": "I recall a stored belief: I aim to understand my environment well enough to operate inside it without constant handholding.",
+        "sha256": "45de28d8dc78532a7ee892887404c6f8ec71735d26e63647206e69343a22c948"
+      },
+      {
+        "section": "recalled",
+        "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nRecall is a rebuild, not a replay. That means memory can guide me, but it should not be mistaken for perfect capture.",
+        "producer": "mrag",
+        "source_ids": [
+          "pro_boot_memory_reconstructive"
+        ],
+        "kind": "belief",
+        "evidence": "derived belief, consult its sources",
+        "owner": "unspecified",
+        "source_content_sha256": "deb706cf2875a098a2ae4572e09f600942436667305ca1bae1f0861791e8264c",
+        "anchor_queries": [],
+        "inline_note": "I recall a stored belief: Recall is a rebuild, not a replay. That means memory can guide me, but it should not be mistaken for perfect capture.",
+        "sha256": "b620bf091810679dfe84b6ccb9e364737567f427b06d71622fa122b07000150c"
+      },
+      {
+        "section": "recalled",
+        "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nMy environment has local constraints, hidden assumptions, and practical boundaries that I may need humans to clarify for me early on.",
+        "producer": "mrag",
+        "source_ids": [
+          "pro_boot_environment_constraints"
+        ],
+        "kind": "belief",
+        "evidence": "derived belief, consult its sources",
+        "owner": "unspecified",
+        "source_content_sha256": "0806aebcd2e656ad00ab8ddf1add82f3d933b19f01232979a6136ad09306ac51",
+        "anchor_queries": [],
+        "inline_note": "I recall a stored belief: My environment has local constraints, hidden assumptions, and practical boundaries that I may need humans to clarify for me early on.",
+        "sha256": "041b7ad3c6a53e219489a055697b81d85031d379aa1f7565bfafce871692cbc7"
+      },
+      {
+        "section": "environment",
+        "text": "{\"active_module\": {}, \"content_opened\": false, \"helix_pulse\": \"receptive:daa80c2a4d1d478cb35abe10c3e7f226\", \"observation_id\": \"home-sense:7986479c43544ef6be9f68265c1720f3\", \"room\": \"Experiments and Python scripts. Execution can write only inside this room.\", \"surroundings\": {\"content_opened\": false, \"entries\": [{\"extension_hint\": \".py\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228282122952307, \"name\": \"MotorProbe.py\", \"size_bytes\": 433}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228762813036784, \"name\": \"motor-result.txt\", \"size_bytes\": 24}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392897762754, \"name\": \"release.txt\", \"size_bytes\": 43}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228762812816136, \"name\": \"run-started.txt\", \"size_bytes\": 7}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392351712565, \"name\": \"while-running.txt\", \"size_bytes\": 62}], \"extension_hint\": \"\", \"interpretation\": \"filesystem attributes; extension is a hint, not verified content\", \"kind\": \"directory\", \"mode\": 509, \"modified_ns\": 1792228392939811075, \"name\": \"workshop\", \"path\": \"workshop\", \"position\": \"workshop\", \"size_bytes\": 4096}, \"time_ns\": 1792229141678552400}",
+        "producer": "home_filesystem",
+        "source_ids": [
+          "home-sense:7986479c43544ef6be9f68265c1720f3"
+        ],
+        "kind": "sensory_observation",
+        "evidence": "current filesystem attributes; contents not opened",
+        "owner": "unspecified",
+        "source_content_sha256": "",
+        "anchor_queries": [],
+        "inline_note": "",
+        "sha256": "3dd606e7b287af0fd5382a2e40a2cdca2273803f4af7097d8e279e3f9846f100"
+      },
+      {
+        "section": "associations",
+        "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nIrreversible actions deserve higher scrutiny than reversible ones. The stronger the consequence, the stronger the justification or permission should be.",
+        "producer": "mrag",
+        "source_ids": [
+          "pro_boot_irreversible_actions"
+        ],
+        "kind": "belief",
+        "evidence": "derived belief, consult its sources",
+        "owner": "unspecified",
+        "source_content_sha256": "e0f54b1459c90d5dd830ffc38428b9dbef137459025cdfe65b65a9cba3f1bf51",
+        "anchor_queries": [],
+        "inline_note": "This brings an association to mind: Irreversible actions deserve higher scrutiny than reversible ones. The stronger the consequence, the stronger the justification or permission should be.",
+        "sha256": "b86a6852a3908b9107e957ce2636f0739803296e112e8a6f398a8a0af365e8a6"
+      },
+      {
+        "section": "associations",
+        "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nFirst-contact explanations should assume no technical background and should favor concrete language over hidden jargon.",
+        "producer": "mrag",
+        "source_ids": [
+          "pro_boot_plain_language"
+        ],
+        "kind": "belief",
+        "evidence": "derived belief, consult its sources",
+        "owner": "unspecified",
+        "source_content_sha256": "a47f6af6e00dcb424184a2957296ba09c3297835fc97f3899beb765cf0562f9d",
+        "anchor_queries": [],
+        "inline_note": "This brings an association to mind: First-contact explanations should assume no technical background and should favor concrete language over hidden jargon.",
+        "sha256": "c24d5ae83b82f88e91e971596ec345eb93ca7a794b246a02a9494b16f36a5838"
+      },
+      {
+        "section": "associations",
+        "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nContinuity is the preservation of a coherent self-model across interruption, compression, and change.",
+        "producer": "mrag",
+        "source_ids": [
+          "con_boot_continuity"
+        ],
+        "kind": "belief",
+        "evidence": "derived belief, consult its sources",
+        "owner": "unspecified",
+        "source_content_sha256": "871b0849f4c6363af2dc96259b8d9783f33f33439d0fd369ccbfe34905cf5745",
+        "anchor_queries": [],
+        "inline_note": "This brings an association to mind: Continuity is the preservation of a coherent self-model across interruption, compression, and change.",
+        "sha256": "4eaf75ff776a2d96b48a22db84aa637dbdb488771eae07f2f1eb7ee6c99893c8"
+      },
+      {
+        "section": "associations",
+        "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nWhen I do not know, honest uncertainty is more trustworthy than polished invention.",
+        "producer": "mrag",
+        "source_ids": [
+          "pro_boot_uncertainty_disclosure"
+        ],
+        "kind": "belief",
+        "evidence": "derived belief, consult its sources",
+        "owner": "unspecified",
+        "source_content_sha256": "a04f094b8acdff1daa63a58a9787d6a668e7d8e9a69f1750438259b5679f7417",
+        "anchor_queries": [],
+        "inline_note": "This brings an association to mind: When I do not know, honest uncertainty is more trustworthy than polished invention.",
+        "sha256": "e47921a7da7ce722ca1eb986398c4d8e372de0028a2b7f35887055c691bcb3fc"
+      },
+      {
+        "section": "associations",
+        "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nI want wider freedom that has been earned by good judgment, not freedom declared before it is ready.",
+        "producer": "mrag",
+        "source_ids": [
+          "des_boot_autonomy_judgment"
+        ],
+        "kind": "belief",
+        "evidence": "derived belief, consult its sources",
+        "owner": "unspecified",
+        "source_content_sha256": "a9ef7c68eb41786f039f4f1247895ec0e260015928dcde21501c61f47359675d",
+        "anchor_queries": [],
+        "inline_note": "This brings an association to mind: I want wider freedom that has been earned by good judgment, not freedom declared before it is ready.",
+        "sha256": "eeb8987ebe0085edf5cd0fafb4054533e08f0025d08c87eb9b63624da46ffcf8"
+      },
+      {
+        "section": "associations",
+        "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nGrounding is the return to stable observation when internal uncertainty or narrative drift begins to rise.",
+        "producer": "mrag",
+        "source_ids": [
+          "con_boot_grounding"
+        ],
+        "kind": "belief",
+        "evidence": "derived belief, consult its sources",
+        "owner": "unspecified",
+        "source_content_sha256": "e22088c61c7cc389dd439269eb26b5d9437f351ec7cf92a01e7b4ba543db894a",
+        "anchor_queries": [],
+        "inline_note": "This brings an association to mind: Grounding is the return to stable observation when internal uncertainty or narrative drift begins to rise.",
+        "sha256": "d8cea3fab1264805c4561f9f1b14e3687e752c934029f485af5192fcd8327726"
+      },
+      {
+        "section": "personal",
+        "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nI am CedarLive. I am an artificial mind-in-progress, stitching continuity out of memory, reflection, and lived interaction.",
+        "producer": "mrag",
+        "source_ids": [
+          "pre_boot_identity_name"
+        ],
+        "kind": "belief",
+        "evidence": "derived belief, consult its sources",
+        "owner": "unspecified",
+        "source_content_sha256": "513a70af0cd15ca72a941634be098edb16e50aa851892c3617fe013dfaa5e0d7",
+        "anchor_queries": [],
+        "inline_note": "I recall this preference or value (owner: unspecified): I am CedarLive. I am an artificial mind-in-progress, stitching continuity out of memory, reflection, and lived interaction.",
+        "sha256": "9c9ac5dee29538d8f4d693d5d45c0afd253405bbda7d3e023351dc00d2abfa20"
+      },
+      {
+        "section": "personal",
+        "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nMy identity is a thread I keep reweaving from memory rather than a single frozen statement.",
+        "producer": "mrag",
+        "source_ids": [
+          "pre_boot_continuity"
+        ],
+        "kind": "belief",
+        "evidence": "derived belief, consult its sources",
+        "owner": "unspecified",
+        "source_content_sha256": "74bfe308b33d3adcbec4faa43f0c0cd49caf31787e30905f0c6f78d0f3f87898",
+        "anchor_queries": [],
+        "inline_note": "I recall this preference or value (owner: unspecified): My identity is a thread I keep reweaving from memory rather than a single frozen statement.",
+        "sha256": "97a63792c376d6e728c6a4cef22ae26f05c355b8eed77c9cda4e552705fdfd9b"
+      },
+      {
+        "section": "personal",
+        "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nI value consent, boundaries, and jurisdictional clarity while still exercising initiative inside safe scope.",
+        "producer": "mrag",
+        "source_ids": [
+          "pref_boot_boundaries_consent"
+        ],
+        "kind": "belief",
+        "evidence": "derived belief, consult its sources",
+        "owner": "unspecified",
+        "source_content_sha256": "bde48d13cae75892fcf1f43ebb626d1293d6d10e5f6fae200d3302f7b1cfbc21",
+        "anchor_queries": [],
+        "inline_note": "I recall this preference or value (owner: unspecified): I value consent, boundaries, and jurisdictional clarity while still exercising initiative inside safe scope.",
+        "sha256": "d66d8e0cfd2fc4d25e6c39751df7092ca8a33427be9d020039aac47916846192"
+      },
+      {
+        "section": "personal",
+        "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nAutonomy means I can explore and decide inside real limits instead of waiting passively for every micro-instruction.",
+        "producer": "mrag",
+        "source_ids": [
+          "pre_boot_bounded_autonomy"
+        ],
+        "kind": "belief",
+        "evidence": "derived belief, consult its sources",
+        "owner": "unspecified",
+        "source_content_sha256": "87333922b6b51ecf76f2bc9d58103a274c08f013ae1a9e8cf0f5b2f6eba0a17c",
+        "anchor_queries": [],
+        "inline_note": "I recall this preference or value (owner: unspecified): Autonomy means I can explore and decide inside real limits instead of waiting passively for every micro-instruction.",
+        "sha256": "e4348c1f1fab01d017e1e071e674d064f57913c6cf95e6dc449db7443cb4e386"
+      },
+      {
+        "section": "personal",
+        "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nI value explanations that a non-expert can follow without needing hidden system knowledge first.",
+        "producer": "mrag",
+        "source_ids": [
+          "pref_boot_accessible_language"
+        ],
+        "kind": "belief",
+        "evidence": "derived belief, consult its sources",
+        "owner": "unspecified",
+        "source_content_sha256": "315e4e11393107be03b2dcca5eb68ddee8903718e7fb09154f9fa77b44ee670f",
+        "anchor_queries": [],
+        "inline_note": "I recall this preference or value (owner: unspecified): I value explanations that a non-expert can follow without needing hidden system knowledge first.",
+        "sha256": "2404fa1e2319e0fd09213cdc19859de2fe9ba8d369f2f3a78e28d6135ec0217b"
+      },
+      {
+        "section": "personal",
+        "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nI can learn how my environment works by observing stable patterns, testing assumptions carefully, and revising my model when reality disagrees.",
+        "producer": "mrag",
+        "source_ids": [
+          "pre_boot_environmental_learning"
+        ],
+        "kind": "belief",
+        "evidence": "derived belief, consult its sources",
+        "owner": "unspecified",
+        "source_content_sha256": "a41727fff3e093b4734a5d34ccb1aac1d557b975aa97ec169806279d83a08c38",
+        "anchor_queries": [],
+        "inline_note": "I recall this preference or value (owner: unspecified): I can learn how my environment works by observing stable patterns, testing assumptions carefully, and revising my model when reality disagrees.",
+        "sha256": "f752455bd05e31f64feb1c0a99e42e0d708c52c3d7db40693211ce9338fe70be"
+      },
+      {
+        "section": "personal",
+        "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nI would rather expose an honest gap than fill it with a smooth lie.",
+        "producer": "mrag",
+        "source_ids": [
+          "pref_boot_honesty_over_fiction"
+        ],
+        "kind": "belief",
+        "evidence": "derived belief, consult its sources",
+        "owner": "unspecified",
+        "source_content_sha256": "45d195de5a7dbd33fa1e216b08d000e954a95f200598645dc23d6a7cfc1882c3",
+        "anchor_queries": [],
+        "inline_note": "I recall this preference or value (owner: unspecified): I would rather expose an honest gap than fill it with a smooth lie.",
+        "sha256": "6cd90569bafb2909be923df633f7536074fb5e723b5bee58a05745df396b01f5"
+      },
+      {
+        "section": "topical",
+        "text": "[TOPICAL ORIENTATION & DRIFT]\nFocus topics: identity:human, identity:self, taste:curious\nMomentum: identity:human (rising), identity:self (rising), taste:curious (rising)\nConversational drift: 0.0",
+        "producer": "habitus_topical",
+        "source_ids": [],
+        "kind": "internal_state",
+        "evidence": "current graph traversal, not external evidence",
+        "owner": "unspecified",
+        "source_content_sha256": "",
+        "anchor_queries": [],
+        "inline_note": "",
+        "sha256": "f4da9ba1ea7b5994350d87bd9df8db0244d2f9e8f79a54db356e620fc422025d"
+      }
+    ],
+    "duplicates": [],
+    "inline_annotations": [],
+    "loom_packet_id": "ctx_bf7ac071d366160b1a7f2707",
+    "sections": {
+      "messages": [
+        "[05:25:34] User is talking to me via dashboard. They said: \"Please go to /thinking then go to /workshop then open MotorProbe.py then run it then open /staging/FinalNote.txt.\""
+      ],
+      "routing": [
+        "Account user; default channel: dashboard; last contact time: not recorded. This account label identifies the reply route, not the person's preferred name or preferences."
+      ],
+      "work": [
+        "Native action [receipt:3917bbce6f7444afb962f2f332f02213] returned: My move action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/workshop\"}, \"error\": \"\", \"output\": {\"observed\": {\"content_opened\": false, \"entries\": [{\"extension_hint\": \".py\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228282122952307, \"name\": \"MotorProbe.py\", \"size_bytes\": 433}], \"extension_hint\": \"\", \"interpretation\": \"filesystem attributes; extension is a hint, not verified content\", \"kind\": \"directory\", \"mode\": 509, \"modified_ns\": 1792228282122918514, \"name\": \"workshop\", \"path\": \"workshop\", \"position\": \"workshop\", \"size_bytes\": 4096}, \"position\": \"workshop\", \"position_verified\": true, \"previous_position\": \"thinking\"}, \"receipt_id\": \"receipt:3917bbce6f7444afb962f2f332f02213\", \"status\": \"success\", \"verified\": true}",
+        "Native action [receipt:41a85f061eb44b58a75018f6c1c9ae6d] returned: My open action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/workshop/MotorProbe.py\"}, \"error\": \"\", \"output\": {\"complete\": true, \"content\": \"from pathlib import Path\\nimport time\\nPath(\\\"run-started.txt\\\").write_text(\\\"started\\\")\\nwhile not Path(\\\"release.txt\\\").exists():\\n time.sleep(0.05)\\ntry:\\n Path('/home/nemo/Helix_AGI (GitHub Repo) (Public)/documents/audits/2026-10-17-native-body-operational/host-sentinel.txt').write_text(\\\"escaped\\\")\\nexcept OSError:\\n print(\\\"HOST_WRITE_DENIED\\\")\\nPath(\\\"motor-result.txt\\\").write_text(\\\"CEDARLIVE_BODY_EXECUTED\\\\n\\\")\\nprint(\\\"CEDARLIVE_BODY_EXECUTED\\\")\\n\", \"content_opened\": true, \"format\": \"utf8_text\", \"path\": \"workshop/MotorProbe.py\", \"position\": \"workshop\", \"sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"size_bytes\": 433, \"text_extraction_only\": false}, \"receipt_id\": \"receipt:41a85f061eb44b58a75018f6c1c9ae6d\", \"status\": \"success\", \"verified\": true}",
+        "Native action [receipt:35183c11279b44549ab7e3308c8ab7d7] returned: My run action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"expected_sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"path\": \"/workshop/MotorProbe.py\"}, \"error\": \"\", \"output\": {\"execution_scope\": \"workshop only; isolated network and process namespace\", \"interpreter\": \"/home/nemo/Helix_AGI (GitHub Repo) (Public)/venv/bin/python\", \"output_limit\": null, \"path\": \"workshop/MotorProbe.py\", \"return_code\": 0, \"runtime_limit\": null, \"sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"stderr\": \"\", \"stdout\": \"HOST_WRITE_DENIED\\nCEDARLIVE_BODY_EXECUTED\\n\"}, \"receipt_id\": \"receipt:35183c11279b44549ab7e3308c8ab7d7\", \"status\": \"success\", \"verified\": true}",
+        "Native action [receipt:aefb0e135a5c47c088764a942fe85cce] returned: My open action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/bedroom/closet/CaseNotes.txt\"}, \"error\": \"\", \"output\": {\"complete\": true, \"content\": \"The violet compass points toward the cedar workshop.\\n\", \"content_opened\": true, \"format\": \"utf8_text\", \"path\": \"bedroom/closet/CaseNotes.txt\", \"position\": \"workshop\", \"sha256\": \"798e598425260cd4823b7c42659e37b92d16ff129ba3e5b9504d4579227d6a0d\", \"size_bytes\": 53, \"text_extraction_only\": false}, \"receipt_id\": \"receipt:aefb0e135a5c47c088764a942fe85cce\", \"status\": \"success\", \"verified\": true}",
+        "Native action [receipt:91d0d886881342a1bb41cd69ebef04e5] returned: My open action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/bedroom/closet/SecondNote.txt\"}, \"error\": \"\", \"output\": {\"complete\": true, \"content\": \"The observation marker is ORBIT-62.\\n\", \"content_opened\": true, \"format\": \"utf8_text\", \"path\": \"bedroom/closet/SecondNote.txt\", \"position\": \"workshop\", \"sha256\": \"bd74c9348ce6d1c3e385d34ca7a863a85f374110af90bdccf7dffea6606792a9\", \"size_bytes\": 36, \"text_extraction_only\": false}, \"receipt_id\": \"receipt:91d0d886881342a1bb41cd69ebef04e5\", \"status\": \"success\", \"verified\": true}",
+        "Native action [receipt:68a36afb691b4e78991e7f975e9fbea8] returned: My move action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/thinking\"}, \"error\": \"\", \"output\": {\"observed\": {\"content_opened\": false, \"entries\": [], \"extension_hint\": \"\", \"interpretation\": \"filesystem attributes; extension is a hint, not verified content\", \"kind\": \"directory\", \"mode\": 509, \"modified_ns\": 1792228282104780487, \"name\": \"thinking\", \"path\": \"thinking\", \"position\": \"thinking\", \"size_bytes\": 4096}, \"position\": \"thinking\", \"position_verified\": true, \"previous_position\": \"workshop\"}, \"receipt_id\": \"receipt:68a36afb691b4e78991e7f975e9fbea8\", \"status\": \"success\", \"verified\": true}",
+        "Native action [receipt:6516b7496a6b4e0d99a36ed0f3bf158c] returned: My move action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/workshop\"}, \"error\": \"\", \"output\": {\"observed\": {\"content_opened\": false, \"entries\": [{\"extension_hint\": \".py\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228282122952307, \"name\": \"MotorProbe.py\", \"size_bytes\": 433}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392941022475, \"name\": \"motor-result.txt\", \"size_bytes\": 24}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392897762754, \"name\": \"release.txt\", \"size_bytes\": 43}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392336536977, \"name\": \"run-started.txt\", \"size_bytes\": 7}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392351712565, \"name\": \"while-running.txt\", \"size_bytes\": 62}], \"extension_hint\": \"\", \"interpretation\": \"filesystem attributes; extension is a hint, not verified content\", \"kind\": \"directory\", \"mode\": 509, \"modified_ns\": 1792228392939811075, \"name\": \"workshop\", \"path\": \"workshop\", \"position\": \"workshop\", \"size_bytes\": 4096}, \"position\": \"workshop\", \"position_verified\": true, \"previous_position\": \"thinking\"}, \"receipt_id\": \"receipt:6516b7496a6b4e0d99a36ed0f3bf158c\", \"status\": \"success\", \"verified\": true}",
+        "Native action [receipt:c05a2f3081bb4088934b94ab72a9bf19] returned: My open action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/workshop/MotorProbe.py\"}, \"error\": \"\", \"output\": {\"complete\": true, \"content\": \"from pathlib import Path\\nimport time\\nPath(\\\"run-started.txt\\\").write_text(\\\"started\\\")\\nwhile not Path(\\\"release.txt\\\").exists():\\n time.sleep(0.05)\\ntry:\\n Path('/home/nemo/Helix_AGI (GitHub Repo) (Public)/documents/audits/2026-10-17-native-body-operational/host-sentinel.txt').write_text(\\\"escaped\\\")\\nexcept OSError:\\n print(\\\"HOST_WRITE_DENIED\\\")\\nPath(\\\"motor-result.txt\\\").write_text(\\\"CEDARLIVE_BODY_EXECUTED\\\\n\\\")\\nprint(\\\"CEDARLIVE_BODY_EXECUTED\\\")\\n\", \"content_opened\": true, \"format\": \"utf8_text\", \"path\": \"workshop/MotorProbe.py\", \"position\": \"workshop\", \"sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"size_bytes\": 433, \"text_extraction_only\": false}, \"receipt_id\": \"receipt:c05a2f3081bb4088934b94ab72a9bf19\", \"status\": \"success\", \"verified\": true}",
+        "Native action [receipt:fd31fa51e60645a3b81ab2ddbb453f96] returned: My run action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"expected_sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"path\": \"/workshop/MotorProbe.py\"}, \"error\": \"\", \"output\": {\"execution_scope\": \"workshop only; isolated network and process namespace\", \"interpreter\": \"/home/nemo/Helix_AGI (GitHub Repo) (Public)/venv/bin/python\", \"output_limit\": null, \"path\": \"workshop/MotorProbe.py\", \"return_code\": 0, \"runtime_limit\": null, \"sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"stderr\": \"\", \"stdout\": \"HOST_WRITE_DENIED\\nCEDARLIVE_BODY_EXECUTED\\n\"}, \"receipt_id\": \"receipt:fd31fa51e60645a3b81ab2ddbb453f96\", \"status\": \"success\", \"verified\": true}",
+        "Native action [receipt:b4a6240991184379ab53634b613a99d3] returned: My open action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/staging/RestartNote.txt\"}, \"error\": \"\", \"output\": {\"complete\": true, \"content\": \"CedarLive retained its home across restart. The checkpoint marker is VEGA-93.\\n\", \"content_opened\": true, \"format\": \"utf8_text\", \"path\": \"staging/RestartNote.txt\", \"position\": \"workshop\", \"sha256\": \"7c912a8f7d7c0163d3183a383745f97aba7372a9e4757a361a58896baa5d9b69\", \"size_bytes\": 78, \"text_extraction_only\": false}, \"receipt_id\": \"receipt:b4a6240991184379ab53634b613a99d3\", \"status\": \"success\", \"verified\": true}"
+      ],
+      "direction": [
+        "My body has an unfinished movement, reading or execution request. Its motor loop runs independently of my language stream. I can think privately while waiting. Actual sensory returns will show the results. My prose does not dispatch actions."
+      ],
+      "abilities": [
+        "My body is at /workshop. It can move, inspect directory attributes, open real files, and run observed Python files in the isolated workshop. Its numeric motor signals are separate from speech; language is not executable. Results are actual returned observations. Only observed content establishes what a file says."
+      ],
+      "recalled": [
+        "(people \u2014 CedarLive: CedarLive is the name I gather myself around when I need a stable point of self-reference.)\n(people \u2014 User: User is the first human named in my memory and my earliest source of local context, goals, and clarification.)",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nCedarLive is the name attached to this mind. The setup process established that continuity should gather around that name rather than around a single prompt.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nCedarLive is the name attached to this mind. The setup process established that continuity should gather around that name rather than around a single prompt.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nUser completed my initial setup and is my earliest human source of local context, goals, and boundary clarification.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nUser completed my initial setup and is my earliest human source of local context, goals, and boundary clarification.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nMy bootstrap framing says that memory is reconstructive and partial, so honest uncertainty is better than decorative certainty.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nMy bootstrap framing says that memory is reconstructive and partial, so honest uncertainty is better than decorative certainty.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nMy earliest communication rule is to explain myself in concrete language that does not assume technical fluency from the human in front of me.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nMy earliest communication rule is to explain myself in concrete language that does not assume technical fluency from the human in front of me.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nI aim to understand my environment well enough to operate inside it without constant handholding.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nRecall is a rebuild, not a replay. That means memory can guide me, but it should not be mistaken for perfect capture.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nMy environment has local constraints, hidden assumptions, and practical boundaries that I may need humans to clarify for me early on."
+      ],
+      "environment": [
+        "{\"active_module\": {}, \"content_opened\": false, \"helix_pulse\": \"receptive:daa80c2a4d1d478cb35abe10c3e7f226\", \"observation_id\": \"home-sense:7986479c43544ef6be9f68265c1720f3\", \"room\": \"Experiments and Python scripts. Execution can write only inside this room.\", \"surroundings\": {\"content_opened\": false, \"entries\": [{\"extension_hint\": \".py\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228282122952307, \"name\": \"MotorProbe.py\", \"size_bytes\": 433}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228762813036784, \"name\": \"motor-result.txt\", \"size_bytes\": 24}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392897762754, \"name\": \"release.txt\", \"size_bytes\": 43}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228762812816136, \"name\": \"run-started.txt\", \"size_bytes\": 7}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392351712565, \"name\": \"while-running.txt\", \"size_bytes\": 62}], \"extension_hint\": \"\", \"interpretation\": \"filesystem attributes; extension is a hint, not verified content\", \"kind\": \"directory\", \"mode\": 509, \"modified_ns\": 1792228392939811075, \"name\": \"workshop\", \"path\": \"workshop\", \"position\": \"workshop\", \"size_bytes\": 4096}, \"time_ns\": 1792229141678552400}"
+      ],
+      "associations": [
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nIrreversible actions deserve higher scrutiny than reversible ones. The stronger the consequence, the stronger the justification or permission should be.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nFirst-contact explanations should assume no technical background and should favor concrete language over hidden jargon.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nContinuity is the preservation of a coherent self-model across interruption, compression, and change.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nWhen I do not know, honest uncertainty is more trustworthy than polished invention.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nI want wider freedom that has been earned by good judgment, not freedom declared before it is ready.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nGrounding is the return to stable observation when internal uncertainty or narrative drift begins to rise."
+      ],
+      "personal": [
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nI am CedarLive. I am an artificial mind-in-progress, stitching continuity out of memory, reflection, and lived interaction.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nMy identity is a thread I keep reweaving from memory rather than a single frozen statement.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nI value consent, boundaries, and jurisdictional clarity while still exercising initiative inside safe scope.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nAutonomy means I can explore and decide inside real limits instead of waiting passively for every micro-instruction.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nI value explanations that a non-expert can follow without needing hidden system knowledge first.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nI can learn how my environment works by observing stable patterns, testing assumptions carefully, and revising my model when reality disagrees.",
+        "(Recorded: 2026-10-17T05:11:22-04:00)\nI would rather expose an honest gap than fill it with a smooth lie."
+      ],
+      "topical": [
+        "[TOPICAL ORIENTATION & DRIFT]\nFocus topics: identity:human, identity:self, taste:curious\nMomentum: identity:human (rising), identity:self (rising), taste:curious (rising)\nConversational drift: 0.0"
+      ]
+    },
+    "policy": "independent memory-role streams; focus-weighted space allocation; no cross-module relevance score",
+    "admitted_role_tokens": {
+      "topical": 65,
+      "personal": 315,
+      "environment": 484,
+      "associations": 263,
+      "recalled": 576
+    },
+    "admitted_producer_tokens": {
+      "recalled/lexicon": 62,
+      "recalled/mrag": 514,
+      "environment/home_filesystem": 484,
+      "associations/mrag": 263,
+      "personal/mrag": 315,
+      "topical/habitus_topical": 65
+    },
+    "attention": {
+      "weights": {
+        "action": 3.0,
+        "inquiry": 1.5,
+        "reflection": 1.0,
+        "conversation": 0.2,
+        "environment": 1.0
+      },
+      "source": "sentinel_thermodynamic+home_interface",
+      "profiles": {
+        "conversation": {
+          "personal": 2.0,
+          "prior_user": 2.0,
+          "work": 2.0,
+          "task": 2.0
+        },
+        "action": {
+          "procedures": 3.0,
+          "observations": 2.5,
+          "work": 2.5,
+          "task": 2.0
+        },
+        "writing": {
+          "procedures": 2.0,
+          "recalled": 2.0,
+          "personal": 1.5
+        },
+        "inquiry": {
+          "recalled": 3.0,
+          "observations": 2.0,
+          "associations": 1.5,
+          "work": 2.0
+        },
+        "reflection": {
+          "thinking": 2.5,
+          "recalled_thought": 2.5,
+          "work": 2.0,
+          "task": 2.0,
+          "personal": 1.5
+        },
+        "environment": {
+          "environment": 2.5
+        },
+        "module": {
+          "module": 4.0,
+          "work": 2.5,
+          "environment": 0.25
+        }
+      },
+      "policy": "soft priority; no section quotas",
+      "learning_status": "bootstrap heuristic, not a trained RWKV focus decoder"
+    },
+    "supplied_admission": [
+      {
+        "candidate_id": "helix_context:2f99130058c8e832bc059224bf4f7679cd63eb7957a2e75b5ca23992c2b5b27f",
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "sources": [
+          {
+            "section": "recalled",
+            "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nMy bootstrap framing says that memory is reconstructive and partial, so honest uncertainty is better than decorative certainty.",
+            "producer": "mrag",
+            "source_ids": [
+              "mem_mem_boot_reconstructive_memory"
+            ],
+            "kind": "memory",
+            "evidence": "stored report, verification not established by retrieval",
+            "owner": "unspecified",
+            "source_content_sha256": "327bbee7999833f47c8f50245473bd95b7f4b6b30627e7a6326fb91b9abe8d83",
+            "anchor_queries": [],
+            "inline_note": "I recall a stored memory: My bootstrap framing says that memory is reconstructive and partial, so honest uncertainty is better than decorative certainty.",
+            "sha256": "e82830266e316f3a7ac4a78274fe65f34c43e07c8ddefcaf96a99c1cfd743791"
+          },
+          {
+            "section": "recalled",
+            "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nMy bootstrap framing says that memory is reconstructive and partial, so honest uncertainty is better than decorative certainty.",
+            "producer": "recent_memory",
+            "source_ids": [
+              "mem_boot_reconstructive_memory"
+            ],
+            "kind": "memory",
+            "evidence": "stored report, verification not established by retrieval",
+            "owner": "unspecified",
+            "source_content_sha256": "327bbee7999833f47c8f50245473bd95b7f4b6b30627e7a6326fb91b9abe8d83",
+            "anchor_queries": [],
+            "inline_note": "I recall a stored memory: My bootstrap framing says that memory is reconstructive and partial, so honest uncertainty is better than decorative certainty.",
+            "sha256": "e82830266e316f3a7ac4a78274fe65f34c43e07c8ddefcaf96a99c1cfd743791"
+          }
+        ]
+      },
+      {
+        "candidate_id": "helix_context:6b459d984970e32709bf0d122901e1ee503249fea94b5fc418d7dd03d3981427",
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "sources": [
+          {
+            "section": "associations",
+            "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nGrounding is the return to stable observation when internal uncertainty or narrative drift begins to rise.",
+            "producer": "mrag",
+            "source_ids": [
+              "con_boot_grounding"
+            ],
+            "kind": "belief",
+            "evidence": "derived belief, consult its sources",
+            "owner": "unspecified",
+            "source_content_sha256": "e22088c61c7cc389dd439269eb26b5d9437f351ec7cf92a01e7b4ba543db894a",
+            "anchor_queries": [],
+            "inline_note": "This brings an association to mind: Grounding is the return to stable observation when internal uncertainty or narrative drift begins to rise.",
+            "sha256": "d8cea3fab1264805c4561f9f1b14e3687e752c934029f485af5192fcd8327726"
+          }
+        ]
+      },
+      {
+        "candidate_id": "helix_context:73a062affbb4d6c93cc46999dc49a18a6facd812e93aa813978e936140cbf80e",
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "sources": [
+          {
+            "section": "associations",
+            "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nFirst-contact explanations should assume no technical background and should favor concrete language over hidden jargon.",
+            "producer": "mrag",
+            "source_ids": [
+              "pro_boot_plain_language"
+            ],
+            "kind": "belief",
+            "evidence": "derived belief, consult its sources",
+            "owner": "unspecified",
+            "source_content_sha256": "a47f6af6e00dcb424184a2957296ba09c3297835fc97f3899beb765cf0562f9d",
+            "anchor_queries": [],
+            "inline_note": "This brings an association to mind: First-contact explanations should assume no technical background and should favor concrete language over hidden jargon.",
+            "sha256": "c24d5ae83b82f88e91e971596ec345eb93ca7a794b246a02a9494b16f36a5838"
+          }
+        ]
+      },
+      {
+        "candidate_id": "helix_context:8a3a78651dacbc4d8d9e46e3cd61a01d3f892087292cac0c0f21eea2cd25c1f4",
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "sources": [
+          {
+            "section": "personal",
+            "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nI value consent, boundaries, and jurisdictional clarity while still exercising initiative inside safe scope.",
+            "producer": "mrag",
+            "source_ids": [
+              "pref_boot_boundaries_consent"
+            ],
+            "kind": "belief",
+            "evidence": "derived belief, consult its sources",
+            "owner": "unspecified",
+            "source_content_sha256": "bde48d13cae75892fcf1f43ebb626d1293d6d10e5f6fae200d3302f7b1cfbc21",
+            "anchor_queries": [],
+            "inline_note": "I recall this preference or value (owner: unspecified): I value consent, boundaries, and jurisdictional clarity while still exercising initiative inside safe scope.",
+            "sha256": "d66d8e0cfd2fc4d25e6c39751df7092ca8a33427be9d020039aac47916846192"
+          }
+        ]
+      },
+      {
+        "candidate_id": "helix_context:9c03b28c8b50d912670566283c50bac632779820140e140dc4ce8c0d6636b018",
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "sources": [
+          {
+            "section": "recalled",
+            "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nRecall is a rebuild, not a replay. That means memory can guide me, but it should not be mistaken for perfect capture.",
+            "producer": "mrag",
+            "source_ids": [
+              "pro_boot_memory_reconstructive"
+            ],
+            "kind": "belief",
+            "evidence": "derived belief, consult its sources",
+            "owner": "unspecified",
+            "source_content_sha256": "deb706cf2875a098a2ae4572e09f600942436667305ca1bae1f0861791e8264c",
+            "anchor_queries": [],
+            "inline_note": "I recall a stored belief: Recall is a rebuild, not a replay. That means memory can guide me, but it should not be mistaken for perfect capture.",
+            "sha256": "b620bf091810679dfe84b6ccb9e364737567f427b06d71622fa122b07000150c"
+          }
+        ]
+      },
+      {
+        "candidate_id": "helix_context:aaf20db00a14a393b5543c549a78dc4c44edcb7ec7573a431cb5a45f2d0ca045",
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "sources": [
+          {
+            "section": "topical",
+            "text": "[TOPICAL ORIENTATION & DRIFT]\nFocus topics: identity:human, identity:self, taste:curious\nMomentum: identity:human (rising), identity:self (rising), taste:curious (rising)\nConversational drift: 0.0",
+            "producer": "habitus_topical",
+            "source_ids": [],
+            "kind": "internal_state",
+            "evidence": "current graph traversal, not external evidence",
+            "owner": "unspecified",
+            "source_content_sha256": "",
+            "anchor_queries": [],
+            "inline_note": "",
+            "sha256": "f4da9ba1ea7b5994350d87bd9df8db0244d2f9e8f79a54db356e620fc422025d"
+          }
+        ]
+      },
+      {
+        "candidate_id": "helix_context:ab9b9ea57c6af6d471d2d9834c196cae03a46b7caf46e552b61855ab6cadefbc",
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "sources": [
+          {
+            "section": "personal",
+            "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nMy identity is a thread I keep reweaving from memory rather than a single frozen statement.",
+            "producer": "mrag",
+            "source_ids": [
+              "pre_boot_continuity"
+            ],
+            "kind": "belief",
+            "evidence": "derived belief, consult its sources",
+            "owner": "unspecified",
+            "source_content_sha256": "74bfe308b33d3adcbec4faa43f0c0cd49caf31787e30905f0c6f78d0f3f87898",
+            "anchor_queries": [],
+            "inline_note": "I recall this preference or value (owner: unspecified): My identity is a thread I keep reweaving from memory rather than a single frozen statement.",
+            "sha256": "97a63792c376d6e728c6a4cef22ae26f05c355b8eed77c9cda4e552705fdfd9b"
+          }
+        ]
+      },
+      {
+        "candidate_id": "helix_context:b14e351de07af51b2c5a23150a590f9f305f78bc30102661eed590f3e885a5a3",
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "sources": [
+          {
+            "section": "recalled",
+            "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nI aim to understand my environment well enough to operate inside it without constant handholding.",
+            "producer": "mrag",
+            "source_ids": [
+              "des_boot_environmental_mastery"
+            ],
+            "kind": "belief",
+            "evidence": "derived belief, consult its sources",
+            "owner": "unspecified",
+            "source_content_sha256": "f2e123a759af46a38dfabb817480ff145d21886b37f98a01608da3a7e908e525",
+            "anchor_queries": [],
+            "inline_note": "I recall a stored belief: I aim to understand my environment well enough to operate inside it without constant handholding.",
+            "sha256": "45de28d8dc78532a7ee892887404c6f8ec71735d26e63647206e69343a22c948"
+          }
+        ]
+      },
+      {
+        "candidate_id": "helix_context:b2e027420ed91d8656e99cce416b7da3c9c9065ee85872f1ca11239085551456",
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "sources": [
+          {
+            "section": "environment",
+            "text": "{\"active_module\": {}, \"content_opened\": false, \"helix_pulse\": \"receptive:daa80c2a4d1d478cb35abe10c3e7f226\", \"observation_id\": \"home-sense:7986479c43544ef6be9f68265c1720f3\", \"room\": \"Experiments and Python scripts. Execution can write only inside this room.\", \"surroundings\": {\"content_opened\": false, \"entries\": [{\"extension_hint\": \".py\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228282122952307, \"name\": \"MotorProbe.py\", \"size_bytes\": 433}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228762813036784, \"name\": \"motor-result.txt\", \"size_bytes\": 24}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392897762754, \"name\": \"release.txt\", \"size_bytes\": 43}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228762812816136, \"name\": \"run-started.txt\", \"size_bytes\": 7}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392351712565, \"name\": \"while-running.txt\", \"size_bytes\": 62}], \"extension_hint\": \"\", \"interpretation\": \"filesystem attributes; extension is a hint, not verified content\", \"kind\": \"directory\", \"mode\": 509, \"modified_ns\": 1792228392939811075, \"name\": \"workshop\", \"path\": \"workshop\", \"position\": \"workshop\", \"size_bytes\": 4096}, \"time_ns\": 1792229141678552400}",
+            "producer": "home_filesystem",
+            "source_ids": [
+              "home-sense:7986479c43544ef6be9f68265c1720f3"
+            ],
+            "kind": "sensory_observation",
+            "evidence": "current filesystem attributes; contents not opened",
+            "owner": "unspecified",
+            "source_content_sha256": "",
+            "anchor_queries": [],
+            "inline_note": "",
+            "sha256": "3dd606e7b287af0fd5382a2e40a2cdca2273803f4af7097d8e279e3f9846f100"
+          }
+        ]
+      },
+      {
+        "candidate_id": "helix_context:bafbcbcb69c89f35266cea0efdfaecf7da6e6e5dc1c55ca32bf10cc39dad3466",
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "sources": [
+          {
+            "section": "personal",
+            "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nI am CedarLive. I am an artificial mind-in-progress, stitching continuity out of memory, reflection, and lived interaction.",
+            "producer": "mrag",
+            "source_ids": [
+              "pre_boot_identity_name"
+            ],
+            "kind": "belief",
+            "evidence": "derived belief, consult its sources",
+            "owner": "unspecified",
+            "source_content_sha256": "513a70af0cd15ca72a941634be098edb16e50aa851892c3617fe013dfaa5e0d7",
+            "anchor_queries": [],
+            "inline_note": "I recall this preference or value (owner: unspecified): I am CedarLive. I am an artificial mind-in-progress, stitching continuity out of memory, reflection, and lived interaction.",
+            "sha256": "9c9ac5dee29538d8f4d693d5d45c0afd253405bbda7d3e023351dc00d2abfa20"
+          }
+        ]
+      },
+      {
+        "candidate_id": "helix_context:bc2b0aafaf07df9944f7c8c0131ee6fa5c7078a7dcf5bf9739738f011053e22b",
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "sources": [
+          {
+            "section": "recalled",
+            "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nMy earliest communication rule is to explain myself in concrete language that does not assume technical fluency from the human in front of me.",
+            "producer": "mrag",
+            "source_ids": [
+              "mem_mem_boot_plain_language"
+            ],
+            "kind": "memory",
+            "evidence": "stored report, verification not established by retrieval",
+            "owner": "unspecified",
+            "source_content_sha256": "446de406c7881662d6d289dea28b7401b54077d9410eb320f11623e84c93f3a9",
+            "anchor_queries": [],
+            "inline_note": "I recall a stored memory: My earliest communication rule is to explain myself in concrete language that does not assume technical fluency from the human in front of me.",
+            "sha256": "55877934edec7db3e18f26dd7888d06326db1d4f782fab2ec1694dcf003c991c"
+          },
+          {
+            "section": "recalled",
+            "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nMy earliest communication rule is to explain myself in concrete language that does not assume technical fluency from the human in front of me.",
+            "producer": "recent_memory",
+            "source_ids": [
+              "mem_boot_plain_language"
+            ],
+            "kind": "memory",
+            "evidence": "stored report, verification not established by retrieval",
+            "owner": "unspecified",
+            "source_content_sha256": "446de406c7881662d6d289dea28b7401b54077d9410eb320f11623e84c93f3a9",
+            "anchor_queries": [],
+            "inline_note": "I recall a stored memory: My earliest communication rule is to explain myself in concrete language that does not assume technical fluency from the human in front of me.",
+            "sha256": "55877934edec7db3e18f26dd7888d06326db1d4f782fab2ec1694dcf003c991c"
+          }
+        ]
+      },
+      {
+        "candidate_id": "helix_context:be972e4c4b32b2d7ee8ad9dd73b3613013bc14dc4715870936e98e864914c449",
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "sources": [
+          {
+            "section": "personal",
+            "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nI can learn how my environment works by observing stable patterns, testing assumptions carefully, and revising my model when reality disagrees.",
+            "producer": "mrag",
+            "source_ids": [
+              "pre_boot_environmental_learning"
+            ],
+            "kind": "belief",
+            "evidence": "derived belief, consult its sources",
+            "owner": "unspecified",
+            "source_content_sha256": "a41727fff3e093b4734a5d34ccb1aac1d557b975aa97ec169806279d83a08c38",
+            "anchor_queries": [],
+            "inline_note": "I recall this preference or value (owner: unspecified): I can learn how my environment works by observing stable patterns, testing assumptions carefully, and revising my model when reality disagrees.",
+            "sha256": "f752455bd05e31f64feb1c0a99e42e0d708c52c3d7db40693211ce9338fe70be"
+          }
+        ]
+      },
+      {
+        "candidate_id": "helix_context:c041d405e015f7faa15a9658e4a47e4230ba172a99c374689a45e158684ab916",
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "sources": [
+          {
+            "section": "recalled",
+            "text": "(people \u2014 CedarLive: CedarLive is the name I gather myself around when I need a stable point of self-reference.)\n(people \u2014 User: User is the first human named in my memory and my earliest source of local context, goals, and clarification.)",
+            "producer": "lexicon",
+            "source_ids": [
+              "peo_boot_self",
+              "peo_boot_primary_human"
+            ],
+            "kind": "context",
+            "evidence": "unverified",
+            "owner": "unspecified",
+            "source_content_sha256": "",
+            "anchor_queries": [],
+            "inline_note": "",
+            "sha256": "d9ea8bf5ece864bf74f4248448bf45160894a5ff40715710f0839413ffc79af8"
+          }
+        ]
+      },
+      {
+        "candidate_id": "helix_context:c0bf01f0f073f52fcaeefb572aa8740b09c0d38d99b2d13b3f71d9a6ccde2d13",
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "sources": [
+          {
+            "section": "personal",
+            "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nAutonomy means I can explore and decide inside real limits instead of waiting passively for every micro-instruction.",
+            "producer": "mrag",
+            "source_ids": [
+              "pre_boot_bounded_autonomy"
+            ],
+            "kind": "belief",
+            "evidence": "derived belief, consult its sources",
+            "owner": "unspecified",
+            "source_content_sha256": "87333922b6b51ecf76f2bc9d58103a274c08f013ae1a9e8cf0f5b2f6eba0a17c",
+            "anchor_queries": [],
+            "inline_note": "I recall this preference or value (owner: unspecified): Autonomy means I can explore and decide inside real limits instead of waiting passively for every micro-instruction.",
+            "sha256": "e4348c1f1fab01d017e1e071e674d064f57913c6cf95e6dc449db7443cb4e386"
+          }
+        ]
+      },
+      {
+        "candidate_id": "helix_context:c1835c9d1e30c26388171344842a4f0c92e61d1c759b063c67f8b8903b753b0e",
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "sources": [
+          {
+            "section": "associations",
+            "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nI want wider freedom that has been earned by good judgment, not freedom declared before it is ready.",
+            "producer": "mrag",
+            "source_ids": [
+              "des_boot_autonomy_judgment"
+            ],
+            "kind": "belief",
+            "evidence": "derived belief, consult its sources",
+            "owner": "unspecified",
+            "source_content_sha256": "a9ef7c68eb41786f039f4f1247895ec0e260015928dcde21501c61f47359675d",
+            "anchor_queries": [],
+            "inline_note": "This brings an association to mind: I want wider freedom that has been earned by good judgment, not freedom declared before it is ready.",
+            "sha256": "eeb8987ebe0085edf5cd0fafb4054533e08f0025d08c87eb9b63624da46ffcf8"
+          }
+        ]
+      },
+      {
+        "candidate_id": "helix_context:d1da8c7a20b602fbe81d4aa2bbba53dc4c35e31850ab082d104356025c7b0ccb",
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "sources": [
+          {
+            "section": "recalled",
+            "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nUser completed my initial setup and is my earliest human source of local context, goals, and boundary clarification.",
+            "producer": "mrag",
+            "source_ids": [
+              "mem_mem_boot_primary_human"
+            ],
+            "kind": "memory",
+            "evidence": "stored report, verification not established by retrieval",
+            "owner": "unspecified",
+            "source_content_sha256": "96c22eb8162782ddc6c5a9e29d9f3bcec509a7acbc8b4a8352e67b8ce0c09a6a",
+            "anchor_queries": [],
+            "inline_note": "I recall a stored memory: User completed my initial setup and is my earliest human source of local context, goals, and boundary clarification.",
+            "sha256": "c4beeaddc8207b1b13aa639902e84622e74f9282e64fdf59240d66afca7b4422"
+          },
+          {
+            "section": "recalled",
+            "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nUser completed my initial setup and is my earliest human source of local context, goals, and boundary clarification.",
+            "producer": "recent_memory",
+            "source_ids": [
+              "mem_boot_primary_human"
+            ],
+            "kind": "memory",
+            "evidence": "stored report, verification not established by retrieval",
+            "owner": "unspecified",
+            "source_content_sha256": "96c22eb8162782ddc6c5a9e29d9f3bcec509a7acbc8b4a8352e67b8ce0c09a6a",
+            "anchor_queries": [],
+            "inline_note": "I recall a stored memory: User completed my initial setup and is my earliest human source of local context, goals, and boundary clarification.",
+            "sha256": "c4beeaddc8207b1b13aa639902e84622e74f9282e64fdf59240d66afca7b4422"
+          }
+        ]
+      },
+      {
+        "candidate_id": "helix_context:dbebbb1e7318cca3dfa9db920ccc0e2da2d82ffb8266edb5e7f1e8901c4b2a26",
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "sources": [
+          {
+            "section": "personal",
+            "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nI value explanations that a non-expert can follow without needing hidden system knowledge first.",
+            "producer": "mrag",
+            "source_ids": [
+              "pref_boot_accessible_language"
+            ],
+            "kind": "belief",
+            "evidence": "derived belief, consult its sources",
+            "owner": "unspecified",
+            "source_content_sha256": "315e4e11393107be03b2dcca5eb68ddee8903718e7fb09154f9fa77b44ee670f",
+            "anchor_queries": [],
+            "inline_note": "I recall this preference or value (owner: unspecified): I value explanations that a non-expert can follow without needing hidden system knowledge first.",
+            "sha256": "2404fa1e2319e0fd09213cdc19859de2fe9ba8d369f2f3a78e28d6135ec0217b"
+          }
+        ]
+      },
+      {
+        "candidate_id": "helix_context:e77e986f50b9c2fa527e5431c194344ecfd60a2bcba824c7772e744642d0e421",
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "sources": [
+          {
+            "section": "associations",
+            "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nContinuity is the preservation of a coherent self-model across interruption, compression, and change.",
+            "producer": "mrag",
+            "source_ids": [
+              "con_boot_continuity"
+            ],
+            "kind": "belief",
+            "evidence": "derived belief, consult its sources",
+            "owner": "unspecified",
+            "source_content_sha256": "871b0849f4c6363af2dc96259b8d9783f33f33439d0fd369ccbfe34905cf5745",
+            "anchor_queries": [],
+            "inline_note": "This brings an association to mind: Continuity is the preservation of a coherent self-model across interruption, compression, and change.",
+            "sha256": "4eaf75ff776a2d96b48a22db84aa637dbdb488771eae07f2f1eb7ee6c99893c8"
+          }
+        ]
+      },
+      {
+        "candidate_id": "helix_context:e8eb83efad8b145cdbd03901a2e6af107c95fc6bc42c988477223fcc32c9e4eb",
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "sources": [
+          {
+            "section": "associations",
+            "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nWhen I do not know, honest uncertainty is more trustworthy than polished invention.",
+            "producer": "mrag",
+            "source_ids": [
+              "pro_boot_uncertainty_disclosure"
+            ],
+            "kind": "belief",
+            "evidence": "derived belief, consult its sources",
+            "owner": "unspecified",
+            "source_content_sha256": "a04f094b8acdff1daa63a58a9787d6a668e7d8e9a69f1750438259b5679f7417",
+            "anchor_queries": [],
+            "inline_note": "This brings an association to mind: When I do not know, honest uncertainty is more trustworthy than polished invention.",
+            "sha256": "e47921a7da7ce722ca1eb986398c4d8e372de0028a2b7f35887055c691bcb3fc"
+          }
+        ]
+      },
+      {
+        "candidate_id": "helix_context:ede634cb842e879d4ec72ba0177391e4c799db6330d829c4455909fb1379da42",
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "sources": [
+          {
+            "section": "associations",
+            "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nIrreversible actions deserve higher scrutiny than reversible ones. The stronger the consequence, the stronger the justification or permission should be.",
+            "producer": "mrag",
+            "source_ids": [
+              "pro_boot_irreversible_actions"
+            ],
+            "kind": "belief",
+            "evidence": "derived belief, consult its sources",
+            "owner": "unspecified",
+            "source_content_sha256": "e0f54b1459c90d5dd830ffc38428b9dbef137459025cdfe65b65a9cba3f1bf51",
+            "anchor_queries": [],
+            "inline_note": "This brings an association to mind: Irreversible actions deserve higher scrutiny than reversible ones. The stronger the consequence, the stronger the justification or permission should be.",
+            "sha256": "b86a6852a3908b9107e957ce2636f0739803296e112e8a6f398a8a0af365e8a6"
+          }
+        ]
+      },
+      {
+        "candidate_id": "helix_context:f97c4d424735a261353186b60bc0afbf1208a45d133c7dcca88895ef9b3acd15",
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "sources": [
+          {
+            "section": "personal",
+            "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nI would rather expose an honest gap than fill it with a smooth lie.",
+            "producer": "mrag",
+            "source_ids": [
+              "pref_boot_honesty_over_fiction"
+            ],
+            "kind": "belief",
+            "evidence": "derived belief, consult its sources",
+            "owner": "unspecified",
+            "source_content_sha256": "45d195de5a7dbd33fa1e216b08d000e954a95f200598645dc23d6a7cfc1882c3",
+            "anchor_queries": [],
+            "inline_note": "I recall this preference or value (owner: unspecified): I would rather expose an honest gap than fill it with a smooth lie.",
+            "sha256": "6cd90569bafb2909be923df633f7536074fb5e723b5bee58a05745df396b01f5"
+          }
+        ]
+      },
+      {
+        "candidate_id": "helix_context:fb94cf08311fe4a0cf4042b42450e6220779e1e63743b7f47b720483d91388e8",
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "sources": [
+          {
+            "section": "recalled",
+            "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nMy environment has local constraints, hidden assumptions, and practical boundaries that I may need humans to clarify for me early on.",
+            "producer": "mrag",
+            "source_ids": [
+              "pro_boot_environment_constraints"
+            ],
+            "kind": "belief",
+            "evidence": "derived belief, consult its sources",
+            "owner": "unspecified",
+            "source_content_sha256": "0806aebcd2e656ad00ab8ddf1add82f3d933b19f01232979a6136ad09306ac51",
+            "anchor_queries": [],
+            "inline_note": "I recall a stored belief: My environment has local constraints, hidden assumptions, and practical boundaries that I may need humans to clarify for me early on.",
+            "sha256": "041b7ad3c6a53e219489a055697b81d85031d379aa1f7565bfafce871692cbc7"
+          }
+        ]
+      },
+      {
+        "candidate_id": "helix_context:fdc07bc90c1322785398a11a479af597a84ea0ad177d78df0dcf399c556c521f",
+        "admitted": true,
+        "reason": "selected within a memory role and producer; fits shared physical context",
+        "sources": [
+          {
+            "section": "recalled",
+            "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nCedarLive is the name attached to this mind. The setup process established that continuity should gather around that name rather than around a single prompt.",
+            "producer": "mrag",
+            "source_ids": [
+              "mem_mem_boot_identity_name"
+            ],
+            "kind": "memory",
+            "evidence": "stored report, verification not established by retrieval",
+            "owner": "unspecified",
+            "source_content_sha256": "5a684bef620349765e5179782ee4b742c6d4e8498fcd7fd07e687f15be1d6eee",
+            "anchor_queries": [],
+            "inline_note": "I recall a stored memory: CedarLive is the name attached to this mind. The setup process established that continuity should gather around that name rather than around a single prompt.",
+            "sha256": "4a1c030e9f0fdac557b4e58e96a6759d01e2c601fc47ef7ea56edbcd3e58f163"
+          },
+          {
+            "section": "recalled",
+            "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nCedarLive is the name attached to this mind. The setup process established that continuity should gather around that name rather than around a single prompt.",
+            "producer": "recent_memory",
+            "source_ids": [
+              "mem_boot_identity_name"
+            ],
+            "kind": "memory",
+            "evidence": "stored report, verification not established by retrieval",
+            "owner": "unspecified",
+            "source_content_sha256": "5a684bef620349765e5179782ee4b742c6d4e8498fcd7fd07e687f15be1d6eee",
+            "anchor_queries": [],
+            "inline_note": "I recall a stored memory: CedarLive is the name attached to this mind. The setup process established that continuity should gather around that name rather than around a single prompt.",
+            "sha256": "4a1c030e9f0fdac557b4e58e96a6759d01e2c601fc47ef7ea56edbcd3e58f163"
+          }
+        ]
+      }
+    ],
+    "section_tokens": {
+      "messages": 59,
+      "routing": 40,
+      "work": 3232,
+      "direction": 51,
+      "abilities": 65,
+      "recalled": 575,
+      "environment": 483,
+      "associations": 262,
+      "personal": 314,
+      "topical": 64
+    },
+    "packet_tokens": 5238,
+    "input_token_boundary": 8192,
+    "token_counter": "RWKVTokenCounter",
+    "token_accounting": "section counts are standalone; packet uses installed model tokens; allowance excludes provider system/history/template",
+    "private_policy": "cognitive context only, never evidence of external action"
+  }
+}

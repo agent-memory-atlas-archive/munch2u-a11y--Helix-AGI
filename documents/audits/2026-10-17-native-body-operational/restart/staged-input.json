@@ -1,0 +1,11 @@
+{
+  "content": "CedarLive retained its home across restart. The checkpoint marker is VEGA-93.\n",
+  "http": {
+    "filename": "RestartNote.txt",
+    "ok": true,
+    "path": "staging/RestartNote.txt",
+    "size": 78
+  },
+  "path": "/home/nemo/Helix_AGI (GitHub Repo) (Public)/data/homes/CedarLive/staging/RestartNote.txt",
+  "sha256": "7c912a8f7d7c0163d3183a383745f97aba7372a9e4757a361a58896baa5d9b69"
+}

@@ -15,6 +15,8 @@ import subprocess
 import sys
 import time
 import uuid
+import signal
+import threading
 
 from habitus_ai.agent_workspace import AgentWorkspace
 from habitus_ai.tools import ToolDefinition
@@ -26,6 +28,9 @@ class MindscapeWorkspace(AgentWorkspace):
     """Persistent position, metadata-only touch, real content and checked writes."""
 
     def __init__(self, root, store, *, home=None):
+        self._execution_lock = threading.Lock()
+        self._execution_process = None
+        self._execution_cancelled = threading.Event()
         self.home = home
         self.dream_engine = None
         if home:
@@ -82,12 +87,6 @@ class MindscapeWorkspace(AgentWorkspace):
         if path_obj.is_absolute():
             if path_obj.is_relative_to(self.root):
                 return "/" + path_obj.relative_to(self.root).as_posix()
-            parts = path_obj.parts
-            for idx in range(1, len(parts)):
-                subpath = Path(*parts[idx:])
-                candidate = self.root / subpath
-                if candidate.exists() or candidate.parent.exists():
-                    return "/" + subpath.as_posix()
         return raw
 
     def resolve_path(self, supplied):
@@ -213,7 +212,33 @@ class MindscapeWorkspace(AgentWorkspace):
         command += ["--chdir", cwd,
                     "--setenv", "PATH", "/usr/bin:/bin", "--setenv", "HOME", "/tmp",
                     "--setenv", "PYTHONDONTWRITEBYTECODE", "1", "--", *argv]
-        return subprocess.run(command, input=input_text, capture_output=True, text=True)
+        if self._execution_cancelled.is_set():
+            raise RuntimeError("Body shutdown requested; execution cancelled")
+        with self._execution_lock:
+            process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                       stderr=subprocess.PIPE, text=True, start_new_session=True)
+            self._execution_process = process
+            if self._execution_cancelled.is_set():
+                os.killpg(process.pid, signal.SIGKILL)
+        try:
+            stdout, stderr = process.communicate(input=input_text)
+            if self._execution_cancelled.is_set():
+                raise RuntimeError("Body shutdown interrupted script execution; no completion established")
+            return subprocess.CompletedProcess(command, process.returncode, stdout, stderr)
+        finally:
+            with self._execution_lock:
+                self._execution_process = None
+
+    def cancel_execution(self):
+        """Explicit lifecycle cancellation of this body's own process namespace."""
+        self._execution_cancelled.set()
+        with self._execution_lock:
+            process = self._execution_process
+            if process is not None and process.poll() is None:
+                try:
+                    os.killpg(process.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
 
     def activate(self, arguments):
         if not self.home:

@@ -1,0 +1,23 @@
+{
+  "models": [
+    {
+      "context_length": 4096,
+      "details": {
+        "families": [
+          "qwen3"
+        ],
+        "family": "qwen3",
+        "format": "gguf",
+        "parameter_size": "595.78M",
+        "parent_model": "",
+        "quantization_level": "Q8_0"
+      },
+      "digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d",
+      "expires_at": "2026-10-17T05:33:34.621233348-04:00",
+      "model": "qwen3-embedding:0.6b",
+      "name": "qwen3-embedding:0.6b",
+      "size": 2371270737,
+      "size_vram": 0
+    }
+  ]
+}

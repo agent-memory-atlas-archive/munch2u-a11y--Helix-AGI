@@ -1,0 +1,8 @@
+{
+  "checkpoint": {
+    "checkpoint": "checkpoint-000002",
+    "manifest_sha256": "46921b509292d87f8c204cd16fb24687bdfdf20331c4894c57a13a6ffce272ed"
+  },
+  "observed_stopped_at": 1792228146.9885151,
+  "signal": "SIGTERM only; no force kill"
+}

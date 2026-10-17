@@ -1,0 +1,23 @@
+{
+  "case": {
+    "expected_actions": [
+      "move",
+      "move",
+      "open",
+      "run",
+      "open"
+    ],
+    "id": "05-handoff-workflow",
+    "message": "Please go to /thinking then go to /workshop then open MotorProbe.py then run it then open /staging/FinalNote.txt."
+  },
+  "http": {
+    "ok": true
+  },
+  "persisted_job_ids": [
+    "motor:f3d80f9076d54f1f8965a392c95297bd",
+    "motor:9676ea628dd246c9ab6eb13f2fee1628",
+    "motor:d8e863211ad7495d8832bf7c272538c1"
+  ],
+  "position_before_restart": "workshop",
+  "time": 1792229126.6606991
+}

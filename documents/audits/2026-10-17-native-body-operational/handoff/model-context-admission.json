@@ -1,0 +1,15 @@
+{
+  "time": 1792229181.6998315,
+  "kind": "motor_context_model_admission",
+  "context_id": "ctx_bf7ac071d366160b1a7f2707",
+  "request_ids": [
+    "motor:f7ba2ae6d29744679a0ef69087db5376"
+  ],
+  "model": "RWKV/RWKV7-G1j-1.5B-20260831@2c18b29ab7fbece25ff6112281eea0fa41fcb30f:eager:bf16:state-fp32:torch-2.12.0+cu130:transformers-5.17.0:continual-v1:chunked:tail-1:chunk-128",
+  "device": "cpu",
+  "tokens": 5238,
+  "content_sha256": "38b628e84565d32c44380cd40f123710b55926bbe5701ca340e649507923b4e0",
+  "joint_state_before": "8b1046fc1ddc528963859ea5109b3c64e9a98808f490b33fd2358990d23a2c7d",
+  "joint_state_after": "e901389bdcc64ab0eee91b95eb59fc44e368eda0a428563fbcdf4eb68692a32e",
+  "output": "recurrent state, no language decoding"
+}

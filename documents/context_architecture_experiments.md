@@ -1,6 +1,14 @@
 # Context Architecture Fork Comparison
 
-**Status:** experimental comparison · **Exam date:** 2026-08-08
+**Status: historical isolated-adapter study · Exam date: 2026-08-08.**
+
+> The scores below are preserved for their original exam, branches and reader
+> adapter. They do not evaluate today's native Mindscape runtime: the normal
+> entry point, persistent native mind, all nine Loom lanes and production
+> context/model/action path are not established by this harness. These numbers
+> must not be used as current product scores, comparisons or tuning evidence.
+> See [current architecture](architecture_current.md) and the
+> [evaluation boundary](../tests/TEST_SUITE_README.md#evidence-boundary).
 
 Both branches start from `e5c33b5` and keep the Helix journal, belief stores,
 1024D semantic index, and 8D associative state canonical. Neither copies

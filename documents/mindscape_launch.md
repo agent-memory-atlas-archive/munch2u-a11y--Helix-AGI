@@ -1,175 +1,178 @@
-# Local mindscape launcher
+# Mindscape setup and launch
 
-The selected application is this Helix checkout. The authoritative entry point
-is `main.py`, using the existing standard `PulseLoop`. `core/mindscape.py` adds a
-gestation, synchronization, and context adapter; it does not replace Helix with
-MightyMem's standalone console or autonomous loop.
+**Source review: 2026-10-17 · Current native route: `main.py → setup_helix →
+PulseLoop`, with independent receptive, sensory and motor loops.**
 
-## Setup
+The default Mindscape configuration uses a persistent native RWKV/Habitus mind
+and a local RWKV foreground. Explicit user goals produce numeric body signals;
+language generation has no actuator authority. See the
+[current architecture](architecture_current.md) for ownership and evidence flow.
+
+## Dependencies
+
+- Python 3.11+ and the checkout's `venv`.
+- Linux with Bubblewrap (`bwrap`) and permitted user/network/process namespaces
+  for workshop execution. There is no unsandboxed fallback.
+- A compatible, explicitly selected MightyMem source containing both
+  `habitus_ai` and `context_loom`.
+- The pinned `RWKV/RWKV7-G1j-1.5B-20260831` checkpoint directory, including
+  its index and all four safetensors shards. The verified revision is
+  `2c18b29ab7fbece25ff6112281eea0fa41fcb30f`.
+- Running Ollama with `qwen3-embedding:0.6b` for Helix's 1024D semantic lane.
 
 ```bash
+python3 -m venv venv
 venv/bin/python -m pip install -r requirements-mindscape.txt
-venv/bin/python setup.py --composition mindscape --composition-only \
-  --mightymem-path ../MightyMem \
-  --rwkv-model ../habitus-ai-experiments/habitus-mind/models/rwkv7-g1j-1.5b-20260831-2c18b29
+ollama pull qwen3-embedding:0.6b
+```
+
+`requirements-mindscape.txt` pins Transformers 5.17.0; the checkpoint requires
+its cache API. The joint bridge is CPU-only. It uses the configured MightyMem
+source, not a replacement `context_loom` package from pip. Paths can be supplied
+through setup or defaults discovered using `MIGHTYMEM_PATH` and
+`RWKV_MODEL_PATH`.
+
+The October 17 run used `/home/nemo/MightyMem`, including local gestation-seed
+support and cooperative cancellation changes in `habitus_ai/continual_rwkv.py`.
+Its dependency patch and source hashes are in the
+[operational audit](audits/2026-10-17-native-body-operational/README.md).
+A clean Helix checkout alone does not supply those external source changes.
+
+## Guided creation
+
+Run `./install.sh` for the PyQt6 wizard. Choose an agent name, creator,
+archetype, starter memory depth/voice, local RWKV model and MightyMem paths,
+primary communication channel, credentials, tools and schedule.
+
+The wizard provisions:
+
+- `data/homes/<Agent Name>/`: rooms, built-in module descriptors and identity.
+- `data/agents/<Agent Name>/`: creation manifest and canonical memory directories.
+- `config/config.json`: selected runtime and paths.
+- `~/.config/helix/credentials.env`: private channel/provider credentials.
+
+Dashboard needs no channel token. External channels must be enabled and supplied
+with their own credentials. Archetypes seed native preferences; they do not
+train model weights or certify competence. The nursery prototype is not offered
+as an integrated startup stage.
+
+## Command-line creation
+
+The CLI currently plans the named paths, creates home rooms and seeds missing
+memory, but does **not** call `provision_creation` to write the initial
+`creation.json`. Native startup expects that manifest for a new identity.
+Use the wizard or complete the explicit provisioning step below.
+
+For a **new, unused** example name and data/home directories, replace the model
+and dependency paths with your actual directories:
+
+```bash
+venv/bin/python setup.py --non-interactive --composition mindscape \
+  --composition-only --provider rwkv \
+  --mightymem-path /absolute/path/to/MightyMem \
+  --rwkv-model /absolute/path/to/rwkv7-g1j-1.5b-20260831-2c18b29 \
+  --agent-name Example --creator-name User --archetype curious \
+  --primary-channel dashboard --data-dir data/agents/Example \
+  --agent-home data/homes/Example
+
+venv/bin/python - <<'PY'
+import json
+from pathlib import Path
+from core.agent_creation import provision_creation
+from core.mindscape_config import resolve
+config = json.loads(Path("config/config.json").read_text())
+provision_creation(resolve(config))
+PY
+```
+
+Run commands from the Helix root. Explicit `--provider rwkv` matters: the
+composition flag alone can follow the CLI's older Ollama provider selection.
+The configuration-only route still seeds missing bootstrap files and updates
+provider/model/channel environment selections; it is not a read-only command.
+It preserves other credential values. Omitting `--composition-only` runs the
+broader CLI setup but does not repair the missing provisioning call.
+
+For an existing agent, avoid recreating identity. Review its saved paths and
+start it directly. `--resume-only` makes missing native checkpoints an error.
+The creation contract refuses a changed identity/archetype over existing state.
+`mindscape.workspace` is a legacy path; the body uses `mindscape.home`.
+
+## Launch and inspect
+
+```bash
+# Initialization check: touches the actual selected stores and checkpoint.
 venv/bin/python main.py --check-setup
+# Continuous production runtime; uses saved data_dir.
 venv/bin/python main.py
 ```
 
-The configuration-only command preserves credentials and lived memory. For a
-new agent, omit `--composition-only` to run the existing bootstrap as well.
-Use `--workspace PATH` to select the native workspace. `--resume-only` makes a
-missing joint checkpoint an error instead of permitting first gestation.
+In another terminal:
 
-`config/config.json` owns `composition`, `local_model`, `local_context_window`, and the nested `mindscape` paths. The primary default runtime is the **Bicameral Dual-RWKV System**, uniting the recurrent Habitus memory cortex with the Bicameral RWKV-7 speaking model and Learned Vocabulary Membrane Grounding. For users preferring Ollama, local Granite (3B or 8B) remains supported as an optional foreground language provider. The pinned RWKV checkpoint is verified by MightyMem before loading.
-The supported joint bridge runs on CPU. Transformers 5.17 is pinned because
-the checkpoint's cache API requires at least 5.15.
+```bash
+venv/bin/python dashboard/dashboard.py --port 5050
+```
 
-## Runtime connections
+The GUI launcher can manage the dashboard process. Plain `main.py` polls the
+dashboard message bridge but does not start its HTTP server.
 
-| Component | Live role |
+Open Dashboard Chat and expand **Environment and actions**. File staging uses
+the configured `mindscape.home/staging`; a staged file remains there until
+moved. Put a Python experiment in `workshop/` before asking it to run.
+
+```text
+Please go to /workshop then open Example.py then run it.
+Please open /staging/Notes.txt.
+Please sense .
+```
+
+The receptor currently supports explicit move/sense/open/run requests. Arbitrary
+write/mkdir, module activation, browser and sleep requests are not exposed by
+this policy, even though related body handlers exist. The legacy room and
+Module Studio views still have old home-path assumptions; the current body
+read-back endpoint is `GET /api/motor`.
+
+## State, limits and shutdown
+
+Let `D` be the configured `data_dir`.
+
+| Artifact | Purpose |
 |---|---|
-| Helix PulseLoop | Cadence, events, foreground session, actions and post-pulse hooks |
-| Native mRAG / Context Office | Semantic retrieval and evidence selection over Helix memory |
-| Helix physics | 8D attention, beliefs, associations and affect |
-| MightyMem ContinualMind | Joint persistent RWKV/cortex state and Habitus graph |
-| RWKV | Incoming events, own foreground output and actual return tokens; native cortex coupling |
-| Context Loom | Additional persistent evidence lanes and final pulse-context compilation |
-| Dual RWKV-7 (Subconscious + Speaker) / Optional Granite | Bicameral foreground language, subconscious motor affordances, and natural intentions |
+| `D/creation.json` | Identity, archetype, seed and native gestation status |
+| `D/mindscape/composition-manifest.json` | Sources, models, lanes and boundaries |
+| `D/mindscape/receipts.jsonl` | Actual intake, context admission, actions, returns and checkpoints |
+| `D/mindscape/motor-state.json` | Public body state and per-goal receipts |
+| `D/mindscape/foreground-health.json` | Language status/failure |
+| `D/mindscape/joint/LATEST.json` | Selected joint neural/graph-memory checkpoint |
+| `D/mindscape/joint/events.jsonl` | Native lineage and restore events |
+| `mindscape.home/intakes/` | Raw changed filesystem observations |
 
-The native graph and Loom SQLite connections have one owning thread. Source
-paths and source hashes are recorded so a different installed `context_loom`
-package cannot silently stand in for the configured MightyMem source.
+First startup gestates native state and admits the initial home observation;
+restart resumes its joint checkpoint. Historical Helix records are projected
+with source/version/evidence labels rather than replayed as new feedback.
+RWKV gradient training is disabled. Loom is a derived projection.
 
-## Gestation and synchronization
+`local_context_window` is a configured assembled-input budget (8192 in the
+verified profile), not RWKV's physical recurrent capacity. Whole input is counted
+with the selected tokenizer; mandatory overflow fails explicitly. There is no
+RWKV generated-output cap, motor action-count cap or workshop timeout.
+`mindscape.sensory_interval_seconds` is the observation cadence, default 1.0.
 
-State belongs to `data/mindscape/`, separate from existing Helix stores and older
-experimental checkpoints. On first launch, the native runtime gestates the
-cortex/graph and loads the pinned RWKV weights. On later launches it restores
-the joint checkpoint and validates the saved tensor state and trained weights.
-No older experiment is automatically adopted as this agent's lineage.
+A successful goal requires all matching returns and a joint checkpoint before
+public completion. Stop with Ctrl-C or SIGTERM for cooperative generation,
+native-chunk and sandbox cancellation plus the shutdown checkpoint. A running
+sandbox interrupted by shutdown is not marked successful. Keep the selected
+home, canonical stores and joint lineage together when backing up the agent.
+Crash recovery and exactly-once replay of every intermediate action remain
+unestablished.
 
-The adapter projects canonical Helix records with original source IDs, content
-hashes and evidence labels. Repeated synchronization skips identical records;
-changed records create linked versions. Historical records are indexed without
-being replayed as fresh human feedback or RWKV gradient training. Private
-thoughts remain private and historical success labels cannot become verified
-observations. Helix's original files remain authoritative.
+## Verification scope
 
-The first gestation is checkpointed before historical indexing begins. Native
-Loom logging populates its X/Y state and entity graph as well as its record
-store. Completed projections are marked so a normal restart does not index
-them twice. Exactly-once graph activation across a crash during indexing has
-not been established.
+`--check-setup` loads the actual composition, synchronizes state and exits
+without running the continuous channels/body loops. It proves initialization
+only. It is not a recall, conversation, nursery or action evaluation.
 
-The native joint checkpoint includes RWKV state, cortex state, coupling weights,
-graph database and checksums. Checkpoints are retained by the native runtime;
-they consume disk space as the agent continues. Loom is a derived projection
-and is reconciled with the canonical corpus after restart.
-
-RWKV gradient training is disabled in this adapter. It advances recurrent state
-and couples it to the native cortex; it does not run MightyMem's standalone
-continual-learning or motor-emission loop. This distinction remains visible in
-the composition receipt.
-
-### Functional Nursery Gestation (Pre-Contact Sandbox)
-
-Before engaging in live external communication or host operations, newly gestated
-agents execute a functional, 4-stage developmental sandbox via
-`core/agent_creation.py::run_functional_nursery_gestation()` and `core/nursery/`:
-
-1. **Stage 1 (Sensory-Motor Reflex)**: Validates basic motor impulses and perceptual responses.
-2. **Stage 2 (Scratchpad Persistence)**: Validates persistent internal scratchpad I/O and state maintenance across pulses.
-3. **Stage 3 (Workspace Mutation & Tool Verification)**: Exercises native file mutation (`write`, `read_back`) and execution receipts in an isolated digital sandbox.
-4. **Stage 4 (Attuned Dialogue)**: Validates multi-turn conversational grounding and identity continuity.
-
-Results are recorded in `data/agents/<agent_id>/developmental_report_card.txt` and preserved in `creation.json`.
-
-## Receipts and verification scope
-
-Pulse context uses conditional source headings through `core/pulse_context.py`
-and `core/mindscape_context.py`. Fresh messages and sensations, focused-work
-results, recalled context, prior assistant statements, and internal state are
-separate. Only populated sections appear. A remembered observation remains
-historical, and an earlier assistant statement remains unverified. The latest
-complete private foreground thought has an explicit continuation slot; outward
-replies never populate that slot. Earlier private records can surface as labeled
-cognitive context. Provider history retains actual received messages and
-delivered replies; retrieved pulse packets are transient. The installed Granite
-foreground sees delivered replies in matching JSON message envelopes, while raw
-dialogue remains unchanged. Canonical record types own the recalled sections,
-including after nominations from different lanes are merged. Older assistant
-prose is recalled only for a request about past statements; actual dialogue
-history remains available. The installed Granite
-tokenizer counts the complete system/dialogue/pulse request. Provider pruning or
-a generation that reaches its context boundary causes an explicit failure.
-
-The Loom presentation override participates in native admission/token counting
-and packet hashing. Retrieval lanes, evidence policies and configured budgets
-remain native; altered header costs can affect what fits in that budget.
-Selected historical observations are rendered with their source and verification
-labels (the upstream section order previously omitted the observations section).
-
-The typed compositor takes fresh query text separately from recalled material,
-state and output direction. Each mRAG result keeps its actual sentence-head
-provenance. A uniquely matched passage may receive an italic, tagged recollection
-directly afterward. Ambiguous/missing anchors retain their ordinary source
-section. Canonical input and remembered text are not rewritten; rendering alone
-adds asides, with source hashes and original offsets recorded in
-`pulse_context.context_assembly`. Identical canonical IDs/content from mRAG and
-Loom are displayed once, with the duplicate explained in the receipt. No
-retrieval score establishes a contradiction or overrides current permission.
-
-The Mindscape profile removes the first-four-sentences restriction from sentence
-head generation. Derived heads, candidate selection, recent-memory selection,
-and history compression retain inherited policies. They remain prerequisites for
-the full-system boundary audit. Loom counts the entire rendering against the
-remaining physical input allowance after provider history and system overhead,
-and fails explicitly if required content cannot fit.
-No agent behavior improvement is established by these implementation checks;
-see the [context weave audit](audits/2026-10-10-context-weave/README.md).
-
-`data/mindscape/composition-manifest.json` records sources, configuration, model
-identities, stores, lanes and integration boundaries. `receipts.jsonl` records
-initialization, canonical sync, pulse context/state changes, foreground returns
-and checkpoint hashes. Native restore evidence lives in `joint/events.jsonl`.
-GUI launch output is retained in `logs/launcher.log`.
-Dependency and bootstrap failures stop GUI setup, with bootstrap details in
-`logs/bootstrap.log`. Closing the launcher sends a graceful shutdown request;
-the process finishes initialization or its current pulse before closing state.
-
-`--check-setup` loads and synchronizes the actual composition, then exits without
-starting channel services or passive sensors. This is initialization evidence,
-not a recall, action, learning or competence benchmark. Inherited Helix retrieval,
-provider and orchestration limits still need a complete audit before behavioral
-scoring. The new adapter adds no record-sampling, action, or reasoning ceiling.
-
-### Subconscious motor actuation and workspace abilities
-
-The installed bootstrap provides a native workspace body with move, sense,
-open, write, mkdir and run abilities. Rather than constraining the foreground
-Speaker to output rigid `<intention>` JSON markup, Helix uses the
-**Subconscious Motor Actuation Bridge**:
-
-- **Motor Affordance Impulse**: The Subconscious stream emits latent motor
-  affordances through `OutputTrunk.DO` and `OutputTrunk.LOOK`
-  (`core/mindscape.py::has_subconscious_motor_impulse()`).
-- **Natural Intention Extraction**: When the Speaker articulates natural prose
-  or commitment (e.g., *"I will check `main.py`"*),
-  `core/mindscape_intention.py::parse_natural_or_wire_intention()` resolves the
-  intended target and action, with seamless fallback to wire JSON if emitted.
-- **Physical Execution & Authoritative Receipts**: The native SELF kernel selects
-  and authorizes the corresponding workspace handler (`resolve_subconscious_action()`).
-  Sense reads attributes without content; open reads UTF-8 or extracts PDF text.
-  Writes require read-back verification; Python execution captures observed hashes
-  and stdout. Python runs in an isolated workspace with no host network.
-  Authoritative receipts are recorded in `receipts.jsonl` and fed back into the
-  recurrent tensor state.
-The latest real launcher failures and repairs are preserved in the
-[native-cycle audit](audits/2026-10-10-native-cycle-repair/README.md).
-
-The [2026-10-09 launch audit](audits/2026-10-09-mindscape-launch/README.md)
-records real startup, synchronization, restart and pulse diagnostics. Those
-checks passed their stated infrastructure conditions. The observed dashboard
-message produced a private thought but no delivered reply, so this is not a
-claim that the complete agent is ready for unattended use.
+The [October 17 evidence](audits/2026-10-17-native-body-operational/README.md)
+covers a normal no-argument launch, graceful restart and verified movement,
+opening and isolated execution through production memory, compiler and native
+model admission. General coherence, learned autonomy and developmental growth
+remain unverified. Earlier failed trials remain preserved for their own sources.

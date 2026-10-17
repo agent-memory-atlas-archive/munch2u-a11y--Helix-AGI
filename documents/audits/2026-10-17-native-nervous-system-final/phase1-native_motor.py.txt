@@ -1,0 +1,283 @@
+"""Non-language body control, independent of foreground token generation.
+
+The bootstrap receptor accepts explicit user movement/reading/execution requests.
+It is a transparent goal policy, not a claim of learned motor competence. Signals
+are integer opcodes bound to observed filesystem targets; model prose is never an
+input. Existing native SELF authorization and sensory returns remain mandatory.
+"""
+from __future__ import annotations
+
+from dataclasses import dataclass, asdict
+from enum import IntEnum
+import hashlib
+import json
+from pathlib import Path
+import re
+import threading
+import time
+import uuid
+import shlex
+import queue
+
+
+class MotorOpcode(IntEnum):
+    MOVE = 1
+    SENSE = 2
+    OPEN = 3
+    RUN = 4
+
+
+ACTION = {MotorOpcode.MOVE: "move", MotorOpcode.SENSE: "sense",
+          MotorOpcode.OPEN: "open", MotorOpcode.RUN: "run"}
+
+
+@dataclass(frozen=True)
+class MotorSignal:
+    opcode: int
+    target_handle: str
+    request_id: str
+    context_id: str
+    observation_id: str
+
+
+VERB = r"(?:go\s+to|move(?:\s+to)?|navigate(?:\s+to)?|enter|cd|open|read|run|execute|inspect|list|sense)"
+LEADER = re.compile(r"^(?:please\s+|(?:can|could|would)\s+you\s+|then\s+|and\s+)*", re.I)
+COMMAND = re.compile(rf"^({VERB})\s+(.+)$", re.I | re.S)
+
+
+def receptive_steps(message):
+    """A deliberately explicit bootstrap grammar on actual received user input.
+
+    None means ordinary conversation. Negated/ambiguous commands are rejected,
+    never completed by guessing filenames, program contents or a default script.
+    Preserve path spelling and the order of every requested target.
+    """
+    text = str(message).split("They said:", 1)[-1].strip()
+    if text.startswith('"') and text.endswith('"'):
+        text = text[1:-1]
+    text = re.sub(r"^(?:hello|hi|hey)\b[^.!?]*[.!?]\s*", "", text, count=1, flags=re.I)
+    text = re.sub(r"^I am [\w -]+\.\s*", "", text, count=1, flags=re.I)
+    text = LEADER.sub("", text).strip()
+    if not COMMAND.match(text):
+        return None
+    if re.search(r"\b(?:not|never|cannot|can't|don't|won't|unable)\b", text, re.I):
+        raise ValueError("Negated movement/execution request: no motor actions admitted")
+    text = re.split(r"\s+and\s+(?:tell|report|show)\b", text, maxsplit=1, flags=re.I)[0]
+    chunks = re.split(rf"\s*(?:;|\b(?:and\s+then|and|then)\b)\s*(?=(?:please\s+)?{VERB}\b)", text, flags=re.I)
+    steps, last_file = [], None
+    for chunk in chunks:
+        m = COMMAND.fullmatch(LEADER.sub("", chunk).strip())
+        if not m:
+            raise ValueError("Unrecognized motor request; give explicit actions and target paths")
+        verb, supplied = m.groups()
+        action = ("move" if re.match(r"go|move|navigate|enter|cd", verb, re.I) else
+                  "open" if verb.lower() in {"open", "read"} else
+                  "run" if verb.lower() in {"run", "execute"} else "sense")
+        supplied = supplied.strip().rstrip("?!").strip()
+        if supplied not in {".", ".."} and supplied.endswith("."):
+            supplied = supplied[:-1]
+        bound_reference = supplied.lower() in {"it", "that file", "that script"}
+        if bound_reference:
+            if last_file is None:
+                raise ValueError("No explicitly named file for 'it'")
+            supplied = last_file
+        tokens = [supplied] if bound_reference else shlex.split(supplied)
+        if not tokens or any(tokens[i].lower() != "and" for i in range(1, len(tokens), 2)) or len(tokens) % 2 == 0:
+            raise ValueError("Use explicit paths; quote filenames containing spaces")
+        targets = tokens[::2]
+        if len(targets) > 1 and action != "open":
+            raise ValueError("Give each movement or execution action its own explicit target")
+        for target in targets:
+            target = target.strip()
+            quoted = len(target) >= 2 and target[0] == target[-1] and target[0] in "\"'"
+            if quoted:
+                target = target[1:-1]
+            if not target:
+                raise ValueError("A motor action needs an explicit target")
+            steps.append({"opcode": int({"move": MotorOpcode.MOVE, "sense": MotorOpcode.SENSE,
+                                         "open": MotorOpcode.OPEN, "run": MotorOpcode.RUN}[action]),
+                          "target": target})
+            if action == "open":
+                last_file = target
+    return steps
+
+
+class NativeMotorSystem:
+    def __init__(self, owner):
+        self.owner = owner
+        self.store = owner.native.mind.store
+        self.jobs = json.loads(self.store.get_metadata("helix_motor_jobs", "[]"))
+        self.stop_event = threading.Event()
+        self.thread = None
+        self.sensor_thread = None
+        self.frames = queue.Queue()
+        self.wake = lambda: None
+        self.sequence = 0
+        self.last_scene_hash = None
+        self.policy = "explicit-user-goals-v1; integer motor signals; native SELF authorization"
+
+    def _save(self):
+        from core.agent_home import write_home_json
+        self.store.set_metadata("helix_motor_jobs", json.dumps(self.jobs))
+        write_home_json(self.owner.directory / "motor-state.json", {
+            "policy": self.policy, "sensory_cadence_seconds": self.interval,
+            "last_sensor_sequence": self.sequence, "updated_at": time.time(), "jobs": self.jobs})
+
+    @property
+    def interval(self):
+        return float(self.owner.config["mindscape"]["sensory_interval_seconds"])
+
+    @property
+    def pending(self):
+        return any(j["status"] in {"awaiting_context", "ready", "acting"} for j in self.jobs)
+
+    def admit(self, messages, pulse):
+        ids = []
+        for index, message in enumerate(messages):
+            if not re.match(r"^(?:\[[^\]]+\]\s*)?[\w .'-]+ is talking to me via \w+\. They said:", message):
+                continue
+            key = f"{self.owner.session_id}:{pulse}:{index}"
+            if any(j["input_id"] == key for j in self.jobs):
+                continue
+            try:
+                steps = receptive_steps(message)
+                if steps is None:
+                    continue
+                error = None
+            except ValueError as exc:
+                steps, error = [], str(exc)
+            job = {"id": "motor:" + uuid.uuid4().hex, "input_id": key,
+                   "message": message, "steps": steps, "cursor": 0, "receipts": [],
+                   "status": "blocked" if error else "awaiting_context", "error": error,
+                   "context_id": None, "created_at": time.time()}
+            self.jobs.append(job)
+            ids.append(job["id"])
+            self.owner._receipt("motor_request_admitted", **job, policy=self.policy)
+        if ids:
+            self._save()
+        return ids
+
+    def link_context(self, ids, context_id):
+        for job in self.jobs:
+            if job["id"] in ids:
+                job["context_id"] = context_id
+                if job["status"] == "awaiting_context":
+                    job["status"] = "ready"
+        if ids:
+            self._save()
+
+    def start(self, wake):
+        if self.thread is not None:
+            return
+        self.wake = wake
+        self.thread = threading.Thread(target=self._run, name="helix-sensory-motor", daemon=True)
+        self.sensor_thread = threading.Thread(target=self._sense_loop, name="helix-filesystem-sensor", daemon=True)
+        self.sensor_thread.start()
+        self.thread.start()
+
+    def sample(self):
+        """The sensor remains live even while the native executor runs a script."""
+        from core.agent_home import write_home_json
+        workspace = self.owner.body.workspace
+        self.sequence += 1
+        position = workspace.position
+        scene = workspace.sense({"path": "/" + position})
+        scene["position"] = position
+        stable = {**scene, "entries": [x for x in scene.get("entries", []) if x["name"] != "intakes"]}
+        stable.pop("modified_ns", None)
+        digest = hashlib.sha256(json.dumps(stable, sort_keys=True).encode()).hexdigest()
+        changed = digest != self.last_scene_hash
+        if changed:
+            frame = {"observation_id": "body-sense:" + uuid.uuid4().hex, "time_ns": time.time_ns(),
+                     "surroundings": scene, "content_opened": False, "scene_sha256": digest}
+            write_home_json(workspace.root / "intakes" / (frame["observation_id"].replace(":", "-") + ".json"), frame)
+            self.frames.put(frame)
+            self.last_scene_hash = digest
+        self.owner._receipt("sensory_tick", sequence=self.sequence, time_ns=time.time_ns(),
+                            scene_sha256=digest, changed=changed, position=scene["position"],
+                            cadence_seconds=self.interval)
+
+    def _sense_loop(self):
+        while not self.stop_event.is_set():
+            try:
+                self.sample()
+            except Exception as exc:
+                self.owner._receipt("sensory_system_failed", error=f"{type(exc).__name__}: {exc}")
+                self.owner.motor_failure = str(exc)
+                self.stop_event.set()
+                self.wake()
+                return
+            self.stop_event.wait(self.interval)
+
+    def _run(self):
+        while not self.stop_event.is_set():
+            try:
+                self.owner._worker.submit(self.tick).result()
+            except Exception as exc:
+                self.owner._receipt("motor_system_failed", error=f"{type(exc).__name__}: {exc}")
+                self.owner.motor_failure = str(exc)
+                self.wake()
+                return
+            self.stop_event.wait(self.interval)
+
+    def stop(self):
+        self.stop_event.set()
+        self.owner.body.workspace.cancel_execution()
+        if self.thread is not None and self.thread is not threading.current_thread():
+            self.thread.join()
+        if self.sensor_thread is not None and self.sensor_thread is not threading.current_thread():
+            self.sensor_thread.join()
+
+    def tick(self):
+        workspace = self.owner.body.workspace
+        while not self.frames.empty():
+            frame = self.frames.get_nowait()
+            self.owner._admit_motor_scene(frame)
+        if self.stop_event.is_set():
+            return
+        job = next((j for j in self.jobs if j["status"] in {"ready", "acting"}), None)
+        if job is None:
+            return
+        job["status"] = "acting"
+        step = job["steps"][job["cursor"]]
+        try:
+            target = workspace.resolve_path(step["target"])
+            relative = target.relative_to(workspace.root).as_posix()
+            observed = workspace.sense({"path": "/" + target.parent.relative_to(workspace.root).as_posix()}) if target != workspace.root else workspace.sense({"path": "."})
+            target_state = workspace._attributes(target)
+            target_handle = hashlib.sha256(json.dumps({"path": relative, "attributes": target_state}, sort_keys=True).encode()).hexdigest()
+            observation_id = "motor-target:" + uuid.uuid4().hex
+            self.owner._admit_motor_target(observation_id, observed, target_handle, relative)
+            opcode = MotorOpcode(step["opcode"])
+            # RUN always obtains a real fresh content/hash observation first.
+            previous = next((x for x in reversed(job["receipts"]) if x.get("action") == "open" and
+                             x.get("receipt", {}).get("output", {}).get("path") == relative), None)
+            prerequisite = opcode == MotorOpcode.RUN and previous is None
+            signal = MotorSignal(int(MotorOpcode.OPEN if prerequisite else opcode), target_handle,
+                                 job["id"], job["context_id"], observation_id)
+            arguments = {"path": "/" + relative}
+            if opcode == MotorOpcode.RUN and not prerequisite:
+                arguments["expected_sha256"] = previous["receipt"]["output"]["sha256"]
+            result = self.owner._execute_motor(signal, arguments)
+            job["receipts"].append(result)
+            receipt = result.get("receipt", {})
+            if receipt.get("status") != "success" or not receipt.get("verified"):
+                raise RuntimeError("Native action did not succeed: " + json.dumps(result))
+            output = receipt.get("output", {})
+            returned_path = output.get("position") if signal.opcode == MotorOpcode.MOVE else output.get("path")
+            if returned_path != relative:
+                raise RuntimeError("Native return target differs from requested target")
+            if signal.opcode == MotorOpcode.RUN and output.get("return_code") != 0:
+                raise RuntimeError("Script did not exit successfully")
+            if not prerequisite:
+                job["cursor"] += 1
+            if job["cursor"] == len(job["steps"]):
+                job["status"] = "completed"
+                job["completed_at"] = time.time()
+                self.owner._receipt("motor_request_completed", request_id=job["id"], context_id=job["context_id"],
+                                    receipt_ids=[x["receipt"]["receipt_id"] for x in job["receipts"]])
+        except Exception as exc:
+            job["status"], job["error"] = "blocked", f"{type(exc).__name__}: {exc}"
+            self.owner._receipt("motor_request_blocked", request_id=job["id"], error=job["error"])
+        self._save()
+        self.wake()

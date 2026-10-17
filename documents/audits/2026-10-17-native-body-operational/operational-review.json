@@ -1,0 +1,86 @@
+{
+  "agent": "CedarLive",
+  "bootstrap_boundary": "The motor goal policy recognizes explicit movement, inspection, opening and execution requests. It is operational bootstrap scaffolding, not learned autonomous motor selection or proof of open-ended growth. General conversational coherence was not established by this trial.",
+  "controls": {
+    "graceful_shutdown_and_joint_state": "graceful-shutdown-verified.json",
+    "negated_request_no_action": "03-negative.verified.json",
+    "sensor_intake_during_running_process": "sensor-during-execution.json"
+  },
+  "current_core": [
+    "independent receptive, sensory and motor loops",
+    "real nine-lane production retrieval and compiler output consumed by native RWKV before motor release",
+    "numeric motor signals and observed target handles; speech has no actuator authority",
+    "native SELF authorization, actual action returns, case-preserving per-target verification",
+    "observed-hash workshop execution with filesystem/network/process isolation",
+    "joint neural/memory checkpoint committed before successful goal completion",
+    "normal CLI uses saved setup profile; file staging uses the selected agent home",
+    "foreground and auxiliary inference pinned to declared local provider; configured auxiliary failure cannot use remote fallback",
+    "explicit cancellation for native chunks, language and auxiliary sessions, and own sandbox process namespace"
+  ],
+  "dashboard": "http://127.0.0.1:15219",
+  "dashboard_command": "venv/bin/python dashboard/dashboard.py --port 15219",
+  "data": "/home/nemo/Helix_AGI (GitHub Repo) (Public)/data/agents/CedarLive",
+  "dependency_change": "/home/nemo/MightyMem/habitus_ai/continual_rwkv.py adds cooperative cancellation; existing continual_mind.py changes were preserved.",
+  "final_manifest": "handoff/composition-manifest.json",
+  "final_source_live_verification": {
+    "agent": "CedarLive",
+    "compiled_context_consumed_by_declared_native_model_before_actions": true,
+    "content_hashes_and_execution_artifact_verified": true,
+    "current_source_workflow": [
+      "move",
+      "move",
+      "open",
+      "run",
+      "open"
+    ],
+    "dashboard": "http://127.0.0.1:15219",
+    "entrypoint": "main.py with no arguments",
+    "host_sentinel_unchanged": true,
+    "matching_neural_memory_checkpoint_committed_before_completion": true,
+    "model_policy": "local CPU RWKV; speech has no actuator authority; explicit goal bootstrap, not learned autonomy",
+    "native_authorization_and_returns_verified": true,
+    "nine_production_lanes": [
+      "semantic",
+      "exact",
+      "recent",
+      "subjective",
+      "procedure",
+      "correction",
+      "multi_hop_graph",
+      "y_cipher_depth",
+      "habitus_graph"
+    ],
+    "operational_body_verified": true,
+    "processes": {
+      "agent": 2428774,
+      "dashboard": 2424650
+    },
+    "restart_retained_identity_position_and_goals": true,
+    "source_hashes_match_running_product": true,
+    "uploaded_file_readback_verified": true,
+    "verified_at": 1792229319.4470897
+  },
+  "finished_at": 1792229431.6895976,
+  "focused_implementation_checks": {
+    "kind": "implementation diagnostics, not a product performance score",
+    "log": "handoff/implementation-checks.log",
+    "passed": 72
+  },
+  "historical_runs": "Earlier auxiliary-route and checkpoint-durability diagnostics remain preserved with their limitations; final claims use handoff source/manifest and read-backs.",
+  "home": "/home/nemo/Helix_AGI (GitHub Repo) (Public)/data/homes/CedarLive",
+  "nursery_boundary": "Optional nursery helper remains outside runtime; its separate persistence/safety issues were not repaired or used as training here.",
+  "processes": {
+    "agent": 2428774,
+    "dashboard": 2424650
+  },
+  "start_command": "venv/bin/python main.py",
+  "status": "operational native body verified; selected agent and dashboard running",
+  "verified_tasks": [
+    "move between rooms",
+    "open actual case-sensitive files and verify full content/hash",
+    "run a real Python script and independently read the produced artifact",
+    "deny host writes from workshop execution",
+    "restore identity, position, completed goal IDs and action history after graceful restart",
+    "read a newly uploaded note through the restarted product"
+  ]
+}

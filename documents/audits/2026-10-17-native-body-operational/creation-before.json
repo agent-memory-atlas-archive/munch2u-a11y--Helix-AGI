@@ -1,0 +1,19 @@
+{
+  "agent_archetype": "curious",
+  "agent_name": "CedarLive",
+  "archetype_description": "Gently prefers looking, reading and understanding unfamiliar things.",
+  "channels": [
+    "dashboard"
+  ],
+  "creator_name": "User",
+  "data_dir": "/home/nemo/Helix_AGI (GitHub Repo) (Public)/data/agents/CedarLive",
+  "gestation_status": "pending until native startup",
+  "home": "/home/nemo/Helix_AGI (GitHub Repo) (Public)/data/homes/CedarLive",
+  "native_seed": {
+    "agent_name": "CedarLive",
+    "human_name": "User",
+    "taste_schema": "curious"
+  },
+  "primary_channel": "dashboard",
+  "schema": "helix-agent-creation-v1"
+}

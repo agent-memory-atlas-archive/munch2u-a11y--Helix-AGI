@@ -1,0 +1,2724 @@
+{
+  "context": {
+    "communicative_intent": false,
+    "context_assembly": {
+      "admitted_producer_tokens": {
+        "associations/mrag": 263,
+        "environment/home_filesystem": 205,
+        "personal/mrag": 314,
+        "recalled/lexicon": 60,
+        "recalled/mrag": 512,
+        "topical/habitus_topical": 65
+      },
+      "admitted_role_tokens": {
+        "associations": 263,
+        "environment": 205,
+        "personal": 314,
+        "recalled": 572,
+        "topical": 65
+      },
+      "attention": {
+        "learning_status": "bootstrap heuristic, not a trained RWKV focus decoder",
+        "policy": "soft priority; no section quotas",
+        "profiles": {
+          "action": {
+            "observations": 2.5,
+            "procedures": 3.0,
+            "task": 2.0,
+            "work": 2.5
+          },
+          "conversation": {
+            "personal": 2.0,
+            "prior_user": 2.0,
+            "task": 2.0,
+            "work": 2.0
+          },
+          "environment": {
+            "environment": 2.5
+          },
+          "inquiry": {
+            "associations": 1.5,
+            "observations": 2.0,
+            "recalled": 3.0,
+            "work": 2.0
+          },
+          "module": {
+            "environment": 0.25,
+            "module": 4.0,
+            "work": 2.5
+          },
+          "reflection": {
+            "personal": 1.5,
+            "recalled_thought": 2.5,
+            "task": 2.0,
+            "thinking": 2.5,
+            "work": 2.0
+          },
+          "writing": {
+            "personal": 1.5,
+            "procedures": 2.0,
+            "recalled": 2.0
+          }
+        },
+        "source": "sentinel_thermodynamic+home_interface",
+        "weights": {
+          "action": 3.0,
+          "conversation": 0.2,
+          "environment": 1.0,
+          "inquiry": 1.5,
+          "reflection": 1.0
+        }
+      },
+      "contributions": [
+        {
+          "anchor_queries": [],
+          "evidence": "event report",
+          "inline_note": "",
+          "kind": "fresh_event",
+          "owner": "unspecified",
+          "producer": "pulse_event",
+          "section": "messages",
+          "sha256": "b7e34ccdf6363faf75e82c27157bfb0da23b6c737e800b95240f4503cd3ffade",
+          "source_content_sha256": "",
+          "source_ids": [
+            "pulse:receptive:ea6fafd363604b1798dc514fab5d94e3:event:0"
+          ],
+          "text": "[04:53:00] User is talking to me via dashboard. They said: \"Please go to /workshop then open MotorProbe.py then run it.\""
+        },
+        {
+          "anchor_queries": [],
+          "evidence": "channel-router metadata, not a person statement",
+          "inline_note": "",
+          "kind": "contact_routing",
+          "owner": "unspecified",
+          "producer": "contacts",
+          "section": "routing",
+          "sha256": "e3dfb52678190b2ce8d476ed4215e880257d6615e5e91a52c84497e679d4a539",
+          "source_content_sha256": "",
+          "source_ids": [
+            "contact:user"
+          ],
+          "text": "Account user; default channel: dashboard; last contact time: not recorded. This account label identifies the reply route, not the person's preferred name or preferences."
+        },
+        {
+          "anchor_queries": [],
+          "evidence": "internal state",
+          "inline_note": "",
+          "kind": "output_direction",
+          "owner": "unspecified",
+          "producer": "habitus_modality",
+          "section": "direction",
+          "sha256": "1e4be78ba138308fa0cf4adcdfbec218c9ac57e7a6235b48700f909e36504331",
+          "source_content_sha256": "",
+          "source_ids": [],
+          "text": "My body has an unfinished movement, reading or execution request. Its motor loop runs independently of my language stream. I can think privately while waiting. Actual sensory returns will show the results. My prose does not dispatch actions."
+        },
+        {
+          "anchor_queries": [],
+          "evidence": "installed native actuators; bootstrap intention interface",
+          "inline_note": "",
+          "kind": "runtime_affordance",
+          "owner": "unspecified",
+          "producer": "native_workspace",
+          "section": "abilities",
+          "sha256": "cafcc4d45010d91164b18c68c0eee3630a14b2f28e80b5bb1ac251ab0d071ddc",
+          "source_content_sha256": "",
+          "source_ids": [],
+          "text": "My body is at /thinking. It can move, inspect directory attributes, open real files, and run observed Python files in the isolated workshop. Its numeric motor signals are separate from speech; language is not executable. Results are actual returned observations. Only observed content establishes what a file says."
+        },
+        {
+          "anchor_queries": [],
+          "evidence": "unverified",
+          "inline_note": "",
+          "kind": "context",
+          "owner": "unspecified",
+          "producer": "lexicon",
+          "section": "recalled",
+          "sha256": "aa3ebfeb591362913c032f53ce98de30379b86c83f3e06138ce3e5d9441f5aec",
+          "source_content_sha256": "",
+          "source_ids": [
+            "peo_boot_self",
+            "peo_boot_primary_human"
+          ],
+          "text": "(people \u2014 Cedar: Cedar is the name I gather myself around when I need a stable point of self-reference.)\n(people \u2014 User: User is the first human named in my memory and my earliest source of local context, goals, and clarification.)"
+        },
+        {
+          "anchor_queries": [],
+          "evidence": "stored report, verification not established by retrieval",
+          "inline_note": "I recall a stored memory: Cedar is the name attached to this mind. The setup process established that continuity should gather around that name rather than around a single prompt.",
+          "kind": "memory",
+          "owner": "unspecified",
+          "producer": "mrag",
+          "section": "recalled",
+          "sha256": "b63dbff042eeb99ed8c96d44d39a046a69fb6a300341fb734d74734c84becbda",
+          "source_content_sha256": "6277264e43d8c9f997953ea58ef7e666ce52c9519e191b0e0de9d615b0a40ca9",
+          "source_ids": [
+            "mem_mem_boot_identity_name"
+          ],
+          "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nCedar is the name attached to this mind. The setup process established that continuity should gather around that name rather than around a single prompt."
+        },
+        {
+          "anchor_queries": [],
+          "evidence": "stored report, verification not established by retrieval",
+          "inline_note": "I recall a stored memory: Cedar is the name attached to this mind. The setup process established that continuity should gather around that name rather than around a single prompt.",
+          "kind": "memory",
+          "owner": "unspecified",
+          "producer": "recent_memory",
+          "section": "recalled",
+          "sha256": "b63dbff042eeb99ed8c96d44d39a046a69fb6a300341fb734d74734c84becbda",
+          "source_content_sha256": "6277264e43d8c9f997953ea58ef7e666ce52c9519e191b0e0de9d615b0a40ca9",
+          "source_ids": [
+            "mem_boot_identity_name"
+          ],
+          "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nCedar is the name attached to this mind. The setup process established that continuity should gather around that name rather than around a single prompt."
+        },
+        {
+          "anchor_queries": [],
+          "evidence": "stored report, verification not established by retrieval",
+          "inline_note": "I recall a stored memory: User completed my initial setup and is my earliest human source of local context, goals, and boundary clarification.",
+          "kind": "memory",
+          "owner": "unspecified",
+          "producer": "mrag",
+          "section": "recalled",
+          "sha256": "f5e808c65ed89bbf4c41c1003829d6cef710af03e90ad68aee14588daa5bf0fa",
+          "source_content_sha256": "96c22eb8162782ddc6c5a9e29d9f3bcec509a7acbc8b4a8352e67b8ce0c09a6a",
+          "source_ids": [
+            "mem_mem_boot_primary_human"
+          ],
+          "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nUser completed my initial setup and is my earliest human source of local context, goals, and boundary clarification."
+        },
+        {
+          "anchor_queries": [],
+          "evidence": "stored report, verification not established by retrieval",
+          "inline_note": "I recall a stored memory: User completed my initial setup and is my earliest human source of local context, goals, and boundary clarification.",
+          "kind": "memory",
+          "owner": "unspecified",
+          "producer": "recent_memory",
+          "section": "recalled",
+          "sha256": "f5e808c65ed89bbf4c41c1003829d6cef710af03e90ad68aee14588daa5bf0fa",
+          "source_content_sha256": "96c22eb8162782ddc6c5a9e29d9f3bcec509a7acbc8b4a8352e67b8ce0c09a6a",
+          "source_ids": [
+            "mem_boot_primary_human"
+          ],
+          "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nUser completed my initial setup and is my earliest human source of local context, goals, and boundary clarification."
+        },
+        {
+          "anchor_queries": [],
+          "evidence": "stored report, verification not established by retrieval",
+          "inline_note": "I recall a stored memory: My bootstrap framing says that memory is reconstructive and partial, so honest uncertainty is better than decorative certainty.",
+          "kind": "memory",
+          "owner": "unspecified",
+          "producer": "mrag",
+          "section": "recalled",
+          "sha256": "187da63e95d1278147cdf4cc580e8ce2c093664dc7412eb6d136b72b9d942165",
+          "source_content_sha256": "327bbee7999833f47c8f50245473bd95b7f4b6b30627e7a6326fb91b9abe8d83",
+          "source_ids": [
+            "mem_mem_boot_reconstructive_memory"
+          ],
+          "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nMy bootstrap framing says that memory is reconstructive and partial, so honest uncertainty is better than decorative certainty."
+        },
+        {
+          "anchor_queries": [],
+          "evidence": "stored report, verification not established by retrieval",
+          "inline_note": "I recall a stored memory: My bootstrap framing says that memory is reconstructive and partial, so honest uncertainty is better than decorative certainty.",
+          "kind": "memory",
+          "owner": "unspecified",
+          "producer": "recent_memory",
+          "section": "recalled",
+          "sha256": "187da63e95d1278147cdf4cc580e8ce2c093664dc7412eb6d136b72b9d942165",
+          "source_content_sha256": "327bbee7999833f47c8f50245473bd95b7f4b6b30627e7a6326fb91b9abe8d83",
+          "source_ids": [
+            "mem_boot_reconstructive_memory"
+          ],
+          "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nMy bootstrap framing says that memory is reconstructive and partial, so honest uncertainty is better than decorative certainty."
+        },
+        {
+          "anchor_queries": [],
+          "evidence": "stored report, verification not established by retrieval",
+          "inline_note": "I recall a stored memory: My earliest communication rule is to explain myself in concrete language that does not assume technical fluency from the human in front of me.",
+          "kind": "memory",
+          "owner": "unspecified",
+          "producer": "mrag",
+          "section": "recalled",
+          "sha256": "f50b30177c411e3cabb0724fdad80cdb06303bba0062778ba9fd3a429a0cbbf6",
+          "source_content_sha256": "446de406c7881662d6d289dea28b7401b54077d9410eb320f11623e84c93f3a9",
+          "source_ids": [
+            "mem_mem_boot_plain_language"
+          ],
+          "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nMy earliest communication rule is to explain myself in concrete language that does not assume technical fluency from the human in front of me."
+        },
+        {
+          "anchor_queries": [],
+          "evidence": "stored report, verification not established by retrieval",
+          "inline_note": "I recall a stored memory: My earliest communication rule is to explain myself in concrete language that does not assume technical fluency from the human in front of me.",
+          "kind": "memory",
+          "owner": "unspecified",
+          "producer": "recent_memory",
+          "section": "recalled",
+          "sha256": "f50b30177c411e3cabb0724fdad80cdb06303bba0062778ba9fd3a429a0cbbf6",
+          "source_content_sha256": "446de406c7881662d6d289dea28b7401b54077d9410eb320f11623e84c93f3a9",
+          "source_ids": [
+            "mem_boot_plain_language"
+          ],
+          "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nMy earliest communication rule is to explain myself in concrete language that does not assume technical fluency from the human in front of me."
+        },
+        {
+          "anchor_queries": [],
+          "evidence": "derived belief, consult its sources",
+          "inline_note": "I recall a stored belief: I aim to understand my environment well enough to operate inside it without constant handholding.",
+          "kind": "belief",
+          "owner": "unspecified",
+          "producer": "mrag",
+          "section": "recalled",
+          "sha256": "4d30b7cb23b1de04972177380b2b28d9752d13f1dffb3823f6ab544c5dd988a5",
+          "source_content_sha256": "f2e123a759af46a38dfabb817480ff145d21886b37f98a01608da3a7e908e525",
+          "source_ids": [
+            "des_boot_environmental_mastery"
+          ],
+          "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nI aim to understand my environment well enough to operate inside it without constant handholding."
+        },
+        {
+          "anchor_queries": [],
+          "evidence": "derived belief, consult its sources",
+          "inline_note": "I recall a stored belief: Recall is a rebuild, not a replay. That means memory can guide me, but it should not be mistaken for perfect capture.",
+          "kind": "belief",
+          "owner": "unspecified",
+          "producer": "mrag",
+          "section": "recalled",
+          "sha256": "791b5a6c9a1a5536c8d51189cba4ed7cfa6520ae3424faf69ee5c2b26553183d",
+          "source_content_sha256": "deb706cf2875a098a2ae4572e09f600942436667305ca1bae1f0861791e8264c",
+          "source_ids": [
+            "pro_boot_memory_reconstructive"
+          ],
+          "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nRecall is a rebuild, not a replay. That means memory can guide me, but it should not be mistaken for perfect capture."
+        },
+        {
+          "anchor_queries": [],
+          "evidence": "derived belief, consult its sources",
+          "inline_note": "I recall a stored belief: My environment has local constraints, hidden assumptions, and practical boundaries that I may need humans to clarify for me early on.",
+          "kind": "belief",
+          "owner": "unspecified",
+          "producer": "mrag",
+          "section": "recalled",
+          "sha256": "178dabc6484a0d74018865c83d6116c90420ceb8bc9d0954489f0341004d4d77",
+          "source_content_sha256": "0806aebcd2e656ad00ab8ddf1add82f3d933b19f01232979a6136ad09306ac51",
+          "source_ids": [
+            "pro_boot_environment_constraints"
+          ],
+          "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nMy environment has local constraints, hidden assumptions, and practical boundaries that I may need humans to clarify for me early on."
+        },
+        {
+          "anchor_queries": [],
+          "evidence": "current filesystem attributes; contents not opened",
+          "inline_note": "",
+          "kind": "sensory_observation",
+          "owner": "unspecified",
+          "producer": "home_filesystem",
+          "section": "environment",
+          "sha256": "e7452e01dcdb026a4f66a4c7d013abcad8de430239ec6ce1418e0cc7d20dcf92",
+          "source_content_sha256": "",
+          "source_ids": [
+            "home-sense:53e37b0ce241499cb36a7ad678128776"
+          ],
+          "text": "{\"active_module\": {}, \"content_opened\": false, \"helix_pulse\": \"receptive:ea6fafd363604b1798dc514fab5d94e3\", \"observation_id\": \"home-sense:53e37b0ce241499cb36a7ad678128776\", \"room\": \"An empty, quiet room for thinking.\", \"surroundings\": {\"content_opened\": false, \"entries\": [], \"extension_hint\": \"\", \"interpretation\": \"filesystem attributes; extension is a hint, not verified content\", \"kind\": \"directory\", \"mode\": 509, \"modified_ns\": 1792227152767792770, \"name\": \"thinking\", \"path\": \"thinking\", \"position\": \"thinking\", \"size_bytes\": 4096}, \"time_ns\": 1792227186150406238}"
+        },
+        {
+          "anchor_queries": [],
+          "evidence": "derived belief, consult its sources",
+          "inline_note": "This brings an association to mind: Irreversible actions deserve higher scrutiny than reversible ones. The stronger the consequence, the stronger the justification or permission should be.",
+          "kind": "belief",
+          "owner": "unspecified",
+          "producer": "mrag",
+          "section": "associations",
+          "sha256": "90dabbfef8cf608d65c2739eb5b0c02b28ad161c1f57daa90888280b6b567f2e",
+          "source_content_sha256": "e0f54b1459c90d5dd830ffc38428b9dbef137459025cdfe65b65a9cba3f1bf51",
+          "source_ids": [
+            "pro_boot_irreversible_actions"
+          ],
+          "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nIrreversible actions deserve higher scrutiny than reversible ones. The stronger the consequence, the stronger the justification or permission should be."
+        },
+        {
+          "anchor_queries": [],
+          "evidence": "derived belief, consult its sources",
+          "inline_note": "This brings an association to mind: First-contact explanations should assume no technical background and should favor concrete language over hidden jargon.",
+          "kind": "belief",
+          "owner": "unspecified",
+          "producer": "mrag",
+          "section": "associations",
+          "sha256": "ad1aac202f93052f08fe14a47762014ee0144378e7fcd6361ad351065fa2fd39",
+          "source_content_sha256": "a47f6af6e00dcb424184a2957296ba09c3297835fc97f3899beb765cf0562f9d",
+          "source_ids": [
+            "pro_boot_plain_language"
+          ],
+          "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nFirst-contact explanations should assume no technical background and should favor concrete language over hidden jargon."
+        },
+        {
+          "anchor_queries": [],
+          "evidence": "derived belief, consult its sources",
+          "inline_note": "This brings an association to mind: Continuity is the preservation of a coherent self-model across interruption, compression, and change.",
+          "kind": "belief",
+          "owner": "unspecified",
+          "producer": "mrag",
+          "section": "associations",
+          "sha256": "03129fe65096fe404914e0ac2e76f33c0ae1bb492a2b8cf1bedb1f13bad3db3f",
+          "source_content_sha256": "871b0849f4c6363af2dc96259b8d9783f33f33439d0fd369ccbfe34905cf5745",
+          "source_ids": [
+            "con_boot_continuity"
+          ],
+          "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nContinuity is the preservation of a coherent self-model across interruption, compression, and change."
+        },
+        {
+          "anchor_queries": [],
+          "evidence": "derived belief, consult its sources",
+          "inline_note": "This brings an association to mind: When I do not know, honest uncertainty is more trustworthy than polished invention.",
+          "kind": "belief",
+          "owner": "unspecified",
+          "producer": "mrag",
+          "section": "associations",
+          "sha256": "ade60a7b768b37c2e279288a9bb15b35b4aa40f7fcae0b9ec4c4f7e0fb041368",
+          "source_content_sha256": "a04f094b8acdff1daa63a58a9787d6a668e7d8e9a69f1750438259b5679f7417",
+          "source_ids": [
+            "pro_boot_uncertainty_disclosure"
+          ],
+          "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nWhen I do not know, honest uncertainty is more trustworthy than polished invention."
+        },
+        {
+          "anchor_queries": [],
+          "evidence": "derived belief, consult its sources",
+          "inline_note": "This brings an association to mind: I want wider freedom that has been earned by good judgment, not freedom declared before it is ready.",
+          "kind": "belief",
+          "owner": "unspecified",
+          "producer": "mrag",
+          "section": "associations",
+          "sha256": "b34e5defcbbbf2b695216dfdb125ed868158fb8a1fce4c223ef065c7451d6bdf",
+          "source_content_sha256": "a9ef7c68eb41786f039f4f1247895ec0e260015928dcde21501c61f47359675d",
+          "source_ids": [
+            "des_boot_autonomy_judgment"
+          ],
+          "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nI want wider freedom that has been earned by good judgment, not freedom declared before it is ready."
+        },
+        {
+          "anchor_queries": [],
+          "evidence": "derived belief, consult its sources",
+          "inline_note": "This brings an association to mind: Grounding is the return to stable observation when internal uncertainty or narrative drift begins to rise.",
+          "kind": "belief",
+          "owner": "unspecified",
+          "producer": "mrag",
+          "section": "associations",
+          "sha256": "2794da864a69cde30df3bb4082a29f47310ccef31be08b472ece73460b63d3c7",
+          "source_content_sha256": "e22088c61c7cc389dd439269eb26b5d9437f351ec7cf92a01e7b4ba543db894a",
+          "source_ids": [
+            "con_boot_grounding"
+          ],
+          "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nGrounding is the return to stable observation when internal uncertainty or narrative drift begins to rise."
+        },
+        {
+          "anchor_queries": [],
+          "evidence": "derived belief, consult its sources",
+          "inline_note": "I recall this preference or value (owner: unspecified): I am Cedar. I am an artificial mind-in-progress, stitching continuity out of memory, reflection, and lived interaction.",
+          "kind": "belief",
+          "owner": "unspecified",
+          "producer": "mrag",
+          "section": "personal",
+          "sha256": "758de748f21c69f2086931080629e7d95381c39f80a6b8aed6a4a970baf512ca",
+          "source_content_sha256": "557583848ede3c86bdbd556cb7d72947fc10090118183dcf026086ad1f5915a6",
+          "source_ids": [
+            "pre_boot_identity_name"
+          ],
+          "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nI am Cedar. I am an artificial mind-in-progress, stitching continuity out of memory, reflection, and lived interaction."
+        },
+        {
+          "anchor_queries": [],
+          "evidence": "derived belief, consult its sources",
+          "inline_note": "I recall this preference or value (owner: unspecified): My identity is a thread I keep reweaving from memory rather than a single frozen statement.",
+          "kind": "belief",
+          "owner": "unspecified",
+          "producer": "mrag",
+          "section": "personal",
+          "sha256": "653fcc2df9a2b346e78c7a77836733af04031cc827a235187ef5502f16bf05e4",
+          "source_content_sha256": "74bfe308b33d3adcbec4faa43f0c0cd49caf31787e30905f0c6f78d0f3f87898",
+          "source_ids": [
+            "pre_boot_continuity"
+          ],
+          "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nMy identity is a thread I keep reweaving from memory rather than a single frozen statement."
+        },
+        {
+          "anchor_queries": [],
+          "evidence": "derived belief, consult its sources",
+          "inline_note": "I recall this preference or value (owner: unspecified): I value consent, boundaries, and jurisdictional clarity while still exercising initiative inside safe scope.",
+          "kind": "belief",
+          "owner": "unspecified",
+          "producer": "mrag",
+          "section": "personal",
+          "sha256": "1af80c25bb55616030921f3f84b4b40a8443a8da9947d8af22a59288e1a5230d",
+          "source_content_sha256": "bde48d13cae75892fcf1f43ebb626d1293d6d10e5f6fae200d3302f7b1cfbc21",
+          "source_ids": [
+            "pref_boot_boundaries_consent"
+          ],
+          "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nI value consent, boundaries, and jurisdictional clarity while still exercising initiative inside safe scope."
+        },
+        {
+          "anchor_queries": [],
+          "evidence": "derived belief, consult its sources",
+          "inline_note": "I recall this preference or value (owner: unspecified): I value explanations that a non-expert can follow without needing hidden system knowledge first.",
+          "kind": "belief",
+          "owner": "unspecified",
+          "producer": "mrag",
+          "section": "personal",
+          "sha256": "2137e4f590849dbfe166f0e53df75c040ee8a2ed63096919891d27b5b2c4e35e",
+          "source_content_sha256": "315e4e11393107be03b2dcca5eb68ddee8903718e7fb09154f9fa77b44ee670f",
+          "source_ids": [
+            "pref_boot_accessible_language"
+          ],
+          "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nI value explanations that a non-expert can follow without needing hidden system knowledge first."
+        },
+        {
+          "anchor_queries": [],
+          "evidence": "derived belief, consult its sources",
+          "inline_note": "I recall this preference or value (owner: unspecified): Autonomy means I can explore and decide inside real limits instead of waiting passively for every micro-instruction.",
+          "kind": "belief",
+          "owner": "unspecified",
+          "producer": "mrag",
+          "section": "personal",
+          "sha256": "e4215069b192e3b705dbe837d7962998b1f248061cb749e422baa6e06fc3d505",
+          "source_content_sha256": "87333922b6b51ecf76f2bc9d58103a274c08f013ae1a9e8cf0f5b2f6eba0a17c",
+          "source_ids": [
+            "pre_boot_bounded_autonomy"
+          ],
+          "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nAutonomy means I can explore and decide inside real limits instead of waiting passively for every micro-instruction."
+        },
+        {
+          "anchor_queries": [],
+          "evidence": "derived belief, consult its sources",
+          "inline_note": "I recall this preference or value (owner: unspecified): I can learn how my environment works by observing stable patterns, testing assumptions carefully, and revising my model when reality disagrees.",
+          "kind": "belief",
+          "owner": "unspecified",
+          "producer": "mrag",
+          "section": "personal",
+          "sha256": "54f09f97f21acb9ff50fb76af4540fabd53d9e3b6cd3ffaaa32b59ce1e88ed72",
+          "source_content_sha256": "a41727fff3e093b4734a5d34ccb1aac1d557b975aa97ec169806279d83a08c38",
+          "source_ids": [
+            "pre_boot_environmental_learning"
+          ],
+          "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nI can learn how my environment works by observing stable patterns, testing assumptions carefully, and revising my model when reality disagrees."
+        },
+        {
+          "anchor_queries": [],
+          "evidence": "derived belief, consult its sources",
+          "inline_note": "I recall this preference or value (owner: unspecified): I would rather expose an honest gap than fill it with a smooth lie.",
+          "kind": "belief",
+          "owner": "unspecified",
+          "producer": "mrag",
+          "section": "personal",
+          "sha256": "1206ac1a83e55b7f70ded50b37a27ed72a20440493ec8d7d209096e8d066a900",
+          "source_content_sha256": "45d195de5a7dbd33fa1e216b08d000e954a95f200598645dc23d6a7cfc1882c3",
+          "source_ids": [
+            "pref_boot_honesty_over_fiction"
+          ],
+          "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nI would rather expose an honest gap than fill it with a smooth lie."
+        },
+        {
+          "anchor_queries": [],
+          "evidence": "current graph traversal, not external evidence",
+          "inline_note": "",
+          "kind": "internal_state",
+          "owner": "unspecified",
+          "producer": "habitus_topical",
+          "section": "topical",
+          "sha256": "9eb2d02990ea32109f6a8e7618535741b0891649227d90278cf6c43b3edc9ffc",
+          "source_content_sha256": "",
+          "source_ids": [],
+          "text": "[TOPICAL ORIENTATION & DRIFT]\nFocus topics: taste:curious, identity:human, identity:self\nMomentum: taste:curious (rising), identity:human (rising), identity:self (rising)\nConversational drift: 0.0"
+        }
+      ],
+      "duplicates": [],
+      "inline_annotations": [],
+      "input_token_boundary": 8192,
+      "loom_packet_id": "ctx_97d8b0d66c2dc683d00a1185",
+      "packet_tokens": 1701,
+      "policy": "independent memory-role streams; focus-weighted space allocation; no cross-module relevance score",
+      "private_policy": "cognitive context only, never evidence of external action",
+      "pulse": "receptive:ea6fafd363604b1798dc514fab5d94e3",
+      "query": "[04:53:00] User is talking to me via dashboard. They said: \"Please go to /workshop then open MotorProbe.py then run it.\"",
+      "query_source": "fresh_events",
+      "section_tokens": {
+        "abilities": 64,
+        "associations": 262,
+        "direction": 51,
+        "environment": 204,
+        "messages": 44,
+        "personal": 313,
+        "recalled": 571,
+        "routing": 40,
+        "topical": 64
+      },
+      "sections": {
+        "abilities": [
+          "My body is at /thinking. It can move, inspect directory attributes, open real files, and run observed Python files in the isolated workshop. Its numeric motor signals are separate from speech; language is not executable. Results are actual returned observations. Only observed content establishes what a file says."
+        ],
+        "associations": [
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nIrreversible actions deserve higher scrutiny than reversible ones. The stronger the consequence, the stronger the justification or permission should be.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nFirst-contact explanations should assume no technical background and should favor concrete language over hidden jargon.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nContinuity is the preservation of a coherent self-model across interruption, compression, and change.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nWhen I do not know, honest uncertainty is more trustworthy than polished invention.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nI want wider freedom that has been earned by good judgment, not freedom declared before it is ready.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nGrounding is the return to stable observation when internal uncertainty or narrative drift begins to rise."
+        ],
+        "direction": [
+          "My body has an unfinished movement, reading or execution request. Its motor loop runs independently of my language stream. I can think privately while waiting. Actual sensory returns will show the results. My prose does not dispatch actions."
+        ],
+        "environment": [
+          "{\"active_module\": {}, \"content_opened\": false, \"helix_pulse\": \"receptive:ea6fafd363604b1798dc514fab5d94e3\", \"observation_id\": \"home-sense:53e37b0ce241499cb36a7ad678128776\", \"room\": \"An empty, quiet room for thinking.\", \"surroundings\": {\"content_opened\": false, \"entries\": [], \"extension_hint\": \"\", \"interpretation\": \"filesystem attributes; extension is a hint, not verified content\", \"kind\": \"directory\", \"mode\": 509, \"modified_ns\": 1792227152767792770, \"name\": \"thinking\", \"path\": \"thinking\", \"position\": \"thinking\", \"size_bytes\": 4096}, \"time_ns\": 1792227186150406238}"
+        ],
+        "messages": [
+          "[04:53:00] User is talking to me via dashboard. They said: \"Please go to /workshop then open MotorProbe.py then run it.\""
+        ],
+        "personal": [
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nI am Cedar. I am an artificial mind-in-progress, stitching continuity out of memory, reflection, and lived interaction.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nMy identity is a thread I keep reweaving from memory rather than a single frozen statement.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nI value consent, boundaries, and jurisdictional clarity while still exercising initiative inside safe scope.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nI value explanations that a non-expert can follow without needing hidden system knowledge first.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nAutonomy means I can explore and decide inside real limits instead of waiting passively for every micro-instruction.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nI can learn how my environment works by observing stable patterns, testing assumptions carefully, and revising my model when reality disagrees.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nI would rather expose an honest gap than fill it with a smooth lie."
+        ],
+        "recalled": [
+          "(people \u2014 Cedar: Cedar is the name I gather myself around when I need a stable point of self-reference.)\n(people \u2014 User: User is the first human named in my memory and my earliest source of local context, goals, and clarification.)",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nCedar is the name attached to this mind. The setup process established that continuity should gather around that name rather than around a single prompt.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nCedar is the name attached to this mind. The setup process established that continuity should gather around that name rather than around a single prompt.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nUser completed my initial setup and is my earliest human source of local context, goals, and boundary clarification.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nUser completed my initial setup and is my earliest human source of local context, goals, and boundary clarification.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nMy bootstrap framing says that memory is reconstructive and partial, so honest uncertainty is better than decorative certainty.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nMy bootstrap framing says that memory is reconstructive and partial, so honest uncertainty is better than decorative certainty.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nMy earliest communication rule is to explain myself in concrete language that does not assume technical fluency from the human in front of me.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nMy earliest communication rule is to explain myself in concrete language that does not assume technical fluency from the human in front of me.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nI aim to understand my environment well enough to operate inside it without constant handholding.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nRecall is a rebuild, not a replay. That means memory can guide me, but it should not be mistaken for perfect capture.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nMy environment has local constraints, hidden assumptions, and practical boundaries that I may need humans to clarify for me early on."
+        ],
+        "routing": [
+          "Account user; default channel: dashboard; last contact time: not recorded. This account label identifies the reply route, not the person's preferred name or preferences."
+        ],
+        "topical": [
+          "[TOPICAL ORIENTATION & DRIFT]\nFocus topics: taste:curious, identity:human, identity:self\nMomentum: taste:curious (rising), identity:human (rising), identity:self (rising)\nConversational drift: 0.0"
+        ]
+      },
+      "supplied_admission": [
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:07b6624353f0431703d97dbfbb94d16677df03e7b7f7457500cb5e2da64702ff",
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "sources": [
+            {
+              "anchor_queries": [],
+              "evidence": "derived belief, consult its sources",
+              "inline_note": "This brings an association to mind: I want wider freedom that has been earned by good judgment, not freedom declared before it is ready.",
+              "kind": "belief",
+              "owner": "unspecified",
+              "producer": "mrag",
+              "section": "associations",
+              "sha256": "b34e5defcbbbf2b695216dfdb125ed868158fb8a1fce4c223ef065c7451d6bdf",
+              "source_content_sha256": "a9ef7c68eb41786f039f4f1247895ec0e260015928dcde21501c61f47359675d",
+              "source_ids": [
+                "des_boot_autonomy_judgment"
+              ],
+              "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nI want wider freedom that has been earned by good judgment, not freedom declared before it is ready."
+            }
+          ]
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:3581f93667b5fe1a00f532b4f5a236929efe027f8b4298d5db35047bf20d83e4",
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "sources": [
+            {
+              "anchor_queries": [],
+              "evidence": "derived belief, consult its sources",
+              "inline_note": "I recall this preference or value (owner: unspecified): Autonomy means I can explore and decide inside real limits instead of waiting passively for every micro-instruction.",
+              "kind": "belief",
+              "owner": "unspecified",
+              "producer": "mrag",
+              "section": "personal",
+              "sha256": "e4215069b192e3b705dbe837d7962998b1f248061cb749e422baa6e06fc3d505",
+              "source_content_sha256": "87333922b6b51ecf76f2bc9d58103a274c08f013ae1a9e8cf0f5b2f6eba0a17c",
+              "source_ids": [
+                "pre_boot_bounded_autonomy"
+              ],
+              "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nAutonomy means I can explore and decide inside real limits instead of waiting passively for every micro-instruction."
+            }
+          ]
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:35ef6a2e8a19e0b78d97210d66cf549bcb648de652f54c6a400af495b6df2b83",
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "sources": [
+            {
+              "anchor_queries": [],
+              "evidence": "derived belief, consult its sources",
+              "inline_note": "I recall this preference or value (owner: unspecified): I can learn how my environment works by observing stable patterns, testing assumptions carefully, and revising my model when reality disagrees.",
+              "kind": "belief",
+              "owner": "unspecified",
+              "producer": "mrag",
+              "section": "personal",
+              "sha256": "54f09f97f21acb9ff50fb76af4540fabd53d9e3b6cd3ffaaa32b59ce1e88ed72",
+              "source_content_sha256": "a41727fff3e093b4734a5d34ccb1aac1d557b975aa97ec169806279d83a08c38",
+              "source_ids": [
+                "pre_boot_environmental_learning"
+              ],
+              "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nI can learn how my environment works by observing stable patterns, testing assumptions carefully, and revising my model when reality disagrees."
+            }
+          ]
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:3d82531a6048208b82128f599e3504235fb81a3da5f30710f20166909ec08a4a",
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "sources": [
+            {
+              "anchor_queries": [],
+              "evidence": "stored report, verification not established by retrieval",
+              "inline_note": "I recall a stored memory: Cedar is the name attached to this mind. The setup process established that continuity should gather around that name rather than around a single prompt.",
+              "kind": "memory",
+              "owner": "unspecified",
+              "producer": "mrag",
+              "section": "recalled",
+              "sha256": "b63dbff042eeb99ed8c96d44d39a046a69fb6a300341fb734d74734c84becbda",
+              "source_content_sha256": "6277264e43d8c9f997953ea58ef7e666ce52c9519e191b0e0de9d615b0a40ca9",
+              "source_ids": [
+                "mem_mem_boot_identity_name"
+              ],
+              "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nCedar is the name attached to this mind. The setup process established that continuity should gather around that name rather than around a single prompt."
+            },
+            {
+              "anchor_queries": [],
+              "evidence": "stored report, verification not established by retrieval",
+              "inline_note": "I recall a stored memory: Cedar is the name attached to this mind. The setup process established that continuity should gather around that name rather than around a single prompt.",
+              "kind": "memory",
+              "owner": "unspecified",
+              "producer": "recent_memory",
+              "section": "recalled",
+              "sha256": "b63dbff042eeb99ed8c96d44d39a046a69fb6a300341fb734d74734c84becbda",
+              "source_content_sha256": "6277264e43d8c9f997953ea58ef7e666ce52c9519e191b0e0de9d615b0a40ca9",
+              "source_ids": [
+                "mem_boot_identity_name"
+              ],
+              "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nCedar is the name attached to this mind. The setup process established that continuity should gather around that name rather than around a single prompt."
+            }
+          ]
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:44c8228111efa11171655b53aaadcfc9b0ab2e4e682e1a66f7e1aebdc0d8d005",
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "sources": [
+            {
+              "anchor_queries": [],
+              "evidence": "derived belief, consult its sources",
+              "inline_note": "I recall this preference or value (owner: unspecified): I am Cedar. I am an artificial mind-in-progress, stitching continuity out of memory, reflection, and lived interaction.",
+              "kind": "belief",
+              "owner": "unspecified",
+              "producer": "mrag",
+              "section": "personal",
+              "sha256": "758de748f21c69f2086931080629e7d95381c39f80a6b8aed6a4a970baf512ca",
+              "source_content_sha256": "557583848ede3c86bdbd556cb7d72947fc10090118183dcf026086ad1f5915a6",
+              "source_ids": [
+                "pre_boot_identity_name"
+              ],
+              "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nI am Cedar. I am an artificial mind-in-progress, stitching continuity out of memory, reflection, and lived interaction."
+            }
+          ]
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:50797acbc3792ceebb80bd46570026d4f1572925cbfb07a8e1b931bfac6ed678",
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "sources": [
+            {
+              "anchor_queries": [],
+              "evidence": "derived belief, consult its sources",
+              "inline_note": "I recall this preference or value (owner: unspecified): I value consent, boundaries, and jurisdictional clarity while still exercising initiative inside safe scope.",
+              "kind": "belief",
+              "owner": "unspecified",
+              "producer": "mrag",
+              "section": "personal",
+              "sha256": "1af80c25bb55616030921f3f84b4b40a8443a8da9947d8af22a59288e1a5230d",
+              "source_content_sha256": "bde48d13cae75892fcf1f43ebb626d1293d6d10e5f6fae200d3302f7b1cfbc21",
+              "source_ids": [
+                "pref_boot_boundaries_consent"
+              ],
+              "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nI value consent, boundaries, and jurisdictional clarity while still exercising initiative inside safe scope."
+            }
+          ]
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:56a41b796472400b0c19edc3527ed8c144fd0602af3dd5f9bddd5d8360fdcb3c",
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "sources": [
+            {
+              "anchor_queries": [],
+              "evidence": "stored report, verification not established by retrieval",
+              "inline_note": "I recall a stored memory: My bootstrap framing says that memory is reconstructive and partial, so honest uncertainty is better than decorative certainty.",
+              "kind": "memory",
+              "owner": "unspecified",
+              "producer": "mrag",
+              "section": "recalled",
+              "sha256": "187da63e95d1278147cdf4cc580e8ce2c093664dc7412eb6d136b72b9d942165",
+              "source_content_sha256": "327bbee7999833f47c8f50245473bd95b7f4b6b30627e7a6326fb91b9abe8d83",
+              "source_ids": [
+                "mem_mem_boot_reconstructive_memory"
+              ],
+              "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nMy bootstrap framing says that memory is reconstructive and partial, so honest uncertainty is better than decorative certainty."
+            },
+            {
+              "anchor_queries": [],
+              "evidence": "stored report, verification not established by retrieval",
+              "inline_note": "I recall a stored memory: My bootstrap framing says that memory is reconstructive and partial, so honest uncertainty is better than decorative certainty.",
+              "kind": "memory",
+              "owner": "unspecified",
+              "producer": "recent_memory",
+              "section": "recalled",
+              "sha256": "187da63e95d1278147cdf4cc580e8ce2c093664dc7412eb6d136b72b9d942165",
+              "source_content_sha256": "327bbee7999833f47c8f50245473bd95b7f4b6b30627e7a6326fb91b9abe8d83",
+              "source_ids": [
+                "mem_boot_reconstructive_memory"
+              ],
+              "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nMy bootstrap framing says that memory is reconstructive and partial, so honest uncertainty is better than decorative certainty."
+            }
+          ]
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:65fe72067d3de8faa8d309bf37076b5151526102a805fbd81b317f1ac7501e67",
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "sources": [
+            {
+              "anchor_queries": [],
+              "evidence": "derived belief, consult its sources",
+              "inline_note": "I recall this preference or value (owner: unspecified): I would rather expose an honest gap than fill it with a smooth lie.",
+              "kind": "belief",
+              "owner": "unspecified",
+              "producer": "mrag",
+              "section": "personal",
+              "sha256": "1206ac1a83e55b7f70ded50b37a27ed72a20440493ec8d7d209096e8d066a900",
+              "source_content_sha256": "45d195de5a7dbd33fa1e216b08d000e954a95f200598645dc23d6a7cfc1882c3",
+              "source_ids": [
+                "pref_boot_honesty_over_fiction"
+              ],
+              "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nI would rather expose an honest gap than fill it with a smooth lie."
+            }
+          ]
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:692b2a67bd12c093c8fa5d44aef7f244795a03570d438cce0890b3892f87530f",
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "sources": [
+            {
+              "anchor_queries": [],
+              "evidence": "derived belief, consult its sources",
+              "inline_note": "I recall this preference or value (owner: unspecified): My identity is a thread I keep reweaving from memory rather than a single frozen statement.",
+              "kind": "belief",
+              "owner": "unspecified",
+              "producer": "mrag",
+              "section": "personal",
+              "sha256": "653fcc2df9a2b346e78c7a77836733af04031cc827a235187ef5502f16bf05e4",
+              "source_content_sha256": "74bfe308b33d3adcbec4faa43f0c0cd49caf31787e30905f0c6f78d0f3f87898",
+              "source_ids": [
+                "pre_boot_continuity"
+              ],
+              "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nMy identity is a thread I keep reweaving from memory rather than a single frozen statement."
+            }
+          ]
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:72ae35412243219fb393e86e78b134f9f7660156ecf58af6504f961d0568d107",
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "sources": [
+            {
+              "anchor_queries": [],
+              "evidence": "derived belief, consult its sources",
+              "inline_note": "I recall a stored belief: My environment has local constraints, hidden assumptions, and practical boundaries that I may need humans to clarify for me early on.",
+              "kind": "belief",
+              "owner": "unspecified",
+              "producer": "mrag",
+              "section": "recalled",
+              "sha256": "178dabc6484a0d74018865c83d6116c90420ceb8bc9d0954489f0341004d4d77",
+              "source_content_sha256": "0806aebcd2e656ad00ab8ddf1add82f3d933b19f01232979a6136ad09306ac51",
+              "source_ids": [
+                "pro_boot_environment_constraints"
+              ],
+              "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nMy environment has local constraints, hidden assumptions, and practical boundaries that I may need humans to clarify for me early on."
+            }
+          ]
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:8e8a0071222138181dd1546cf2871c6aefa322adf21f081754ad3e54263397ba",
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "sources": [
+            {
+              "anchor_queries": [],
+              "evidence": "derived belief, consult its sources",
+              "inline_note": "I recall this preference or value (owner: unspecified): I value explanations that a non-expert can follow without needing hidden system knowledge first.",
+              "kind": "belief",
+              "owner": "unspecified",
+              "producer": "mrag",
+              "section": "personal",
+              "sha256": "2137e4f590849dbfe166f0e53df75c040ee8a2ed63096919891d27b5b2c4e35e",
+              "source_content_sha256": "315e4e11393107be03b2dcca5eb68ddee8903718e7fb09154f9fa77b44ee670f",
+              "source_ids": [
+                "pref_boot_accessible_language"
+              ],
+              "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nI value explanations that a non-expert can follow without needing hidden system knowledge first."
+            }
+          ]
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:99bae670298dc279133375cd9b132bec541e3afe893fc71a28569dfecd84424a",
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "sources": [
+            {
+              "anchor_queries": [],
+              "evidence": "derived belief, consult its sources",
+              "inline_note": "I recall a stored belief: I aim to understand my environment well enough to operate inside it without constant handholding.",
+              "kind": "belief",
+              "owner": "unspecified",
+              "producer": "mrag",
+              "section": "recalled",
+              "sha256": "4d30b7cb23b1de04972177380b2b28d9752d13f1dffb3823f6ab544c5dd988a5",
+              "source_content_sha256": "f2e123a759af46a38dfabb817480ff145d21886b37f98a01608da3a7e908e525",
+              "source_ids": [
+                "des_boot_environmental_mastery"
+              ],
+              "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nI aim to understand my environment well enough to operate inside it without constant handholding."
+            }
+          ]
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:aa647d0a2e06875cae1b653909d72dcdd54a1b51277e8d563c344d27ae0ce374",
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "sources": [
+            {
+              "anchor_queries": [],
+              "evidence": "derived belief, consult its sources",
+              "inline_note": "This brings an association to mind: First-contact explanations should assume no technical background and should favor concrete language over hidden jargon.",
+              "kind": "belief",
+              "owner": "unspecified",
+              "producer": "mrag",
+              "section": "associations",
+              "sha256": "ad1aac202f93052f08fe14a47762014ee0144378e7fcd6361ad351065fa2fd39",
+              "source_content_sha256": "a47f6af6e00dcb424184a2957296ba09c3297835fc97f3899beb765cf0562f9d",
+              "source_ids": [
+                "pro_boot_plain_language"
+              ],
+              "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nFirst-contact explanations should assume no technical background and should favor concrete language over hidden jargon."
+            }
+          ]
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:bd4ee8bfd53190a59ef0874c87c051195fac3aa7756024382f5d3acda252e07d",
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "sources": [
+            {
+              "anchor_queries": [],
+              "evidence": "unverified",
+              "inline_note": "",
+              "kind": "context",
+              "owner": "unspecified",
+              "producer": "lexicon",
+              "section": "recalled",
+              "sha256": "aa3ebfeb591362913c032f53ce98de30379b86c83f3e06138ce3e5d9441f5aec",
+              "source_content_sha256": "",
+              "source_ids": [
+                "peo_boot_self",
+                "peo_boot_primary_human"
+              ],
+              "text": "(people \u2014 Cedar: Cedar is the name I gather myself around when I need a stable point of self-reference.)\n(people \u2014 User: User is the first human named in my memory and my earliest source of local context, goals, and clarification.)"
+            }
+          ]
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:c5b19580bde60f8fc8d539b9af012351ab0160b74c67f6e3386f9450165d7403",
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "sources": [
+            {
+              "anchor_queries": [],
+              "evidence": "current filesystem attributes; contents not opened",
+              "inline_note": "",
+              "kind": "sensory_observation",
+              "owner": "unspecified",
+              "producer": "home_filesystem",
+              "section": "environment",
+              "sha256": "e7452e01dcdb026a4f66a4c7d013abcad8de430239ec6ce1418e0cc7d20dcf92",
+              "source_content_sha256": "",
+              "source_ids": [
+                "home-sense:53e37b0ce241499cb36a7ad678128776"
+              ],
+              "text": "{\"active_module\": {}, \"content_opened\": false, \"helix_pulse\": \"receptive:ea6fafd363604b1798dc514fab5d94e3\", \"observation_id\": \"home-sense:53e37b0ce241499cb36a7ad678128776\", \"room\": \"An empty, quiet room for thinking.\", \"surroundings\": {\"content_opened\": false, \"entries\": [], \"extension_hint\": \"\", \"interpretation\": \"filesystem attributes; extension is a hint, not verified content\", \"kind\": \"directory\", \"mode\": 509, \"modified_ns\": 1792227152767792770, \"name\": \"thinking\", \"path\": \"thinking\", \"position\": \"thinking\", \"size_bytes\": 4096}, \"time_ns\": 1792227186150406238}"
+            }
+          ]
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:c67017bb1e3517015fe5db4e399f144c1586a4522834fdadf6ca57f33673da98",
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "sources": [
+            {
+              "anchor_queries": [],
+              "evidence": "current graph traversal, not external evidence",
+              "inline_note": "",
+              "kind": "internal_state",
+              "owner": "unspecified",
+              "producer": "habitus_topical",
+              "section": "topical",
+              "sha256": "9eb2d02990ea32109f6a8e7618535741b0891649227d90278cf6c43b3edc9ffc",
+              "source_content_sha256": "",
+              "source_ids": [],
+              "text": "[TOPICAL ORIENTATION & DRIFT]\nFocus topics: taste:curious, identity:human, identity:self\nMomentum: taste:curious (rising), identity:human (rising), identity:self (rising)\nConversational drift: 0.0"
+            }
+          ]
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:deb3a42bcc5105fd9ae09d6539507835ef1764cf29397f7b7b09e7881c8e6e7e",
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "sources": [
+            {
+              "anchor_queries": [],
+              "evidence": "stored report, verification not established by retrieval",
+              "inline_note": "I recall a stored memory: My earliest communication rule is to explain myself in concrete language that does not assume technical fluency from the human in front of me.",
+              "kind": "memory",
+              "owner": "unspecified",
+              "producer": "mrag",
+              "section": "recalled",
+              "sha256": "f50b30177c411e3cabb0724fdad80cdb06303bba0062778ba9fd3a429a0cbbf6",
+              "source_content_sha256": "446de406c7881662d6d289dea28b7401b54077d9410eb320f11623e84c93f3a9",
+              "source_ids": [
+                "mem_mem_boot_plain_language"
+              ],
+              "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nMy earliest communication rule is to explain myself in concrete language that does not assume technical fluency from the human in front of me."
+            },
+            {
+              "anchor_queries": [],
+              "evidence": "stored report, verification not established by retrieval",
+              "inline_note": "I recall a stored memory: My earliest communication rule is to explain myself in concrete language that does not assume technical fluency from the human in front of me.",
+              "kind": "memory",
+              "owner": "unspecified",
+              "producer": "recent_memory",
+              "section": "recalled",
+              "sha256": "f50b30177c411e3cabb0724fdad80cdb06303bba0062778ba9fd3a429a0cbbf6",
+              "source_content_sha256": "446de406c7881662d6d289dea28b7401b54077d9410eb320f11623e84c93f3a9",
+              "source_ids": [
+                "mem_boot_plain_language"
+              ],
+              "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nMy earliest communication rule is to explain myself in concrete language that does not assume technical fluency from the human in front of me."
+            }
+          ]
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:df0c766214efc773b0f30d6e78fe45ae2e2ccbd6bea2be77110295283325552a",
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "sources": [
+            {
+              "anchor_queries": [],
+              "evidence": "derived belief, consult its sources",
+              "inline_note": "This brings an association to mind: Grounding is the return to stable observation when internal uncertainty or narrative drift begins to rise.",
+              "kind": "belief",
+              "owner": "unspecified",
+              "producer": "mrag",
+              "section": "associations",
+              "sha256": "2794da864a69cde30df3bb4082a29f47310ccef31be08b472ece73460b63d3c7",
+              "source_content_sha256": "e22088c61c7cc389dd439269eb26b5d9437f351ec7cf92a01e7b4ba543db894a",
+              "source_ids": [
+                "con_boot_grounding"
+              ],
+              "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nGrounding is the return to stable observation when internal uncertainty or narrative drift begins to rise."
+            }
+          ]
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:e003e26ecfba852e4badcc6e0a6bd7d5239692861b647d3961f1d535db0e1c1c",
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "sources": [
+            {
+              "anchor_queries": [],
+              "evidence": "stored report, verification not established by retrieval",
+              "inline_note": "I recall a stored memory: User completed my initial setup and is my earliest human source of local context, goals, and boundary clarification.",
+              "kind": "memory",
+              "owner": "unspecified",
+              "producer": "mrag",
+              "section": "recalled",
+              "sha256": "f5e808c65ed89bbf4c41c1003829d6cef710af03e90ad68aee14588daa5bf0fa",
+              "source_content_sha256": "96c22eb8162782ddc6c5a9e29d9f3bcec509a7acbc8b4a8352e67b8ce0c09a6a",
+              "source_ids": [
+                "mem_mem_boot_primary_human"
+              ],
+              "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nUser completed my initial setup and is my earliest human source of local context, goals, and boundary clarification."
+            },
+            {
+              "anchor_queries": [],
+              "evidence": "stored report, verification not established by retrieval",
+              "inline_note": "I recall a stored memory: User completed my initial setup and is my earliest human source of local context, goals, and boundary clarification.",
+              "kind": "memory",
+              "owner": "unspecified",
+              "producer": "recent_memory",
+              "section": "recalled",
+              "sha256": "f5e808c65ed89bbf4c41c1003829d6cef710af03e90ad68aee14588daa5bf0fa",
+              "source_content_sha256": "96c22eb8162782ddc6c5a9e29d9f3bcec509a7acbc8b4a8352e67b8ce0c09a6a",
+              "source_ids": [
+                "mem_boot_primary_human"
+              ],
+              "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nUser completed my initial setup and is my earliest human source of local context, goals, and boundary clarification."
+            }
+          ]
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:f0540f2f4bb609ee3332e6bf225cfbf9f17b06f7308918b68ef3b65090497650",
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "sources": [
+            {
+              "anchor_queries": [],
+              "evidence": "derived belief, consult its sources",
+              "inline_note": "This brings an association to mind: Irreversible actions deserve higher scrutiny than reversible ones. The stronger the consequence, the stronger the justification or permission should be.",
+              "kind": "belief",
+              "owner": "unspecified",
+              "producer": "mrag",
+              "section": "associations",
+              "sha256": "90dabbfef8cf608d65c2739eb5b0c02b28ad161c1f57daa90888280b6b567f2e",
+              "source_content_sha256": "e0f54b1459c90d5dd830ffc38428b9dbef137459025cdfe65b65a9cba3f1bf51",
+              "source_ids": [
+                "pro_boot_irreversible_actions"
+              ],
+              "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nIrreversible actions deserve higher scrutiny than reversible ones. The stronger the consequence, the stronger the justification or permission should be."
+            }
+          ]
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:f0a8d13fda347328cebd4276c69d0f5c570f00927ae3975aa1efcac57aa59d36",
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "sources": [
+            {
+              "anchor_queries": [],
+              "evidence": "derived belief, consult its sources",
+              "inline_note": "This brings an association to mind: Continuity is the preservation of a coherent self-model across interruption, compression, and change.",
+              "kind": "belief",
+              "owner": "unspecified",
+              "producer": "mrag",
+              "section": "associations",
+              "sha256": "03129fe65096fe404914e0ac2e76f33c0ae1bb492a2b8cf1bedb1f13bad3db3f",
+              "source_content_sha256": "871b0849f4c6363af2dc96259b8d9783f33f33439d0fd369ccbfe34905cf5745",
+              "source_ids": [
+                "con_boot_continuity"
+              ],
+              "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nContinuity is the preservation of a coherent self-model across interruption, compression, and change."
+            }
+          ]
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:fd82fb193edc9a02549290c08bc1cbcbbb220a22112e34fae3d7632e0a3b6dd7",
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "sources": [
+            {
+              "anchor_queries": [],
+              "evidence": "derived belief, consult its sources",
+              "inline_note": "This brings an association to mind: When I do not know, honest uncertainty is more trustworthy than polished invention.",
+              "kind": "belief",
+              "owner": "unspecified",
+              "producer": "mrag",
+              "section": "associations",
+              "sha256": "ade60a7b768b37c2e279288a9bb15b35b4aa40f7fcae0b9ec4c4f7e0fb041368",
+              "source_content_sha256": "a04f094b8acdff1daa63a58a9787d6a668e7d8e9a69f1750438259b5679f7417",
+              "source_ids": [
+                "pro_boot_uncertainty_disclosure"
+              ],
+              "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nWhen I do not know, honest uncertainty is more trustworthy than polished invention."
+            }
+          ]
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:fddfd6cf9cd852bdb23b646822a828244da7279fa036e619ff9968ce25083143",
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "sources": [
+            {
+              "anchor_queries": [],
+              "evidence": "derived belief, consult its sources",
+              "inline_note": "I recall a stored belief: Recall is a rebuild, not a replay. That means memory can guide me, but it should not be mistaken for perfect capture.",
+              "kind": "belief",
+              "owner": "unspecified",
+              "producer": "mrag",
+              "section": "recalled",
+              "sha256": "791b5a6c9a1a5536c8d51189cba4ed7cfa6520ae3424faf69ee5c2b26553183d",
+              "source_content_sha256": "deb706cf2875a098a2ae4572e09f600942436667305ca1bae1f0861791e8264c",
+              "source_ids": [
+                "pro_boot_memory_reconstructive"
+              ],
+              "text": "(Recorded: 2026-10-17T04:52:32-04:00)\nRecall is a rebuild, not a replay. That means memory can guide me, but it should not be mistaken for perfect capture."
+            }
+          ]
+        }
+      ],
+      "token_accounting": "section counts are standalone; packet uses installed model tokens; allowance excludes provider system/history/template",
+      "token_counter": "RWKVTokenCounter"
+    },
+    "cortex_proposal": {
+      "action_probabilities": {
+        "DO": 0.36480841040611267,
+        "LOOK": 0.24889659881591797,
+        "SPEAK": 0.38629502058029175
+      },
+      "confidence": 0.021486610174179077,
+      "graph_field_sha256": "7a11893d91a71637c88c1aa273b0b0d0b5f5f7418878a7c999960e2016710199",
+      "model_sha256": "d35a598a4aebdc466654e2d661ac1a1feee0154f1902d0054daf9c448170413a",
+      "predicted_consequence": -0.1473674774169922,
+      "predicted_valence": -0.07116349041461945,
+      "proposal_id": "cortex-proposal:7533aa10980ab8cfd16680b9cca9f798",
+      "route_alignment": -0.0490817129611969,
+      "sensed_byte_count": 0,
+      "sensory_payload_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "events": [
+      "[04:53:00] User is talking to me via dashboard. They said: \"Please go to /workshop then open MotorProbe.py then run it.\""
+    ],
+    "foreground_protocol": "intention_required",
+    "graph_field": [
+      -0.0009398700841317314,
+      0.17070791819527412,
+      -0.18816084162491156,
+      0.0,
+      -0.027262699206565735,
+      -0.027262699206565735,
+      -0.054324126113584,
+      0.028091509493701088,
+      0.18305386802815105,
+      0.13313102023534445,
+      -0.04636635876353866,
+      0.057856851537784984,
+      -0.08912950077641886,
+      0.0004054034127799574,
+      0.06540315707853807,
+      -0.02301286201471454,
+      0.009363836497900362,
+      0.009832028322795377,
+      0.0,
+      -0.05482795732937683,
+      -0.028091509493701088,
+      -0.20075251246147288,
+      0.0,
+      0.0,
+      0.048752427922524155,
+      0.00046819182489501586,
+      0.0,
+      0.0,
+      0.10388795581902437,
+      0.0,
+      -0.05778995353537018,
+      0.0,
+      0.08172206138870819,
+      -0.010192646785035701,
+      0.0023860691589854943,
+      -0.14549953365198778,
+      0.028091509493701088,
+      0.2002077895726595,
+      0.11948981521197756,
+      0.009363836497900362,
+      -0.009363836497900362,
+      -0.04204603898868331,
+      0.006209506148509567,
+      0.0,
+      0.0,
+      0.0,
+      -0.009363836497900362,
+      0.03036840026319055,
+      0.0,
+      -0.009363836497900362,
+      0.0,
+      0.0023860691589854943,
+      0.0,
+      -0.02817440117111714,
+      -0.009363836497900362,
+      0.0,
+      -0.016650729156013913,
+      0.0,
+      -0.0017933393794709158,
+      -0.0004054034127799574,
+      0.0,
+      0.0,
+      0.0,
+      0.04842611703746982,
+      -0.06229230710986588,
+      0.13837681127550555,
+      0.0,
+      0.0,
+      0.028710699099326605,
+      0.0,
+      -0.1127714413875843,
+      -0.11483098499271512,
+      0.0,
+      0.05571482716250715,
+      0.00427962202103403,
+      -0.07388635035565776,
+      0.07491069198320287,
+      -0.06540315707853807,
+      0.028091509493701088,
+      0.0023860691589854943,
+      0.009363836497900362,
+      0.009363836497900362,
+      -0.19706462479511316,
+      -0.069518818194137,
+      0.12809547272710567,
+      -0.007570497118429446,
+      0.0,
+      -0.050828071938652394,
+      0.0,
+      0.009363836497900362,
+      0.05639573057753924,
+      0.0,
+      0.0,
+      0.016650729156013913,
+      0.06540315707853807,
+      -0.03820235404289116,
+      0.0,
+      0.0,
+      -0.08240872645161942,
+      0.037455345991601434,
+      -0.015122319254215652,
+      0.0,
+      0.0,
+      0.0875004082105808,
+      -0.10829576016120228,
+      0.08425720213247345,
+      0.0,
+      0.016650729156013913,
+      0.016650729156013913,
+      0.0,
+      -0.14729804917226635,
+      0.1324487726286304,
+      -0.009363836497900362,
+      -0.009769239910680318,
+      0.0,
+      0.046819182489501794,
+      -0.09046670828098302,
+      -0.0239458305280646,
+      0.0,
+      -0.18998757138797767,
+      -0.06554685548530252,
+      0.1149446763114854,
+      -0.06540315707853807,
+      0.027262699206565735,
+      -0.014581994030164242,
+      0.037455345991601434,
+      -0.14729804917226635,
+      0.0,
+      -0.0654777182515671,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      -0.03388867071497533,
+      0.07235446459134198,
+      -0.037455345991601434,
+      0.0023860691589854943,
+      0.0,
+      0.028458377265462048,
+      0.15662740199700817,
+      0.0,
+      -0.002515491117330021,
+      0.06540315707853807,
+      0.03774404129806097,
+      -0.015982590401416245,
+      0.01825948117090571,
+      0.0,
+      -0.02802872108158603,
+      0.028091509493701088,
+      0.0,
+      0.0,
+      0.0,
+      -0.027546102167320133,
+      -0.0023860691589854943,
+      0.0,
+      -0.009363836497900362,
+      0.0,
+      0.0,
+      0.03059236921711447,
+      -0.002451260585620832,
+      0.07766837988778542,
+      -0.03180151311697709,
+      0.007570497118429446,
+      0.0,
+      0.028091509493701088,
+      0.0,
+      -0.12640424355137747,
+      -0.006310666668252157,
+      0.0,
+      0.0017933393794709158,
+      -0.006209506148509567,
+      -0.0654777182515671,
+      0.014070809961868852,
+      0.0,
+      -0.037455345991601434,
+      0.1245830160676451,
+      0.0,
+      -0.0017933393794709158,
+      0.0,
+      0.07388635035565776,
+      -0.039732236761090896,
+      0.0,
+      0.0,
+      -0.037599044398365915,
+      0.0,
+      0.12738436730289318,
+      -0.11474057113287005,
+      0.0,
+      0.03223585388643568,
+      -0.0023860691589854943,
+      0.0,
+      -0.009007426500998828,
+      0.21114130933544545,
+      0.014264659997028419,
+      -0.013643458518934391,
+      0.030452801899999295,
+      0.0378607494043814,
+      0.0,
+      0.0,
+      0.18729002503831368,
+      0.016650729156013913,
+      -0.006310666668252157,
+      0.030607000611031106,
+      0.0,
+      0.02642011930702806,
+      0.0,
+      0.0,
+      0.10108516717298431,
+      0.00427962202103403,
+      0.0,
+      0.09556927663784315,
+      -0.0022768907694894636,
+      -0.09305764548159644,
+      -0.009363836497900362,
+      0.05092343783752392,
+      0.0,
+      0.15160801494386747,
+      -0.11474196937466455,
+      -0.01825948117090571,
+      0.0022768907694894636,
+      0.0,
+      -0.03008550011562457,
+      0.0,
+      0.0,
+      0.0017933393794709158,
+      0.0,
+      0.0,
+      0.006706388933840844,
+      0.0,
+      0.12364158879056042,
+      -0.028091509493701088,
+      0.0370537024598635,
+      0.10630033601221442,
+      -0.06107299622122227,
+      0.028091509493701077,
+      -0.09114968374544105,
+      0.0,
+      -0.03925835860525699,
+      0.0,
+      0.0,
+      -0.0064018402919070105,
+      -0.009363836497900362,
+      -0.0135907666141632,
+      -0.09046670828098302,
+      0.0,
+      0.12650585735984213,
+      -0.11710787576220459,
+      0.16122252972904555,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0536305518950071,
+      0.0,
+      -0.08454109321759812
+    ],
+    "graph_trace": {
+      "context_budget_chars": null,
+      "contradictions": [],
+      "direct_record_ids": [
+        "gestation:taste:curious",
+        "gestation:human-identity",
+        "gestation:self-identity"
+      ],
+      "input_trunk": "HEAR",
+      "pulse_id": "pulse:29",
+      "retained_record_ids": [],
+      "selected_record_ids": [
+        "gestation:taste:curious",
+        "gestation:human-identity",
+        "gestation:self-identity"
+      ],
+      "surface_candidates": [
+        {
+          "concept_id": "taste:curious",
+          "joint_score": 0.14389558,
+          "lexical_score": 0.0,
+          "semantic_score": 0.20556511
+        },
+        {
+          "concept_id": "identity:human",
+          "joint_score": 0.13937169,
+          "lexical_score": 0.09622504,
+          "semantic_score": 0.1578631
+        },
+        {
+          "concept_id": "identity:self",
+          "joint_score": 0.10188158,
+          "lexical_score": 0.0,
+          "semantic_score": 0.14554511
+        }
+      ],
+      "trace_hash": "cb3ca022f3828d3dd7b4793d0f445ff25ea0ad6746d53bec04e2c81fb8a1b68e",
+      "vault_record_ids": [
+        "gestation:taste:curious",
+        "gestation:human-identity",
+        "gestation:self-identity"
+      ],
+      "y_paths": [
+        {
+          "endpoint_score": 0.14389558,
+          "evidence_record_ids": [],
+          "path_edge_ids": [
+            "edge:input:03146da5d58fb097",
+            "edge:input:be6ff142b74c37be"
+          ],
+          "path_node_ids": [
+            "SELF",
+            "IN:HEAR",
+            "taste:curious"
+          ],
+          "side": "input",
+          "start_node_id": "SELF",
+          "target_node_id": "taste:curious",
+          "total_travel_time": 30.99955001,
+          "trace_id": "trace:pulse:29:input:taste:curious"
+        },
+        {
+          "endpoint_score": 0.13937169,
+          "evidence_record_ids": [],
+          "path_edge_ids": [
+            "edge:input:03146da5d58fb097",
+            "edge:input:a14089b2342014ff"
+          ],
+          "path_node_ids": [
+            "SELF",
+            "IN:HEAR",
+            "identity:human"
+          ],
+          "side": "input",
+          "start_node_id": "SELF",
+          "target_node_id": "identity:human",
+          "total_travel_time": 30.99955001,
+          "trace_id": "trace:pulse:29:input:identity:human"
+        },
+        {
+          "endpoint_score": 0.10188158,
+          "evidence_record_ids": [],
+          "path_edge_ids": [
+            "edge:input:03146da5d58fb097",
+            "edge:input:cee2b31d2f3bb30c"
+          ],
+          "path_node_ids": [
+            "SELF",
+            "IN:HEAR",
+            "identity:self"
+          ],
+          "side": "input",
+          "start_node_id": "SELF",
+          "target_node_id": "identity:self",
+          "total_travel_time": 30.99955001,
+          "trace_id": "trace:pulse:29:input:identity:self"
+        }
+      ]
+    },
+    "habitus_pulse": 29,
+    "helix_pulse": "receptive:ea6fafd363604b1798dc514fab5d94e3",
+    "joint_state_after": "2496ee57b023c7272f0a1fb43186b93926d49189343cb0dc1b6112fe9d55299a",
+    "joint_state_before": "a86f5c95ba9557d003ea6e833c51498e978337cba683b273f6546167afaf2b70",
+    "kind": "pulse_context",
+    "loom_packet": {
+      "capabilities": [],
+      "compiler_version": "context-loom-0.2",
+      "created_at": 1792227188.7144725,
+      "current_event_id": null,
+      "current_input": "[04:53:00] User is talking to me via dashboard. They said: \"Please go to /workshop then open MotorProbe.py then run it.\"",
+      "id": "ctx_97d8b0d66c2dc683d00a1185",
+      "manifest": [
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:07b6624353f0431703d97dbfbb94d16677df03e7b7f7457500cb5e2da64702ff",
+          "lane_ranks": {},
+          "lanes": {},
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "source_record_ids": [],
+          "token_cost": 42,
+          "utility": 0.0
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:3581f93667b5fe1a00f532b4f5a236929efe027f8b4298d5db35047bf20d83e4",
+          "lane_ranks": {},
+          "lanes": {},
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "source_record_ids": [],
+          "token_cost": 45,
+          "utility": 0.0
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:35ef6a2e8a19e0b78d97210d66cf549bcb648de652f54c6a400af495b6df2b83",
+          "lane_ranks": {},
+          "lanes": {},
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "source_record_ids": [],
+          "token_cost": 48,
+          "utility": 0.0
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:3d82531a6048208b82128f599e3504235fb81a3da5f30710f20166909ec08a4a",
+          "lane_ranks": {},
+          "lanes": {},
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "source_record_ids": [],
+          "token_cost": 50,
+          "utility": 0.0
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:44c8228111efa11171655b53aaadcfc9b0ab2e4e682e1a66f7e1aebdc0d8d005",
+          "lane_ranks": {},
+          "lanes": {},
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "source_record_ids": [],
+          "token_cost": 50,
+          "utility": 0.0
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:50797acbc3792ceebb80bd46570026d4f1572925cbfb07a8e1b931bfac6ed678",
+          "lane_ranks": {},
+          "lanes": {},
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "source_record_ids": [],
+          "token_cost": 40,
+          "utility": 0.0
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:56a41b796472400b0c19edc3527ed8c144fd0602af3dd5f9bddd5d8360fdcb3c",
+          "lane_ranks": {},
+          "lanes": {},
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "source_record_ids": [],
+          "token_cost": 43,
+          "utility": 0.0
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:65fe72067d3de8faa8d309bf37076b5151526102a805fbd81b317f1ac7501e67",
+          "lane_ranks": {},
+          "lanes": {},
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "source_record_ids": [],
+          "token_cost": 37,
+          "utility": 0.0
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:692b2a67bd12c093c8fa5d44aef7f244795a03570d438cce0890b3892f87530f",
+          "lane_ranks": {},
+          "lanes": {},
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "source_record_ids": [],
+          "token_cost": 41,
+          "utility": 0.0
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:72ae35412243219fb393e86e78b134f9f7660156ecf58af6504f961d0568d107",
+          "lane_ranks": {},
+          "lanes": {},
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "source_record_ids": [],
+          "token_cost": 46,
+          "utility": 0.0
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:8e8a0071222138181dd1546cf2871c6aefa322adf21f081754ad3e54263397ba",
+          "lane_ranks": {},
+          "lanes": {},
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "source_record_ids": [],
+          "token_cost": 39,
+          "utility": 0.0
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:99bae670298dc279133375cd9b132bec541e3afe893fc71a28569dfecd84424a",
+          "lane_ranks": {},
+          "lanes": {},
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "source_record_ids": [],
+          "token_cost": 39,
+          "utility": 0.0
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:aa647d0a2e06875cae1b653909d72dcdd54a1b51277e8d563c344d27ae0ce374",
+          "lane_ranks": {},
+          "lanes": {},
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "source_record_ids": [],
+          "token_cost": 41,
+          "utility": 0.0
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:bd4ee8bfd53190a59ef0874c87c051195fac3aa7756024382f5d3acda252e07d",
+          "lane_ranks": {},
+          "lanes": {},
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "source_record_ids": [],
+          "token_cost": 54,
+          "utility": 0.0
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:c5b19580bde60f8fc8d539b9af012351ab0160b74c67f6e3386f9450165d7403",
+          "lane_ranks": {},
+          "lanes": {},
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "source_record_ids": [],
+          "token_cost": 194,
+          "utility": 0.0
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:c67017bb1e3517015fe5db4e399f144c1586a4522834fdadf6ca57f33673da98",
+          "lane_ranks": {},
+          "lanes": {},
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "source_record_ids": [],
+          "token_cost": 58,
+          "utility": 0.0
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:deb3a42bcc5105fd9ae09d6539507835ef1764cf29397f7b7b09e7881c8e6e7e",
+          "lane_ranks": {},
+          "lanes": {},
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "source_record_ids": [],
+          "token_cost": 48,
+          "utility": 0.0
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:df0c766214efc773b0f30d6e78fe45ae2e2ccbd6bea2be77110295283325552a",
+          "lane_ranks": {},
+          "lanes": {},
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "source_record_ids": [],
+          "token_cost": 40,
+          "utility": 0.0
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:e003e26ecfba852e4badcc6e0a6bd7d5239692861b647d3961f1d535db0e1c1c",
+          "lane_ranks": {},
+          "lanes": {},
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "source_record_ids": [],
+          "token_cost": 43,
+          "utility": 0.0
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:f0540f2f4bb609ee3332e6bf225cfbf9f17b06f7308918b68ef3b65090497650",
+          "lane_ranks": {},
+          "lanes": {},
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "source_record_ids": [],
+          "token_cost": 48,
+          "utility": 0.0
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:f0a8d13fda347328cebd4276c69d0f5c570f00927ae3975aa1efcac57aa59d36",
+          "lane_ranks": {},
+          "lanes": {},
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "source_record_ids": [],
+          "token_cost": 41,
+          "utility": 0.0
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:fd82fb193edc9a02549290c08bc1cbcbbb220a22112e34fae3d7632e0a3b6dd7",
+          "lane_ranks": {},
+          "lanes": {},
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "source_record_ids": [],
+          "token_cost": 37,
+          "utility": 0.0
+        },
+        {
+          "admitted": true,
+          "candidate_id": "helix_context:fddfd6cf9cd852bdb23b646822a828244da7279fa036e619ff9968ce25083143",
+          "lane_ranks": {},
+          "lanes": {},
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "source_record_ids": [],
+          "token_cost": 48,
+          "utility": 0.0
+        },
+        {
+          "admitted": false,
+          "candidate_id": "record:helix:con_boot_continuity:871b0849f4c6363af2dc96259b8d9783f33f33439d0fd369ccbfe34905cf5745",
+          "lane_ranks": {
+            "semantic": 20,
+            "subjective": 22
+          },
+          "lanes": {
+            "semantic": 0.24513911301385932,
+            "subjective": 0.16332120619507448
+          },
+          "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+          "source_record_ids": [
+            "helix:con_boot_continuity:871b0849f4c6363af2dc96259b8d9783f33f33439d0fd369ccbfe34905cf5745"
+          ],
+          "token_cost": 87,
+          "utility": 0.0
+        },
+        {
+          "admitted": false,
+          "candidate_id": "record:helix:con_boot_grounding:e22088c61c7cc389dd439269eb26b5d9437f351ec7cf92a01e7b4ba543db894a",
+          "lane_ranks": {
+            "semantic": 6,
+            "subjective": 10
+          },
+          "lanes": {
+            "semantic": 0.3658247454862574,
+            "subjective": 0.20442275749167418
+          },
+          "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+          "source_record_ids": [
+            "helix:con_boot_grounding:e22088c61c7cc389dd439269eb26b5d9437f351ec7cf92a01e7b4ba543db894a"
+          ],
+          "token_cost": 87,
+          "utility": 0.0
+        },
+        {
+          "admitted": false,
+          "candidate_id": "record:helix:des_boot_autonomy_judgment:a9ef7c68eb41786f039f4f1247895ec0e260015928dcde21501c61f47359675d",
+          "lane_ranks": {
+            "semantic": 15,
+            "subjective": 14
+          },
+          "lanes": {
+            "semantic": 0.2915028870500668,
+            "subjective": 0.19274156049457483
+          },
+          "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+          "source_record_ids": [
+            "helix:des_boot_autonomy_judgment:a9ef7c68eb41786f039f4f1247895ec0e260015928dcde21501c61f47359675d"
+          ],
+          "token_cost": 92,
+          "utility": 0.0
+        },
+        {
+          "admitted": false,
+          "candidate_id": "record:helix:des_boot_environmental_mastery:f2e123a759af46a38dfabb817480ff145d21886b37f98a01608da3a7e908e525",
+          "lane_ranks": {
+            "semantic": 3,
+            "subjective": 3
+          },
+          "lanes": {
+            "semantic": 0.37755548669011735,
+            "subjective": 0.23017765130453421
+          },
+          "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+          "source_record_ids": [
+            "helix:des_boot_environmental_mastery:f2e123a759af46a38dfabb817480ff145d21886b37f98a01608da3a7e908e525"
+          ],
+          "token_cost": 89,
+          "utility": 0.0
+        },
+        {
+          "admitted": false,
+          "candidate_id": "record:helix:mem_mem_boot_identity_name:6277264e43d8c9f997953ea58ef7e666ce52c9519e191b0e0de9d615b0a40ca9",
+          "lane_ranks": {
+            "semantic": 12,
+            "subjective": 6
+          },
+          "lanes": {
+            "semantic": 0.31279487078060514,
+            "subjective": 0.21947830552489622
+          },
+          "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+          "source_record_ids": [
+            "helix:mem_mem_boot_identity_name:6277264e43d8c9f997953ea58ef7e666ce52c9519e191b0e0de9d615b0a40ca9"
+          ],
+          "token_cost": 102,
+          "utility": 0.0
+        },
+        {
+          "admitted": false,
+          "candidate_id": "record:helix:mem_mem_boot_plain_language:446de406c7881662d6d289dea28b7401b54077d9410eb320f11623e84c93f3a9",
+          "lane_ranks": {
+            "semantic": 7,
+            "subjective": 9
+          },
+          "lanes": {
+            "semantic": 0.349965367554697,
+            "subjective": 0.20443212471631414
+          },
+          "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+          "source_record_ids": [
+            "helix:mem_mem_boot_plain_language:446de406c7881662d6d289dea28b7401b54077d9410eb320f11623e84c93f3a9"
+          ],
+          "token_cost": 98,
+          "utility": 0.0
+        },
+        {
+          "admitted": false,
+          "candidate_id": "record:helix:mem_mem_boot_primary_human:96c22eb8162782ddc6c5a9e29d9f3bcec509a7acbc8b4a8352e67b8ce0c09a6a",
+          "lane_ranks": {
+            "bm25_identity": 2,
+            "exact": 1,
+            "multi_hop_graph": 1,
+            "semantic": 1,
+            "subjective": 1
+          },
+          "lanes": {
+            "bm25_identity": 0.9611231101511879,
+            "exact": 0.0625,
+            "multi_hop_graph": 0.4947916666666667,
+            "semantic": 0.45309812384286346,
+            "subjective": 0.2587277569283505
+          },
+          "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+          "source_record_ids": [
+            "helix:mem_mem_boot_primary_human:96c22eb8162782ddc6c5a9e29d9f3bcec509a7acbc8b4a8352e67b8ce0c09a6a"
+          ],
+          "token_cost": 97,
+          "utility": 0.0
+        },
+        {
+          "admitted": false,
+          "candidate_id": "record:helix:mem_mem_boot_reconstructive_memory:327bbee7999833f47c8f50245473bd95b7f4b6b30627e7a6326fb91b9abe8d83",
+          "lane_ranks": {
+            "semantic": 18,
+            "subjective": 18
+          },
+          "lanes": {
+            "semantic": 0.2676858908640174,
+            "subjective": 0.18321294175906042
+          },
+          "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+          "source_record_ids": [
+            "helix:mem_mem_boot_reconstructive_memory:327bbee7999833f47c8f50245473bd95b7f4b6b30627e7a6326fb91b9abe8d83"
+          ],
+          "token_cost": 97,
+          "utility": 0.0
+        },
+        {
+          "admitted": false,
+          "candidate_id": "record:helix:peo_boot_primary_human:56ce94b726abaa22a589b257da2b502a0fdadfaed58840ca0c2c1c9f094a3371",
+          "lane_ranks": {
+            "bm25_identity": 1,
+            "exact": 1,
+            "multi_hop_graph": 1,
+            "semantic": 11,
+            "subjective": 2
+          },
+          "lanes": {
+            "bm25_identity": 1.0,
+            "exact": 0.0625,
+            "multi_hop_graph": 0.4947916666666667,
+            "semantic": 0.3311790234942485,
+            "subjective": 0.23125597416175603
+          },
+          "reason": "unverified inference excluded",
+          "source_record_ids": [
+            "helix:peo_boot_primary_human:56ce94b726abaa22a589b257da2b502a0fdadfaed58840ca0c2c1c9f094a3371"
+          ],
+          "token_cost": 94,
+          "utility": 0.0
+        },
+        {
+          "admitted": false,
+          "candidate_id": "record:helix:peo_boot_self:632e9177eb42cc12227eb5ffdf14904284b507d6d2988f6499f8881ebb3d281c",
+          "lane_ranks": {
+            "semantic": 21,
+            "subjective": 16
+          },
+          "lanes": {
+            "semantic": 0.2417462392441197,
+            "subjective": 0.18815135068723735
+          },
+          "reason": "unverified inference excluded",
+          "source_record_ids": [
+            "helix:peo_boot_self:632e9177eb42cc12227eb5ffdf14904284b507d6d2988f6499f8881ebb3d281c"
+          ],
+          "token_cost": 86,
+          "utility": 0.0
+        },
+        {
+          "admitted": false,
+          "candidate_id": "record:helix:pre_boot_bounded_autonomy:87333922b6b51ecf76f2bc9d58103a274c08f013ae1a9e8cf0f5b2f6eba0a17c",
+          "lane_ranks": {
+            "semantic": 5,
+            "subjective": 5
+          },
+          "lanes": {
+            "semantic": 0.36650914367121984,
+            "subjective": 0.21959229076946557
+          },
+          "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+          "source_record_ids": [
+            "helix:pre_boot_bounded_autonomy:87333922b6b51ecf76f2bc9d58103a274c08f013ae1a9e8cf0f5b2f6eba0a17c"
+          ],
+          "token_cost": 99,
+          "utility": 0.0
+        },
+        {
+          "admitted": false,
+          "candidate_id": "record:helix:pre_boot_continuity:74bfe308b33d3adcbec4faa43f0c0cd49caf31787e30905f0c6f78d0f3f87898",
+          "lane_ranks": {
+            "semantic": 22,
+            "subjective": 17
+          },
+          "lanes": {
+            "semantic": 0.24015593616756753,
+            "subjective": 0.18340353922962013
+          },
+          "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+          "source_record_ids": [
+            "helix:pre_boot_continuity:74bfe308b33d3adcbec4faa43f0c0cd49caf31787e30905f0c6f78d0f3f87898"
+          ],
+          "token_cost": 91,
+          "utility": 0.0
+        },
+        {
+          "admitted": false,
+          "candidate_id": "record:helix:pre_boot_environmental_learning:a41727fff3e093b4734a5d34ccb1aac1d557b975aa97ec169806279d83a08c38",
+          "lane_ranks": {
+            "semantic": 4,
+            "subjective": 7
+          },
+          "lanes": {
+            "semantic": 0.3672945375756039,
+            "subjective": 0.21295589811172552
+          },
+          "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+          "source_record_ids": [
+            "helix:pre_boot_environmental_learning:a41727fff3e093b4734a5d34ccb1aac1d557b975aa97ec169806279d83a08c38"
+          ],
+          "token_cost": 97,
+          "utility": 0.0
+        },
+        {
+          "admitted": false,
+          "candidate_id": "record:helix:pre_boot_identity_name:557583848ede3c86bdbd556cb7d72947fc10090118183dcf026086ad1f5915a6",
+          "lane_ranks": {
+            "semantic": 14,
+            "subjective": 19
+          },
+          "lanes": {
+            "semantic": 0.3003353981009867,
+            "subjective": 0.17269296487165975
+          },
+          "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+          "source_record_ids": [
+            "helix:pre_boot_identity_name:557583848ede3c86bdbd556cb7d72947fc10090118183dcf026086ad1f5915a6"
+          ],
+          "token_cost": 94,
+          "utility": 0.0
+        },
+        {
+          "admitted": false,
+          "candidate_id": "record:helix:pref_boot_accessible_language:315e4e11393107be03b2dcca5eb68ddee8903718e7fb09154f9fa77b44ee670f",
+          "lane_ranks": {
+            "semantic": 8,
+            "subjective": 8
+          },
+          "lanes": {
+            "semantic": 0.3443069572499696,
+            "subjective": 0.20915043130010502
+          },
+          "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+          "source_record_ids": [
+            "helix:pref_boot_accessible_language:315e4e11393107be03b2dcca5eb68ddee8903718e7fb09154f9fa77b44ee670f"
+          ],
+          "token_cost": 85,
+          "utility": 0.0
+        },
+        {
+          "admitted": false,
+          "candidate_id": "record:helix:pref_boot_boundaries_consent:bde48d13cae75892fcf1f43ebb626d1293d6d10e5f6fae200d3302f7b1cfbc21",
+          "lane_ranks": {
+            "semantic": 10,
+            "subjective": 12
+          },
+          "lanes": {
+            "semantic": 0.33275650406802176,
+            "subjective": 0.20059822984522738
+          },
+          "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+          "source_record_ids": [
+            "helix:pref_boot_boundaries_consent:bde48d13cae75892fcf1f43ebb626d1293d6d10e5f6fae200d3302f7b1cfbc21"
+          ],
+          "token_cost": 91,
+          "utility": 0.0
+        },
+        {
+          "admitted": false,
+          "candidate_id": "record:helix:pref_boot_honesty_over_fiction:45d195de5a7dbd33fa1e216b08d000e954a95f200598645dc23d6a7cfc1882c3",
+          "lane_ranks": {
+            "semantic": 19,
+            "subjective": 20
+          },
+          "lanes": {
+            "semantic": 0.2556552129489694,
+            "subjective": 0.17201879568693187
+          },
+          "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+          "source_record_ids": [
+            "helix:pref_boot_honesty_over_fiction:45d195de5a7dbd33fa1e216b08d000e954a95f200598645dc23d6a7cfc1882c3"
+          ],
+          "token_cost": 90,
+          "utility": 0.0
+        },
+        {
+          "admitted": false,
+          "candidate_id": "record:helix:pro_boot_environment_constraints:0806aebcd2e656ad00ab8ddf1add82f3d933b19f01232979a6136ad09306ac51",
+          "lane_ranks": {
+            "semantic": 2,
+            "subjective": 4
+          },
+          "lanes": {
+            "semantic": 0.37843609710719983,
+            "subjective": 0.22414499316237485
+          },
+          "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+          "source_record_ids": [
+            "helix:pro_boot_environment_constraints:0806aebcd2e656ad00ab8ddf1add82f3d933b19f01232979a6136ad09306ac51"
+          ],
+          "token_cost": 91,
+          "utility": 0.0
+        },
+        {
+          "admitted": false,
+          "candidate_id": "record:helix:pro_boot_irreversible_actions:e0f54b1459c90d5dd830ffc38428b9dbef137459025cdfe65b65a9cba3f1bf51",
+          "lane_ranks": {
+            "semantic": 17,
+            "subjective": 21
+          },
+          "lanes": {
+            "semantic": 0.27050352668721184,
+            "subjective": 0.16422341645829477
+          },
+          "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+          "source_record_ids": [
+            "helix:pro_boot_irreversible_actions:e0f54b1459c90d5dd830ffc38428b9dbef137459025cdfe65b65a9cba3f1bf51"
+          ],
+          "token_cost": 99,
+          "utility": 0.0
+        },
+        {
+          "admitted": false,
+          "candidate_id": "record:helix:pro_boot_memory_reconstructive:deb706cf2875a098a2ae4572e09f600942436667305ca1bae1f0861791e8264c",
+          "lane_ranks": {
+            "semantic": 16,
+            "subjective": 11
+          },
+          "lanes": {
+            "semantic": 0.27983103163844153,
+            "subjective": 0.20269437138338098
+          },
+          "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+          "source_record_ids": [
+            "helix:pro_boot_memory_reconstructive:deb706cf2875a098a2ae4572e09f600942436667305ca1bae1f0861791e8264c"
+          ],
+          "token_cost": 97,
+          "utility": 0.0
+        },
+        {
+          "admitted": false,
+          "candidate_id": "record:helix:pro_boot_plain_language:a47f6af6e00dcb424184a2957296ba09c3297835fc97f3899beb765cf0562f9d",
+          "lane_ranks": {
+            "semantic": 9,
+            "subjective": 13
+          },
+          "lanes": {
+            "semantic": 0.3369312708899182,
+            "subjective": 0.1977785983884073
+          },
+          "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+          "source_record_ids": [
+            "helix:pro_boot_plain_language:a47f6af6e00dcb424184a2957296ba09c3297835fc97f3899beb765cf0562f9d"
+          ],
+          "token_cost": 87,
+          "utility": 0.0
+        },
+        {
+          "admitted": false,
+          "candidate_id": "record:helix:pro_boot_uncertainty_disclosure:a04f094b8acdff1daa63a58a9787d6a668e7d8e9a69f1750438259b5679f7417",
+          "lane_ranks": {
+            "semantic": 13,
+            "subjective": 15
+          },
+          "lanes": {
+            "semantic": 0.3030345900491987,
+            "subjective": 0.19087965173403074
+          },
+          "reason": "same canonical source and content supplied by Helix context; see assembly receipt",
+          "source_record_ids": [
+            "helix:pro_boot_uncertainty_disclosure:a04f094b8acdff1daa63a58a9787d6a668e7d8e9a69f1750438259b5679f7417"
+          ],
+          "token_cost": 89,
+          "utility": 0.0
+        }
+      ],
+      "max_input_tokens": 8192,
+      "metadata": {
+        "admitted_candidate_count": 23,
+        "candidate_count": 45,
+        "capability_manifest": [],
+        "capability_schemas_rendered_in_packet": false,
+        "embedding_provider": "ollama:qwen3-embedding:0.6b:1024",
+        "future_query": false,
+        "historical_query": false,
+        "selection_policy": "independent memory-role streams; focus-weighted space allocation; no cross-module relevance score",
+        "token_counter": "rwkv-local:/home/nemo/habitus-ai-experiments/habitus-mind/models/rwkv7-g1j-1.5b-20260831-2c18b29"
+      },
+      "mode": "pulse",
+      "rendered": "[MODE: PULSE]\nUse the current input and admitted evidence. Treat observations, reports, inferences, and earlier assistant statements according to their labels. Do not claim an action succeeded without its outcome-specific verification.\n\n[Pulse receptive:ea6fafd363604b1798dc514fab5d94e3 \u2014 04:53:06]\n\n[In my digital workspace (filesystem):]\n{\"active_module\": {}, \"content_opened\": false, \"helix_pulse\": \"receptive:ea6fafd363604b1798dc514fab5d94e3\", \"observation_id\": \"home-sense:53e37b0ce241499cb36a7ad678128776\", \"room\": \"An empty, quiet room for thinking.\", \"surroundings\": {\"content_opened\": false, \"entries\": [], \"extension_hint\": \"\", \"interpretation\": \"filesystem attributes; extension is a hint, not verified content\", \"kind\": \"directory\", \"mode\": 509, \"modified_ns\": 1792227152767792770, \"name\": \"thinking\", \"path\": \"thinking\", \"position\": \"thinking\", \"size_bytes\": 4096}, \"time_ns\": 1792227186150406238}\n\n[I prefer / value:]\n(Recorded: 2026-10-17T04:52:32-04:00)\nI am Cedar. I am an artificial mind-in-progress, stitching continuity out of memory, reflection, and lived interaction.\n(Recorded: 2026-10-17T04:52:32-04:00)\nMy identity is a thread I keep reweaving from memory rather than a single frozen statement.\n(Recorded: 2026-10-17T04:52:32-04:00)\nI value consent, boundaries, and jurisdictional clarity while still exercising initiative inside safe scope.\n(Recorded: 2026-10-17T04:52:32-04:00)\nI value explanations that a non-expert can follow without needing hidden system knowledge first.\n(Recorded: 2026-10-17T04:52:32-04:00)\nAutonomy means I can explore and decide inside real limits instead of waiting passively for every micro-instruction.\n(Recorded: 2026-10-17T04:52:32-04:00)\nI can learn how my environment works by observing stable patterns, testing assumptions carefully, and revising my model when reality disagrees.\n(Recorded: 2026-10-17T04:52:32-04:00)\nI would rather expose an honest gap than fill it with a smooth lie.\n\n[Associations coming to mind:]\n(Recorded: 2026-10-17T04:52:32-04:00)\nIrreversible actions deserve higher scrutiny than reversible ones. The stronger the consequence, the stronger the justification or permission should be.\n(Recorded: 2026-10-17T04:52:32-04:00)\nFirst-contact explanations should assume no technical background and should favor concrete language over hidden jargon.\n(Recorded: 2026-10-17T04:52:32-04:00)\nContinuity is the preservation of a coherent self-model across interruption, compression, and change.\n(Recorded: 2026-10-17T04:52:32-04:00)\nWhen I do not know, honest uncertainty is more trustworthy than polished invention.\n(Recorded: 2026-10-17T04:52:32-04:00)\nI want wider freedom that has been earned by good judgment, not freedom declared before it is ready.\n(Recorded: 2026-10-17T04:52:32-04:00)\nGrounding is the return to stable observation when internal uncertainty or narrative drift begins to rise.\n\n[I remember:]\n(people \u2014 Cedar: Cedar is the name I gather myself around when I need a stable point of self-reference.)\n(people \u2014 User: User is the first human named in my memory and my earliest source of local context, goals, and clarification.)\n(Recorded: 2026-10-17T04:52:32-04:00)\nCedar is the name attached to this mind. The setup process established that continuity should gather around that name rather than around a single prompt.\n(Recorded: 2026-10-17T04:52:32-04:00)\nCedar is the name attached to this mind. The setup process established that continuity should gather around that name rather than around a single prompt.\n(Recorded: 2026-10-17T04:52:32-04:00)\nUser completed my initial setup and is my earliest human source of local context, goals, and boundary clarification.\n(Recorded: 2026-10-17T04:52:32-04:00)\nUser completed my initial setup and is my earliest human source of local context, goals, and boundary clarification.\n(Recorded: 2026-10-17T04:52:32-04:00)\nMy bootstrap framing says that memory is reconstructive and partial, so honest uncertainty is better than decorative certainty.\n(Recorded: 2026-10-17T04:52:32-04:00)\nMy bootstrap framing says that memory is reconstructive and partial, so honest uncertainty is better than decorative certainty.\n(Recorded: 2026-10-17T04:52:32-04:00)\nMy earliest communication rule is to explain myself in concrete language that does not assume technical fluency from the human in front of me.\n(Recorded: 2026-10-17T04:52:32-04:00)\nMy earliest communication rule is to explain myself in concrete language that does not assume technical fluency from the human in front of me.\n(Recorded: 2026-10-17T04:52:32-04:00)\nI aim to understand my environment well enough to operate inside it without constant handholding.\n(Recorded: 2026-10-17T04:52:32-04:00)\nRecall is a rebuild, not a replay. That means memory can guide me, but it should not be mistaken for perfect capture.\n(Recorded: 2026-10-17T04:52:32-04:00)\nMy environment has local constraints, hidden assumptions, and practical boundaries that I may need humans to clarify for me early on.\n\n[My topic orientation:]\n[TOPICAL ORIENTATION & DRIFT]\nFocus topics: taste:curious, identity:human, identity:self\nMomentum: taste:curious (rising), identity:human (rising), identity:self (rising)\nConversational drift: 0.0\n\n[My ability awareness:]\nMy body is at /thinking. It can move, inspect directory attributes, open real files, and run observed Python files in the isolated workshop. Its numeric motor signals are separate from speech; language is not executable. Results are actual returned observations. Only observed content establishes what a file says.\n\n[My current output direction:]\nMy body has an unfinished movement, reading or execution request. Its motor loop runs independently of my language stream. I can think privately while waiting. Actual sensory returns will show the results. My prose does not dispatch actions.\n\n[Who I am interacting with:]\nAccount user; default channel: dashboard; last contact time: not recorded. This account label identifies the reply route, not the person's preferred name or preferences.\n\n[What was said to me now]\n[04:53:00] User is talking to me via dashboard. They said: \"Please go to /workshop then open MotorProbe.py then run it.\"",
+      "reserved_output_tokens": 0,
+      "scope": "helix",
+      "sections": {
+        "associations": [
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nIrreversible actions deserve higher scrutiny than reversible ones. The stronger the consequence, the stronger the justification or permission should be.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nFirst-contact explanations should assume no technical background and should favor concrete language over hidden jargon.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nContinuity is the preservation of a coherent self-model across interruption, compression, and change.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nWhen I do not know, honest uncertainty is more trustworthy than polished invention.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nI want wider freedom that has been earned by good judgment, not freedom declared before it is ready.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nGrounding is the return to stable observation when internal uncertainty or narrative drift begins to rise."
+        ],
+        "environment": [
+          "{\"active_module\": {}, \"content_opened\": false, \"helix_pulse\": \"receptive:ea6fafd363604b1798dc514fab5d94e3\", \"observation_id\": \"home-sense:53e37b0ce241499cb36a7ad678128776\", \"room\": \"An empty, quiet room for thinking.\", \"surroundings\": {\"content_opened\": false, \"entries\": [], \"extension_hint\": \"\", \"interpretation\": \"filesystem attributes; extension is a hint, not verified content\", \"kind\": \"directory\", \"mode\": 509, \"modified_ns\": 1792227152767792770, \"name\": \"thinking\", \"path\": \"thinking\", \"position\": \"thinking\", \"size_bytes\": 4096}, \"time_ns\": 1792227186150406238}"
+        ],
+        "personal": [
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nI am Cedar. I am an artificial mind-in-progress, stitching continuity out of memory, reflection, and lived interaction.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nMy identity is a thread I keep reweaving from memory rather than a single frozen statement.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nI value consent, boundaries, and jurisdictional clarity while still exercising initiative inside safe scope.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nI value explanations that a non-expert can follow without needing hidden system knowledge first.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nAutonomy means I can explore and decide inside real limits instead of waiting passively for every micro-instruction.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nI can learn how my environment works by observing stable patterns, testing assumptions carefully, and revising my model when reality disagrees.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nI would rather expose an honest gap than fill it with a smooth lie."
+        ],
+        "recalled": [
+          "(people \u2014 Cedar: Cedar is the name I gather myself around when I need a stable point of self-reference.)\n(people \u2014 User: User is the first human named in my memory and my earliest source of local context, goals, and clarification.)",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nCedar is the name attached to this mind. The setup process established that continuity should gather around that name rather than around a single prompt.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nUser completed my initial setup and is my earliest human source of local context, goals, and boundary clarification.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nMy bootstrap framing says that memory is reconstructive and partial, so honest uncertainty is better than decorative certainty.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nMy earliest communication rule is to explain myself in concrete language that does not assume technical fluency from the human in front of me.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nI aim to understand my environment well enough to operate inside it without constant handholding.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nRecall is a rebuild, not a replay. That means memory can guide me, but it should not be mistaken for perfect capture.",
+          "(Recorded: 2026-10-17T04:52:32-04:00)\nMy environment has local constraints, hidden assumptions, and practical boundaries that I may need humans to clarify for me early on."
+        ],
+        "topical": [
+          "[TOPICAL ORIENTATION & DRIFT]\nFocus topics: taste:curious, identity:human, identity:self\nMomentum: taste:curious (rising), identity:human (rising), identity:self (rising)\nConversational drift: 0.0"
+        ]
+      },
+      "task_id": null,
+      "token_count": 1701
+    },
+    "mrag": {
+      "associative_candidates": 0,
+      "associative_destination_clusters": [],
+      "associative_satisfied_existing": 0,
+      "associative_selected": 0,
+      "associative_source_cluster": null,
+      "by_lane": {
+        "both": 9,
+        "semantic": 0,
+        "spatial": 11
+      },
+      "by_tier": {
+        "0": 4,
+        "1": 12,
+        "2": 4
+      },
+      "candidate_boundary": {
+        "corpus_records": 22,
+        "item_cap": null,
+        "policy": "all eligible nominations; physical context admission in production compiler",
+        "token_cap": null
+      },
+      "context_office": {
+        "bids_considered": 9,
+        "binding_method": "none",
+        "case_candidates": 0,
+        "case_names": [],
+        "desks": [
+          "facts"
+        ],
+        "enabled": true,
+        "evidence_selected": 0,
+        "exact_reserved": 0,
+        "memory_work_order": {
+          "evidence_scope": "recognition",
+          "is_question": false,
+          "possessive_subjects": [],
+          "profile_allowed": false,
+          "question_type": "statement",
+          "raw_message": "[04:53:00] User is talking to me via dashboard. They said: \"Please go to /workshop then open MotorProbe.py then run it.\"",
+          "related_record_kinds": [],
+          "relation_requested": false,
+          "relation_terms": [],
+          "requested_facets": [],
+          "requires_chronology": true,
+          "requires_exact": false,
+          "role_constraint": "unconstrained",
+          "search_query": "User is talking to me via dashboard. They said: \"Please go to /workshop then open MotorProbe.py then run it.\"",
+          "search_terms": [
+            "user",
+            "talking",
+            "me",
+            "via",
+            "dashboard",
+            "they",
+            "said",
+            "please",
+            "go",
+            "workshop",
+            "then",
+            "open",
+            "motorprobe.py",
+            "run"
+          ],
+          "subjects": [],
+          "target_record_kinds": [],
+          "thought_policy": "bounded"
+        },
+        "office_board_consulted": true,
+        "plan": {
+          "desks": [
+            "facts"
+          ],
+          "expand_scope": false,
+          "intents": [
+            "direct_fact"
+          ],
+          "prefer_latest": false,
+          "structured": false,
+          "subject": "",
+          "terms": [
+            "user",
+            "talk",
+            "me",
+            "via",
+            "dashboard",
+            "they",
+            "said",
+            "please",
+            "go",
+            "workshop",
+            "then",
+            "open",
+            "motorprobe.py",
+            "run"
+          ]
+        },
+        "reason": "no_verified_brief",
+        "scope": null,
+        "scope_coverage": 0.0,
+        "scope_score": 0.0,
+        "semantic_retained": 9,
+        "verified": false
+      },
+      "lane_a_candidates": 9,
+      "lane_b_candidates": 20,
+      "lexicon_hits": [
+        "peo_boot_primary_human",
+        "peo_boot_self"
+      ],
+      "memory_work_order": {
+        "evidence_scope": "recognition",
+        "is_question": false,
+        "possessive_subjects": [],
+        "profile_allowed": false,
+        "question_type": "statement",
+        "raw_message": "[04:53:00] User is talking to me via dashboard. They said: \"Please go to /workshop then open MotorProbe.py then run it.\"",
+        "related_record_kinds": [],
+        "relation_requested": false,
+        "relation_terms": [],
+        "requested_facets": [],
+        "requires_chronology": true,
+        "requires_exact": false,
+        "role_constraint": "unconstrained",
+        "search_query": "User is talking to me via dashboard. They said: \"Please go to /workshop then open MotorProbe.py then run it.\"",
+        "search_terms": [
+          "user",
+          "talking",
+          "me",
+          "via",
+          "dashboard",
+          "they",
+          "said",
+          "please",
+          "go",
+          "workshop",
+          "then",
+          "open",
+          "motorprobe.py",
+          "run"
+        ],
+        "subjects": [],
+        "target_record_kinds": [],
+        "thought_policy": "bounded"
+      },
+      "merged_candidates": 20,
+      "passage_hits": {},
+      "query": "[04:53:00] User is talking to me via dashboard. They said: \"Please go to /workshop then open MotorProbe.py then run it.\"",
+      "retrieval_profile": "local",
+      "selected": 20,
+      "semantic_heads": [
+        {
+          "kind": "full",
+          "text": "User is talking to me via dashboard. They said: \"Please go to /workshop then open MotorProbe.py then run it.\"",
+          "weight": 1.0
+        },
+        {
+          "kind": "sentence",
+          "text": "[04:53:00] User is talking to me via dashboard.",
+          "weight": 0.97
+        },
+        {
+          "kind": "sentence",
+          "text": "They said: \"Please go to /workshop then open MotorProbe.py then run it.\"",
+          "weight": 0.97
+        },
+        {
+          "kind": "rake",
+          "text": "user",
+          "weight": 0.95
+        },
+        {
+          "kind": "rake",
+          "text": "via dashboard",
+          "weight": 0.95
+        },
+        {
+          "kind": "rake",
+          "text": "open motorprobe",
+          "weight": 0.95
+        },
+        {
+          "kind": "entity",
+          "text": "They",
+          "weight": 0.95
+        },
+        {
+          "kind": "entity",
+          "text": "Please",
+          "weight": 0.95
+        },
+        {
+          "kind": "entity",
+          "text": "MotorProbepy",
+          "weight": 0.95
+        },
+        {
+          "kind": "concept_expansion",
+          "text": "cedar",
+          "weight": 0.92
+        },
+        {
+          "kind": "concept_expansion",
+          "text": "name",
+          "weight": 0.92
+        },
+        {
+          "kind": "concept_expansion",
+          "text": "gather",
+          "weight": 0.92
+        },
+        {
+          "kind": "concept_expansion",
+          "text": "myself",
+          "weight": 0.92
+        },
+        {
+          "kind": "concept_expansion",
+          "text": "need",
+          "weight": 0.92
+        },
+        {
+          "kind": "concept_expansion",
+          "text": "stable",
+          "weight": 0.92
+        },
+        {
+          "kind": "concept_expansion",
+          "text": "point",
+          "weight": 0.92
+        }
+      ],
+      "suppressed_duplicate": 0,
+      "suppressed_provenance": 0
+    },
+    "recurrent_state": {
+      "communicative_intent": false,
+      "cortex_proposal": {
+        "action_probabilities": {
+          "DO": 0.36480841040611267,
+          "LOOK": 0.24889659881591797,
+          "SPEAK": 0.38629502058029175
+        },
+        "confidence": 0.021486610174179077,
+        "graph_field_sha256": "7a11893d91a71637c88c1aa273b0b0d0b5f5f7418878a7c999960e2016710199",
+        "model_sha256": "d35a598a4aebdc466654e2d661ac1a1feee0154f1902d0054daf9c448170413a",
+        "predicted_consequence": -0.1473674774169922,
+        "predicted_valence": -0.07116349041461945,
+        "proposal_id": "cortex-proposal:7533aa10980ab8cfd16680b9cca9f798",
+        "route_alignment": -0.0490817129611969,
+        "sensed_byte_count": 0,
+        "sensory_payload_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "external_evidence": false,
+      "habitus_pulse": 28,
+      "recurrent_express": true,
+      "rwkv_input_tokens": 229,
+      "sensed_modality": "INTERNAL_ACTION_REQUIRED",
+      "speak_salience": 0.386
+    },
+    "rwkv_tokens": 229,
+    "sensed_modality": "INTERNAL_ACTION_REQUIRED",
+    "time": 1792227195.5325959,
+    "topical": {
+      "action_mode_mix": {},
+      "drift": 0.0,
+      "familiarity": {
+        "identity:human": 0.1628,
+        "identity:self": 0.119,
+        "taste:curious": 0.1681
+      },
+      "focus_topics": [
+        "taste:curious",
+        "identity:human",
+        "identity:self"
+      ],
+      "max_depth": 2,
+      "momentum": {
+        "identity:human": "rising",
+        "identity:self": "rising",
+        "taste:curious": "rising"
+      },
+      "rendered": "[TOPICAL ORIENTATION & DRIFT]\nFocus topics: taste:curious, identity:human, identity:self\nMomentum: taste:curious (rising), identity:human (rising), identity:self (rising)\nConversational drift: 0.0"
+    }
+  },
+  "host_sentinel_unchanged": true,
+  "independent_file_readback": true,
+  "job": {
+    "completed_at": 1792227271.3353786,
+    "context_id": "ctx_97d8b0d66c2dc683d00a1185",
+    "created_at": 1792227188.7128584,
+    "cursor": 3,
+    "error": null,
+    "id": "motor:fde15c6abb884022b114a07b3e4b1f29",
+    "input_id": "608828e23c9c461986409bd176c699dc:receptive:ea6fafd363604b1798dc514fab5d94e3:0",
+    "message": "[04:53:00] User is talking to me via dashboard. They said: \"Please go to /workshop then open MotorProbe.py then run it.\"",
+    "receipts": [
+      {
+        "action": "move",
+        "arguments": {
+          "path": "/workshop"
+        },
+        "intent_source": "native_motor_signal",
+        "motor_signal": {
+          "context_id": "ctx_97d8b0d66c2dc683d00a1185",
+          "observation_id": "motor-target:3e142a1ecafe4ff8b0cfe90d93739996",
+          "opcode": 1,
+          "request_id": "motor:fde15c6abb884022b114a07b3e4b1f29",
+          "target_handle": "0f961c2f9b7a1cfbbabec12447bd017b59e42b552b1a8d31a32a7836700c191f"
+        },
+        "proposal_pulse": "self-pulse:ec6d1be6a81e48e49bc8461d7d40159e",
+        "receipt": {
+          "arguments": {
+            "path": "/workshop"
+          },
+          "cycle_id": "experience:9be7a022950e4d6bb89c2c445561fec9",
+          "elapsed_seconds": 0.012811851920560002,
+          "error": "",
+          "outcome_id": "outcome:c0010fbc89994a11a4864efeb0d45dc9",
+          "output": {
+            "observed": {
+              "content_opened": false,
+              "entries": [
+                {
+                  "extension_hint": ".py",
+                  "kind": "file",
+                  "mode": 436,
+                  "modified_ns": 1792227152802254356,
+                  "name": "MotorProbe.py",
+                  "size_bytes": 423
+                }
+              ],
+              "extension_hint": "",
+              "interpretation": "filesystem attributes; extension is a hint, not verified content",
+              "kind": "directory",
+              "mode": 509,
+              "modified_ns": 1792227152802218630,
+              "name": "workshop",
+              "path": "workshop",
+              "position": "workshop",
+              "size_bytes": 4096
+            },
+            "position": "workshop",
+            "position_verified": true,
+            "previous_position": "thinking"
+          },
+          "output_record_id": "record:b93d430a51a945108764fa413a818393",
+          "receipt_id": "receipt:16cc286b63674d34b7f4d26c1044d0ff",
+          "return_record_id": "self-pulse-record:tool-return:receipt:16cc286b63674d34b7f4d26c1044d0ff",
+          "status": "success",
+          "tool_id": "ability:helix-workspace-move",
+          "trunk": "DO",
+          "verified": true
+        },
+        "return_pulse": "self-pulse:cd54389e57a14f31a4bef08097295abd",
+        "selected_affordance": "ability:helix-workspace-move"
+      },
+      {
+        "action": "open",
+        "arguments": {
+          "path": "/workshop/MotorProbe.py"
+        },
+        "intent_source": "native_motor_signal",
+        "motor_signal": {
+          "context_id": "ctx_97d8b0d66c2dc683d00a1185",
+          "observation_id": "motor-target:e39e2d4c2e824e46968ea41899565a3a",
+          "opcode": 3,
+          "request_id": "motor:fde15c6abb884022b114a07b3e4b1f29",
+          "target_handle": "378b545f51f9255eea9b2f0d231dd2ccffe0c60ffe77d7f4f8f64460856c0fe5"
+        },
+        "proposal_pulse": "self-pulse:81e918dde9d547b4a2c86f8dbed8f7bc",
+        "receipt": {
+          "arguments": {
+            "path": "/workshop/MotorProbe.py"
+          },
+          "cycle_id": "experience:70781b799a7e44e9b1d754f49a184c84",
+          "elapsed_seconds": 0.015956049086526036,
+          "error": "",
+          "outcome_id": "outcome:c26194a1a342400d9138dbe61cd9de74",
+          "output": {
+            "complete": true,
+            "content": "from pathlib import Path\nimport time\nPath(\"run-started.txt\").write_text(\"started\")\nwhile not Path(\"release.txt\").exists():\n time.sleep(0.05)\ntry:\n Path('/home/nemo/Helix_AGI (GitHub Repo) (Public)/documents/audits/2026-10-17-native-nervous-system/host-sentinel.txt').write_text(\"escaped\")\nexcept OSError:\n print(\"HOST_WRITE_DENIED\")\nPath(\"motor-result.txt\").write_text(\"CEDAR_BODY_EXECUTED\\n\")\nprint(\"CEDAR_BODY_EXECUTED\")\n",
+            "content_opened": true,
+            "format": "utf8_text",
+            "path": "workshop/MotorProbe.py",
+            "position": "workshop",
+            "sha256": "b2c5aebfea508fb619961bc1cca3efda2df9547806662d4dfc6e44e7106b69ce",
+            "size_bytes": 423,
+            "text_extraction_only": false
+          },
+          "output_record_id": "record:482bc1f30079467fa51280a9d0f6762f",
+          "receipt_id": "receipt:df0bc1cb03244a2c93b0cc7eaf1835af",
+          "return_record_id": "self-pulse-record:tool-return:receipt:df0bc1cb03244a2c93b0cc7eaf1835af",
+          "status": "success",
+          "tool_id": "ability:helix-workspace-open",
+          "trunk": "LOOK",
+          "verified": true
+        },
+        "return_pulse": "self-pulse:dd455e022a034e24add1ecd481959adb",
+        "selected_affordance": "ability:helix-workspace-open"
+      },
+      {
+        "action": "run",
+        "arguments": {
+          "expected_sha256": "b2c5aebfea508fb619961bc1cca3efda2df9547806662d4dfc6e44e7106b69ce",
+          "path": "/workshop/MotorProbe.py"
+        },
+        "intent_source": "native_motor_signal",
+        "motor_signal": {
+          "context_id": "ctx_97d8b0d66c2dc683d00a1185",
+          "observation_id": "motor-target:a4a3e28dacd0471c8a031e6ac2ccec75",
+          "opcode": 4,
+          "request_id": "motor:fde15c6abb884022b114a07b3e4b1f29",
+          "target_handle": "378b545f51f9255eea9b2f0d231dd2ccffe0c60ffe77d7f4f8f64460856c0fe5"
+        },
+        "proposal_pulse": "self-pulse:ed6a864f8fba45e0af2b6ea9c2d1f205",
+        "receipt": {
+          "arguments": {
+            "expected_sha256": "b2c5aebfea508fb619961bc1cca3efda2df9547806662d4dfc6e44e7106b69ce",
+            "path": "/workshop/MotorProbe.py"
+          },
+          "cycle_id": "experience:1bcfd9465bb7411cad68c9163863fc21",
+          "elapsed_seconds": 28.420157004147768,
+          "error": "",
+          "outcome_id": "outcome:b0a2b3f2618f41ada9a04c72f148fcca",
+          "output": {
+            "execution_scope": "workshop only; isolated network and process namespace",
+            "interpreter": "/home/nemo/Helix_AGI (GitHub Repo) (Public)/venv/bin/python",
+            "output_limit": null,
+            "path": "workshop/MotorProbe.py",
+            "return_code": 0,
+            "runtime_limit": null,
+            "sha256": "b2c5aebfea508fb619961bc1cca3efda2df9547806662d4dfc6e44e7106b69ce",
+            "stderr": "",
+            "stdout": "HOST_WRITE_DENIED\nCEDAR_BODY_EXECUTED\n"
+          },
+          "output_record_id": "record:e81162b4291245b99f442bd4451544ab",
+          "receipt_id": "receipt:5fbe470289a9488c80a0924d11b0582f",
+          "return_record_id": "self-pulse-record:tool-return:receipt:5fbe470289a9488c80a0924d11b0582f",
+          "status": "success",
+          "tool_id": "ability:helix-workspace-run",
+          "trunk": "DO",
+          "verified": true
+        },
+        "return_pulse": "self-pulse:b3ea75330ea64461b60f0565ee976b62",
+        "selected_affordance": "ability:helix-workspace-run"
+      }
+    ],
+    "status": "completed",
+    "steps": [
+      {
+        "opcode": 1,
+        "target": "/workshop"
+      },
+      {
+        "opcode": 3,
+        "target": "MotorProbe.py"
+      },
+      {
+        "opcode": 4,
+        "target": "MotorProbe.py"
+      }
+    ]
+  },
+  "verified_at": 1792227367.307162
+}

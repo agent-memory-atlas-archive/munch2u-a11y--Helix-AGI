@@ -1,0 +1,11 @@
+{
+  "no_action_receipts": [
+    {
+      "time": 1792227935.9372232,
+      "kind": "motor_receptor_no_action",
+      "input_sha256": "0c756b351dde61ca4a06899f6d6989bb04c6fb6c7462e565da2c280fb5975eb7",
+      "reason": "no explicit positive motor request"
+    }
+  ],
+  "job_count_unchanged": true
+}

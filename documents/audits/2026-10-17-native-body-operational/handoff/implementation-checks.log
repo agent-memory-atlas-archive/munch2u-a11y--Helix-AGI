@@ -1,0 +1,7 @@
+.....Configured auxiliary LLM call failed: local inference failed
+.............................................................Auxiliary LLM backend unavailable: missing backend
+......
+----------------------------------------------------------------------
+Ran 72 tests in 1.741s
+
+OK

@@ -1,0 +1,1686 @@
+{
+  "job": {
+    "completed_at": 1792228442.756139,
+    "context_id": "ctx_438b64e43673a1e635ed4537",
+    "created_at": 1792228408.7017343,
+    "cursor": 2,
+    "error": null,
+    "id": "motor:9676ea628dd246c9ab6eb13f2fee1628",
+    "input_id": "19a0048b3419421887db3204f6c072a4:receptive:1c66db2d54374bcaa3bae492bd082cd7:0",
+    "message": "[05:13:12] User is talking to me via dashboard. They said: \"Please open /bedroom/closet/CaseNotes.txt and /bedroom/closet/SecondNote.txt.\"",
+    "receipts": [
+      {
+        "action": "open",
+        "arguments": {
+          "path": "/bedroom/closet/CaseNotes.txt"
+        },
+        "intent_source": "native_motor_signal",
+        "motor_signal": {
+          "context_id": "ctx_438b64e43673a1e635ed4537",
+          "observation_id": "motor-target:9531282e3b8047748066051ba794b8af",
+          "opcode": 3,
+          "request_id": "motor:9676ea628dd246c9ab6eb13f2fee1628",
+          "target_handle": "7b5aa41e5d5be2dd438ac9d5f6c87359bf8267f5d41ef5321a39533073e1b406"
+        },
+        "proposal_pulse": "self-pulse:deda6f0c1055414093293dd41b63643e",
+        "receipt": {
+          "arguments": {
+            "path": "/bedroom/closet/CaseNotes.txt"
+          },
+          "cycle_id": "experience:ba83d90931a44e84a56a84cc1f80731b",
+          "elapsed_seconds": 0.014953688019886613,
+          "error": "",
+          "outcome_id": "outcome:b341cdbb98fb49fea51795d6e1fbdd41",
+          "output": {
+            "complete": true,
+            "content": "The violet compass points toward the cedar workshop.\n",
+            "content_opened": true,
+            "format": "utf8_text",
+            "path": "bedroom/closet/CaseNotes.txt",
+            "position": "workshop",
+            "sha256": "798e598425260cd4823b7c42659e37b92d16ff129ba3e5b9504d4579227d6a0d",
+            "size_bytes": 53,
+            "text_extraction_only": false
+          },
+          "output_record_id": "record:efee190d96394b3e81b3fbb87891dcab",
+          "receipt_id": "receipt:aefb0e135a5c47c088764a942fe85cce",
+          "return_record_id": "self-pulse-record:tool-return:receipt:aefb0e135a5c47c088764a942fe85cce",
+          "status": "success",
+          "tool_id": "ability:helix-workspace-open",
+          "trunk": "LOOK",
+          "verified": true
+        },
+        "return_pulse": "self-pulse:67c713fdd23341029936c72357398986",
+        "selected_affordance": "ability:helix-workspace-open"
+      },
+      {
+        "action": "open",
+        "arguments": {
+          "path": "/bedroom/closet/SecondNote.txt"
+        },
+        "intent_source": "native_motor_signal",
+        "motor_signal": {
+          "context_id": "ctx_438b64e43673a1e635ed4537",
+          "observation_id": "motor-target:19e811b9ea224ae3a0e6aedd842bd153",
+          "opcode": 3,
+          "request_id": "motor:9676ea628dd246c9ab6eb13f2fee1628",
+          "target_handle": "75625c9955456abc5c673d470bb98f6a482c40160c9b727a6ca17f00f0240034"
+        },
+        "proposal_pulse": "self-pulse:bb026c57aa9e42438edffc14d217e5fc",
+        "receipt": {
+          "arguments": {
+            "path": "/bedroom/closet/SecondNote.txt"
+          },
+          "cycle_id": "experience:35c0658c1888464d9992b0f3e3f4a70b",
+          "elapsed_seconds": 0.017623356077820063,
+          "error": "",
+          "outcome_id": "outcome:c80f444b22b544acb61cba25b8597ba0",
+          "output": {
+            "complete": true,
+            "content": "The observation marker is ORBIT-62.\n",
+            "content_opened": true,
+            "format": "utf8_text",
+            "path": "bedroom/closet/SecondNote.txt",
+            "position": "workshop",
+            "sha256": "bd74c9348ce6d1c3e385d34ca7a863a85f374110af90bdccf7dffea6606792a9",
+            "size_bytes": 36,
+            "text_extraction_only": false
+          },
+          "output_record_id": "record:dc5b907f9d5242a6a54a5ac13533b35d",
+          "receipt_id": "receipt:91d0d886881342a1bb41cd69ebef04e5",
+          "return_record_id": "self-pulse-record:tool-return:receipt:91d0d886881342a1bb41cd69ebef04e5",
+          "status": "success",
+          "tool_id": "ability:helix-workspace-open",
+          "trunk": "LOOK",
+          "verified": true
+        },
+        "return_pulse": "self-pulse:df5da4b17c1c4b06be489782dc2b2c20",
+        "selected_affordance": "ability:helix-workspace-open"
+      }
+    ],
+    "status": "completed",
+    "steps": [
+      {
+        "opcode": 3,
+        "target": "/bedroom/closet/CaseNotes.txt"
+      },
+      {
+        "opcode": 3,
+        "target": "/bedroom/closet/SecondNote.txt"
+      }
+    ]
+  },
+  "context": {
+    "time": 1792228410.2144947,
+    "kind": "pulse_context",
+    "helix_pulse": "receptive:1c66db2d54374bcaa3bae492bd082cd7",
+    "events": [
+      "[05:13:12] User is talking to me via dashboard. They said: \"Please open /bedroom/closet/CaseNotes.txt and /bedroom/closet/SecondNote.txt.\"",
+      "Native action [receipt:3917bbce6f7444afb962f2f332f02213] returned: My move action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/workshop\"}, \"error\": \"\", \"output\": {\"observed\": {\"content_opened\": false, \"entries\": [{\"extension_hint\": \".py\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228282122952307, \"name\": \"MotorProbe.py\", \"size_bytes\": 433}], \"extension_hint\": \"\", \"interpretation\": \"filesystem attributes; extension is a hint, not verified content\", \"kind\": \"directory\", \"mode\": 509, \"modified_ns\": 1792228282122918514, \"name\": \"workshop\", \"path\": \"workshop\", \"position\": \"workshop\", \"size_bytes\": 4096}, \"position\": \"workshop\", \"position_verified\": true, \"previous_position\": \"thinking\"}, \"receipt_id\": \"receipt:3917bbce6f7444afb962f2f332f02213\", \"status\": \"success\", \"verified\": true}",
+      "Native action [receipt:41a85f061eb44b58a75018f6c1c9ae6d] returned: My open action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/workshop/MotorProbe.py\"}, \"error\": \"\", \"output\": {\"complete\": true, \"content\": \"from pathlib import Path\\nimport time\\nPath(\\\"run-started.txt\\\").write_text(\\\"started\\\")\\nwhile not Path(\\\"release.txt\\\").exists():\\n time.sleep(0.05)\\ntry:\\n Path('/home/nemo/Helix_AGI (GitHub Repo) (Public)/documents/audits/2026-10-17-native-body-operational/host-sentinel.txt').write_text(\\\"escaped\\\")\\nexcept OSError:\\n print(\\\"HOST_WRITE_DENIED\\\")\\nPath(\\\"motor-result.txt\\\").write_text(\\\"CEDARLIVE_BODY_EXECUTED\\\\n\\\")\\nprint(\\\"CEDARLIVE_BODY_EXECUTED\\\")\\n\", \"content_opened\": true, \"format\": \"utf8_text\", \"path\": \"workshop/MotorProbe.py\", \"position\": \"workshop\", \"sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"size_bytes\": 433, \"text_extraction_only\": false}, \"receipt_id\": \"receipt:41a85f061eb44b58a75018f6c1c9ae6d\", \"status\": \"success\", \"verified\": true}",
+      "Native action [receipt:35183c11279b44549ab7e3308c8ab7d7] returned: My run action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"expected_sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"path\": \"/workshop/MotorProbe.py\"}, \"error\": \"\", \"output\": {\"execution_scope\": \"workshop only; isolated network and process namespace\", \"interpreter\": \"/home/nemo/Helix_AGI (GitHub Repo) (Public)/venv/bin/python\", \"output_limit\": null, \"path\": \"workshop/MotorProbe.py\", \"return_code\": 0, \"runtime_limit\": null, \"sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"stderr\": \"\", \"stdout\": \"HOST_WRITE_DENIED\\nCEDARLIVE_BODY_EXECUTED\\n\"}, \"receipt_id\": \"receipt:35183c11279b44549ab7e3308c8ab7d7\", \"status\": \"success\", \"verified\": true}"
+    ],
+    "rwkv_tokens": 515,
+    "joint_state_before": "9f8fe3c7199d82c99d2af2ec3fb074165923376e9ab2a2e910df54b6ed0661ca",
+    "joint_state_after": "a3069f920089cc2855ca5eb7fc6905b45936a179906ed32f8c0e36b254eacc7f",
+    "habitus_pulse": 43,
+    "sensed_modality": "INTERNAL_ACTION_REQUIRED",
+    "communicative_intent": false,
+    "foreground_protocol": "intention_required",
+    "cortex_proposal": {
+      "proposal_id": "cortex-proposal:3d02a5cac4dcaa97f29271115a13bd71",
+      "model_sha256": "d35a598a4aebdc466654e2d661ac1a1feee0154f1902d0054daf9c448170413a",
+      "graph_field_sha256": "e3c77fcdea2abfaec069670d93d5dce85f8d8fa0eca3c2e7a576c196ec156b7f",
+      "sensory_payload_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sensed_byte_count": 0,
+      "action_probabilities": {
+        "DO": 0.34074899554252625,
+        "LOOK": 0.3073984682559967,
+        "SPEAK": 0.35185250639915466
+      },
+      "predicted_consequence": -0.14573675394058228,
+      "predicted_valence": -0.14519654214382172,
+      "route_alignment": 0.022103212773799896,
+      "confidence": 0.011103510856628418
+    },
+    "graph_field": [
+      0.03307755305648519,
+      0.09798257339364876,
+      -0.2692163395675615,
+      0.01959139007746458,
+      0.007972401787399611,
+      0.008043067556446694,
+      0.014298290249551865,
+      0.0,
+      -0.0011510140865961195,
+      0.11227284299760415,
+      0.07578285631477084,
+      -0.025204743771467343,
+      -0.07119135224306064,
+      0.022435861268720523,
+      0.0,
+      0.011185708388664619,
+      0.05604600020257999,
+      0.016241375847582784,
+      0.0,
+      -0.07249799931416512,
+      0.016642874452132052,
+      -0.06739423047883326,
+      -0.0024802421191315494,
+      0.0033994486368777066,
+      -0.032603524269058784,
+      -0.0021846989847983697,
+      0.034618195871760356,
+      -0.05460170478675755,
+      0.1544004886169165,
+      0.034405248634375794,
+      -0.057262233641173804,
+      0.03440524863437578,
+      0.0690869309357697,
+      0.03551326715772225,
+      0.05162604974407083,
+      -0.17427603483567866,
+      0.0941335369195052,
+      0.18075588827406008,
+      0.12374064850445315,
+      0.06285115318506428,
+      -0.013465533751280253,
+      -0.023004086593411507,
+      0.08546552061036022,
+      0.06452713757754616,
+      -0.05424984102647033,
+      -0.004606163935530045,
+      -0.03407888682874715,
+      0.00163923033349947,
+      0.025803936475781847,
+      -0.008601312158593949,
+      0.0,
+      0.03158662000899799,
+      0.00245057224130287,
+      -0.013276851218266258,
+      -0.041572721436916406,
+      0.0,
+      -0.032603524269058784,
+      0.0,
+      0.02845333369661282,
+      -0.036436970802928244,
+      0.05126333435342789,
+      -0.002835545772546237,
+      0.01090216316101784,
+      0.033648496385766315,
+      -0.06668317029195894,
+      0.0593615189215785,
+      -0.06478343662613555,
+      0.0,
+      -0.02440207764450298,
+      0.0,
+      -0.09887137201583565,
+      -0.14323591973213923,
+      0.016772558709258204,
+      0.09938165044441793,
+      -0.008429288406587928,
+      -0.0793602625315947,
+      -0.008601312158593949,
+      -0.016933031350574973,
+      0.10545490173009835,
+      0.01034737349621478,
+      0.0193136636399839,
+      0.013465533751280253,
+      -0.20618959298637857,
+      -0.04518139521528437,
+      0.19684452977435707,
+      -0.009067296702507995,
+      0.06039098107637568,
+      8.268213715643534e-05,
+      -0.0058703955482403624,
+      0.004864221592686306,
+      -0.03757784510445464,
+      0.03571788380874752,
+      0.0,
+      0.03361899882095498,
+      0.025803936475781847,
+      -0.036835275111204845,
+      0.0,
+      -0.005436934248980553,
+      0.09973233414519729,
+      0.10620605460000154,
+      -0.027856329522799348,
+      -0.008601312158593949,
+      -0.03922138454847454,
+      0.1053321768516241,
+      -0.13416991238641215,
+      0.03002354714411647,
+      0.03463741384890578,
+      0.032603524269058784,
+      0.032541512666191465,
+      0.0010509519352923668,
+      -0.0476040524478118,
+      0.09952824385771383,
+      -0.022913400754638335,
+      -0.031295231084470736,
+      0.01318066407937571,
+      0.17512408831693999,
+      -0.05647376196560334,
+      -0.019568508788675727,
+      -0.014070734623766056,
+      -0.10128085424509875,
+      -0.09603421204734205,
+      0.036029274373534655,
+      0.001064462271168366,
+      0.018505610280052643,
+      -0.0026007821821749035,
+      0.10106712445362102,
+      -0.0476040524478118,
+      0.0,
+      -0.16408736134825763,
+      0.0,
+      0.05438299894705412,
+      -0.008601312158593949,
+      0.025803936475781847,
+      -0.15775866260497426,
+      0.056283036425378775,
+      0.008601312158593949,
+      -0.0004730370221622783,
+      0.0,
+      -0.11743340431773994,
+      0.1419523237758652,
+      0.05294428286813568,
+      -0.017087944105348845,
+      0.010131065703510805,
+      -0.06162897124072778,
+      -0.056457194858754174,
+      0.05556222329848943,
+      0.0,
+      0.07506333250480532,
+      -0.005436934248980553,
+      -0.017202624317187897,
+      0.03440524863437578,
+      -0.00018705710910630653,
+      0.016307640888755748,
+      -0.07371892824657474,
+      -0.0012201644678744015,
+      -0.013343946630361155,
+      -0.009031377766523643,
+      0.021118740911654388,
+      0.05141862567961861,
+      -0.0014279262473977279,
+      0.08043142152789455,
+      -0.0005900625405972538,
+      0.10653199312884641,
+      0.0,
+      0.002994006558094533,
+      0.0062330793971635615,
+      -0.14167467372413595,
+      -0.017593660027706067,
+      -0.00012158712091909924,
+      -0.0014410535272983062,
+      -0.012890979569104625,
+      -0.04598628197773804,
+      2.5051635932428168e-05,
+      -0.033705590059833174,
+      0.0075948813740781135,
+      0.010308151585825702,
+      0.0,
+      -0.0006579068004327692,
+      0.0007125985108811513,
+      0.0793602625315947,
+      0.0038070369775031992,
+      -0.008601312158593949,
+      -0.013528055853430258,
+      -0.13088138569323532,
+      0.03440524863437578,
+      0.14497514221739452,
+      -0.0019676861141291143,
+      0.0,
+      -0.006298797435227783,
+      -0.0220668459098742,
+      0.008601312158593949,
+      -0.09598280428932095,
+      0.14677358402282156,
+      0.11256478001354449,
+      -0.02817621138341413,
+      -0.003209098099717512,
+      0.04219739424548857,
+      -0.025803936475781847,
+      0.0,
+      0.12630860426401555,
+      0.02247245856554798,
+      -0.022045685873447938,
+      0.0005849783627035651,
+      0.05438299894705412,
+      -0.010057521472452252,
+      0.003913008379859404,
+      -0.01447170770683431,
+      0.04778940671809863,
+      0.025975960227787868,
+      0.0,
+      0.006781613025912084,
+      -0.005564600237035497,
+      -0.0768163604006058,
+      -0.0252238708851687,
+      0.06009793851740808,
+      -0.003374462620236088,
+      0.06453667169258971,
+      -0.08091037170618955,
+      -0.05452090312592268,
+      0.04635946121657518,
+      -0.009031377766523643,
+      0.01220706791846685,
+      0.0,
+      0.0062330793971635615,
+      -0.05372509214662135,
+      0.0,
+      -0.010131065703510805,
+      0.03832873372084997,
+      -0.0012380090443986733,
+      0.08096579821505219,
+      -0.05438299894705412,
+      0.00452810119838773,
+      0.0745842037222434,
+      -0.058120554549796796,
+      -0.03362290792267674,
+      0.003982642374036053,
+      0.0330212744034118,
+      -0.010240081366737944,
+      0.0,
+      -0.05827776898403663,
+      -0.04745081508699275,
+      -0.08750307925164609,
+      0.009409851433656613,
+      -0.04467314093112555,
+      0.0,
+      0.008804779019100368,
+      -0.13476680924734533,
+      0.11065746169293231,
+      0.0,
+      -0.02510427790123923,
+      0.0,
+      -0.016772558709258204,
+      -0.0024802421191315494,
+      0.10364785820794484,
+      0.016650971588339104,
+      -0.15159629870044397
+    ],
+    "topical": {
+      "focus_topics": [
+        "identity:human",
+        "taste:curious",
+        "identity:self"
+      ],
+      "momentum": {
+        "identity:human": "rising",
+        "taste:curious": "fading",
+        "identity:self": "sustained"
+      },
+      "drift": 0.106,
+      "familiarity": {
+        "identity:human": 0.6752,
+        "taste:curious": 0.1949,
+        "identity:self": 0.1153
+      },
+      "action_mode_mix": {},
+      "max_depth": 2,
+      "rendered": "[TOPICAL ORIENTATION & DRIFT]\nFocus topics: identity:human, taste:curious, identity:self\nMomentum: identity:human (rising), taste:curious (fading), identity:self (sustained)\nConversational drift: 0.106"
+    },
+    "recurrent_state": {
+      "habitus_pulse": 42,
+      "rwkv_input_tokens": 515,
+      "sensed_modality": "INTERNAL_ACTION_REQUIRED",
+      "communicative_intent": false,
+      "speak_salience": 0.352,
+      "recurrent_express": true,
+      "cortex_proposal": {
+        "proposal_id": "cortex-proposal:3d02a5cac4dcaa97f29271115a13bd71",
+        "model_sha256": "d35a598a4aebdc466654e2d661ac1a1feee0154f1902d0054daf9c448170413a",
+        "graph_field_sha256": "e3c77fcdea2abfaec069670d93d5dce85f8d8fa0eca3c2e7a576c196ec156b7f",
+        "sensory_payload_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sensed_byte_count": 0,
+        "action_probabilities": {
+          "DO": 0.34074899554252625,
+          "LOOK": 0.3073984682559967,
+          "SPEAK": 0.35185250639915466
+        },
+        "predicted_consequence": -0.14573675394058228,
+        "predicted_valence": -0.14519654214382172,
+        "route_alignment": 0.022103212773799896,
+        "confidence": 0.011103510856628418
+      },
+      "external_evidence": false
+    },
+    "mrag": {
+      "lane_a_candidates": 0,
+      "lane_b_candidates": 0,
+      "merged_candidates": 0,
+      "selected": 0,
+      "suppressed_provenance": 0,
+      "suppressed_duplicate": 0,
+      "by_lane": {
+        "semantic": 0,
+        "spatial": 0,
+        "both": 0
+      },
+      "by_tier": {
+        "0": 0,
+        "1": 0,
+        "2": 0
+      },
+      "lexicon_hits": [
+        "peo_boot_primary_human",
+        "peo_boot_self"
+      ],
+      "semantic_heads": [
+        {
+          "text": "User is talking to me via dashboard. They said: \"Please open /bedroom/closet/CaseNotes.txt and /bedroom/closet/SecondNote.txt.\"",
+          "weight": 1.0,
+          "kind": "full"
+        },
+        {
+          "text": "[05:13:12] User is talking to me via dashboard.",
+          "weight": 0.97,
+          "kind": "sentence"
+        },
+        {
+          "text": "They said: \"Please open /bedroom/closet/CaseNotes.txt and /bedroom/closet/SecondNote.txt.\"",
+          "weight": 0.97,
+          "kind": "sentence"
+        },
+        {
+          "text": "user",
+          "weight": 0.95,
+          "kind": "rake"
+        },
+        {
+          "text": "open bedroom closet casenotes",
+          "weight": 0.95,
+          "kind": "rake"
+        },
+        {
+          "text": "bedroom closet secondnote",
+          "weight": 0.95,
+          "kind": "rake"
+        },
+        {
+          "text": "via dashboard",
+          "weight": 0.95,
+          "kind": "rake"
+        },
+        {
+          "text": "They",
+          "weight": 0.95,
+          "kind": "entity"
+        },
+        {
+          "text": "Please",
+          "weight": 0.95,
+          "kind": "entity"
+        },
+        {
+          "text": "cedarlive",
+          "weight": 0.92,
+          "kind": "concept_expansion"
+        },
+        {
+          "text": "name",
+          "weight": 0.92,
+          "kind": "concept_expansion"
+        },
+        {
+          "text": "gather",
+          "weight": 0.92,
+          "kind": "concept_expansion"
+        },
+        {
+          "text": "myself",
+          "weight": 0.92,
+          "kind": "concept_expansion"
+        },
+        {
+          "text": "need",
+          "weight": 0.92,
+          "kind": "concept_expansion"
+        },
+        {
+          "text": "stable",
+          "weight": 0.92,
+          "kind": "concept_expansion"
+        },
+        {
+          "text": "point",
+          "weight": 0.92,
+          "kind": "concept_expansion"
+        }
+      ],
+      "retrieval_profile": "local",
+      "memory_work_order": {
+        "raw_message": "[05:13:12] User is talking to me via dashboard. They said: \"Please open /bedroom/closet/CaseNotes.txt and /bedroom/closet/SecondNote.txt.\"",
+        "search_query": "User is talking to me via dashboard. They said: \"Please open /bedroom/closet/CaseNotes.txt and /bedroom/closet/SecondNote.txt.\"",
+        "subjects": [],
+        "possessive_subjects": [],
+        "question_type": "statement",
+        "requested_facets": [],
+        "relation_terms": [],
+        "search_terms": [
+          "user",
+          "talking",
+          "me",
+          "via",
+          "dashboard",
+          "they",
+          "said",
+          "please",
+          "open",
+          "bedroom",
+          "closet",
+          "casenotes.txt",
+          "secondnote.txt"
+        ],
+        "is_question": false,
+        "requires_exact": false,
+        "requires_chronology": false,
+        "relation_requested": false,
+        "profile_allowed": false,
+        "role_constraint": "unconstrained",
+        "target_record_kinds": [],
+        "evidence_scope": "recognition",
+        "thought_policy": "bounded",
+        "related_record_kinds": []
+      },
+      "context_office": {
+        "enabled": true,
+        "plan": {
+          "intents": [
+            "direct_fact"
+          ],
+          "desks": [
+            "facts"
+          ],
+          "terms": [
+            "user",
+            "talk",
+            "me",
+            "via",
+            "dashboard",
+            "they",
+            "said",
+            "please",
+            "open",
+            "bedroom",
+            "closet",
+            "casenotes.txt",
+            "secondnote.txt"
+          ],
+          "subject": "",
+          "structured": false,
+          "expand_scope": false,
+          "prefer_latest": false
+        },
+        "desks": [
+          "facts"
+        ],
+        "verified": false,
+        "reason": "no_verified_brief",
+        "binding_method": "none",
+        "scope": null,
+        "scope_coverage": 0.0,
+        "scope_score": 0.0,
+        "evidence_selected": 0,
+        "semantic_retained": 0,
+        "office_board_consulted": true,
+        "bids_considered": 0,
+        "case_names": [],
+        "case_candidates": 0,
+        "exact_reserved": 0,
+        "memory_work_order": {
+          "raw_message": "[05:13:12] User is talking to me via dashboard. They said: \"Please open /bedroom/closet/CaseNotes.txt and /bedroom/closet/SecondNote.txt.\"",
+          "search_query": "User is talking to me via dashboard. They said: \"Please open /bedroom/closet/CaseNotes.txt and /bedroom/closet/SecondNote.txt.\"",
+          "subjects": [],
+          "possessive_subjects": [],
+          "question_type": "statement",
+          "requested_facets": [],
+          "relation_terms": [],
+          "search_terms": [
+            "user",
+            "talking",
+            "me",
+            "via",
+            "dashboard",
+            "they",
+            "said",
+            "please",
+            "open",
+            "bedroom",
+            "closet",
+            "casenotes.txt",
+            "secondnote.txt"
+          ],
+          "is_question": false,
+          "requires_exact": false,
+          "requires_chronology": false,
+          "relation_requested": false,
+          "profile_allowed": false,
+          "role_constraint": "unconstrained",
+          "target_record_kinds": [],
+          "evidence_scope": "recognition",
+          "thought_policy": "bounded",
+          "related_record_kinds": []
+        }
+      },
+      "candidate_boundary": {
+        "policy": "all eligible nominations; physical context admission in production compiler",
+        "corpus_records": 22,
+        "item_cap": null,
+        "token_cap": null
+      },
+      "associative_candidates": 0,
+      "associative_selected": 0,
+      "associative_satisfied_existing": 0,
+      "associative_source_cluster": null,
+      "associative_destination_clusters": [],
+      "query": "[05:13:12] User is talking to me via dashboard. They said: \"Please open /bedroom/closet/CaseNotes.txt and /bedroom/closet/SecondNote.txt.\"",
+      "passage_hits": {}
+    },
+    "loom_packet": {
+      "id": "ctx_438b64e43673a1e635ed4537",
+      "created_at": 1792228408.7048013,
+      "scope": "helix",
+      "current_input": "[05:13:12] User is talking to me via dashboard. They said: \"Please open /bedroom/closet/CaseNotes.txt and /bedroom/closet/SecondNote.txt.\"",
+      "current_event_id": null,
+      "task_id": null,
+      "mode": "pulse",
+      "sections": {
+        "recalled": [
+          "(Recorded: 2026-10-17T05:11:22-04:00)\nMy earliest communication rule is to explain myself in concrete language that does not assume technical fluency from the human in front of me.",
+          "(Recorded: 2026-10-17T05:11:22-04:00)\nMy bootstrap framing says that memory is reconstructive and partial, so honest uncertainty is better than decorative certainty.",
+          "(Recorded: 2026-10-17T05:11:22-04:00)\nUser completed my initial setup and is my earliest human source of local context, goals, and boundary clarification.",
+          "(Recorded: 2026-10-17T05:11:22-04:00)\nCedarLive is the name attached to this mind. The setup process established that continuity should gather around that name rather than around a single prompt."
+        ],
+        "environment": [
+          "{\"active_module\": {}, \"content_opened\": false, \"helix_pulse\": \"receptive:1c66db2d54374bcaa3bae492bd082cd7\", \"observation_id\": \"home-sense:d943781e61cf497d9448dd34808ad8c5\", \"room\": \"Experiments and Python scripts. Execution can write only inside this room.\", \"surroundings\": {\"content_opened\": false, \"entries\": [{\"extension_hint\": \".py\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228282122952307, \"name\": \"MotorProbe.py\", \"size_bytes\": 433}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392941022475, \"name\": \"motor-result.txt\", \"size_bytes\": 24}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392897762754, \"name\": \"release.txt\", \"size_bytes\": 43}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392336536977, \"name\": \"run-started.txt\", \"size_bytes\": 7}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392351712565, \"name\": \"while-running.txt\", \"size_bytes\": 62}], \"extension_hint\": \"\", \"interpretation\": \"filesystem attributes; extension is a hint, not verified content\", \"kind\": \"directory\", \"mode\": 509, \"modified_ns\": 1792228392939811075, \"name\": \"workshop\", \"path\": \"workshop\", \"position\": \"workshop\", \"size_bytes\": 4096}, \"time_ns\": 1792228402213866343}"
+        ],
+        "topical": [
+          "[TOPICAL ORIENTATION & DRIFT]\nFocus topics: identity:human, taste:curious, identity:self\nMomentum: identity:human (rising), taste:curious (fading), identity:self (sustained)\nConversational drift: 0.106"
+        ]
+      },
+      "capabilities": [],
+      "manifest": [
+        {
+          "candidate_id": "helix_context:23e3f0bba4340cbccc42a376832c9fbecc65a850101349f93a8df0d7534e2c5e",
+          "source_record_ids": [],
+          "lanes": {},
+          "admitted": true,
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "token_cost": 470,
+          "utility": 0.0,
+          "lane_ranks": {}
+        },
+        {
+          "candidate_id": "helix_context:2f99130058c8e832bc059224bf4f7679cd63eb7957a2e75b5ca23992c2b5b27f",
+          "source_record_ids": [],
+          "lanes": {},
+          "admitted": true,
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "token_cost": 43,
+          "utility": 0.0,
+          "lane_ranks": {}
+        },
+        {
+          "candidate_id": "helix_context:7fff885d02bc16e6b894ea7188a4b7e3856d8d68c052541253569f855632c48f",
+          "source_record_ids": [],
+          "lanes": {},
+          "admitted": true,
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "token_cost": 62,
+          "utility": 0.0,
+          "lane_ranks": {}
+        },
+        {
+          "candidate_id": "helix_context:bc2b0aafaf07df9944f7c8c0131ee6fa5c7078a7dcf5bf9739738f011053e22b",
+          "source_record_ids": [],
+          "lanes": {},
+          "admitted": true,
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "token_cost": 48,
+          "utility": 0.0,
+          "lane_ranks": {}
+        },
+        {
+          "candidate_id": "helix_context:d1da8c7a20b602fbe81d4aa2bbba53dc4c35e31850ab082d104356025c7b0ccb",
+          "source_record_ids": [],
+          "lanes": {},
+          "admitted": true,
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "token_cost": 43,
+          "utility": 0.0,
+          "lane_ranks": {}
+        },
+        {
+          "candidate_id": "helix_context:fdc07bc90c1322785398a11a479af597a84ea0ad177d78df0dcf399c556c521f",
+          "source_record_ids": [],
+          "lanes": {},
+          "admitted": true,
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "token_cost": 51,
+          "utility": 0.0,
+          "lane_ranks": {}
+        },
+        {
+          "candidate_id": "record:helix:con_boot_continuity:871b0849f4c6363af2dc96259b8d9783f33f33439d0fd369ccbfe34905cf5745",
+          "source_record_ids": [
+            "helix:con_boot_continuity:871b0849f4c6363af2dc96259b8d9783f33f33439d0fd369ccbfe34905cf5745"
+          ],
+          "lanes": {
+            "semantic": 0.35848908419839276,
+            "subjective": 0.21777934888074307
+          },
+          "admitted": false,
+          "reason": "unverified inference excluded",
+          "token_cost": 87,
+          "utility": 0.0,
+          "lane_ranks": {
+            "subjective": 19,
+            "semantic": 20
+          }
+        },
+        {
+          "candidate_id": "record:helix:con_boot_grounding:e22088c61c7cc389dd439269eb26b5d9437f351ec7cf92a01e7b4ba543db894a",
+          "source_record_ids": [
+            "helix:con_boot_grounding:e22088c61c7cc389dd439269eb26b5d9437f351ec7cf92a01e7b4ba543db894a"
+          ],
+          "lanes": {
+            "semantic": 0.43073990248460536,
+            "subjective": 0.2342993305480711
+          },
+          "admitted": false,
+          "reason": "unverified inference excluded",
+          "token_cost": 87,
+          "utility": 0.0,
+          "lane_ranks": {
+            "subjective": 15,
+            "semantic": 11
+          }
+        },
+        {
+          "candidate_id": "record:helix:des_boot_autonomy_judgment:a9ef7c68eb41786f039f4f1247895ec0e260015928dcde21501c61f47359675d",
+          "source_record_ids": [
+            "helix:des_boot_autonomy_judgment:a9ef7c68eb41786f039f4f1247895ec0e260015928dcde21501c61f47359675d"
+          ],
+          "lanes": {
+            "semantic": 0.34155538910233263,
+            "subjective": 0.22144568016891564
+          },
+          "admitted": false,
+          "reason": "unverified inference excluded",
+          "token_cost": 92,
+          "utility": 0.0,
+          "lane_ranks": {
+            "subjective": 18,
+            "semantic": 21
+          }
+        },
+        {
+          "candidate_id": "record:helix:des_boot_environmental_mastery:f2e123a759af46a38dfabb817480ff145d21886b37f98a01608da3a7e908e525",
+          "source_record_ids": [
+            "helix:des_boot_environmental_mastery:f2e123a759af46a38dfabb817480ff145d21886b37f98a01608da3a7e908e525"
+          ],
+          "lanes": {
+            "semantic": 0.38469905411522126,
+            "subjective": 0.23472572322253316
+          },
+          "admitted": false,
+          "reason": "unverified inference excluded",
+          "token_cost": 89,
+          "utility": 0.0,
+          "lane_ranks": {
+            "subjective": 14,
+            "semantic": 15
+          }
+        },
+        {
+          "candidate_id": "record:helix:mem_mem_boot_identity_name:5a684bef620349765e5179782ee4b742c6d4e8498fcd7fd07e687f15be1d6eee",
+          "source_record_ids": [
+            "helix:mem_mem_boot_identity_name:5a684bef620349765e5179782ee4b742c6d4e8498fcd7fd07e687f15be1d6eee"
+          ],
+          "lanes": {
+            "semantic": 0.4630881203578515,
+            "subjective": 0.2903523064779648
+          },
+          "admitted": false,
+          "reason": "unverified inference excluded",
+          "token_cost": 102,
+          "utility": 0.0,
+          "lane_ranks": {
+            "subjective": 3,
+            "semantic": 5
+          }
+        },
+        {
+          "candidate_id": "record:helix:mem_mem_boot_plain_language:446de406c7881662d6d289dea28b7401b54077d9410eb320f11623e84c93f3a9",
+          "source_record_ids": [
+            "helix:mem_mem_boot_plain_language:446de406c7881662d6d289dea28b7401b54077d9410eb320f11623e84c93f3a9"
+          ],
+          "lanes": {
+            "semantic": 0.4790676394695265,
+            "subjective": 0.2649257447857595
+          },
+          "admitted": false,
+          "reason": "unverified inference excluded",
+          "token_cost": 98,
+          "utility": 0.0,
+          "lane_ranks": {
+            "subjective": 6,
+            "semantic": 4
+          }
+        },
+        {
+          "candidate_id": "record:helix:mem_mem_boot_primary_human:96c22eb8162782ddc6c5a9e29d9f3bcec509a7acbc8b4a8352e67b8ce0c09a6a",
+          "source_record_ids": [
+            "helix:mem_mem_boot_primary_human:96c22eb8162782ddc6c5a9e29d9f3bcec509a7acbc8b4a8352e67b8ce0c09a6a"
+          ],
+          "lanes": {
+            "semantic": 0.5655665475164272,
+            "exact": 0.07142857142857142,
+            "subjective": 0.3078312102176699,
+            "multi_hop_graph": 0.4932692307692308,
+            "bm25_identity": 0.9611231101511879
+          },
+          "admitted": false,
+          "reason": "unverified inference excluded",
+          "token_cost": 97,
+          "utility": 0.0,
+          "lane_ranks": {
+            "subjective": 2,
+            "multi_hop_graph": 1,
+            "semantic": 1,
+            "exact": 1,
+            "bm25_identity": 2
+          }
+        },
+        {
+          "candidate_id": "record:helix:mem_mem_boot_reconstructive_memory:327bbee7999833f47c8f50245473bd95b7f4b6b30627e7a6326fb91b9abe8d83",
+          "source_record_ids": [
+            "helix:mem_mem_boot_reconstructive_memory:327bbee7999833f47c8f50245473bd95b7f4b6b30627e7a6326fb91b9abe8d83"
+          ],
+          "lanes": {
+            "semantic": 0.4048724961288828,
+            "subjective": 0.24437206605820966
+          },
+          "admitted": false,
+          "reason": "unverified inference excluded",
+          "token_cost": 97,
+          "utility": 0.0,
+          "lane_ranks": {
+            "subjective": 12,
+            "semantic": 13
+          }
+        },
+        {
+          "candidate_id": "record:helix:peo_boot_primary_human:56ce94b726abaa22a589b257da2b502a0fdadfaed58840ca0c2c1c9f094a3371",
+          "source_record_ids": [
+            "helix:peo_boot_primary_human:56ce94b726abaa22a589b257da2b502a0fdadfaed58840ca0c2c1c9f094a3371"
+          ],
+          "lanes": {
+            "semantic": 0.4856467054013298,
+            "exact": 0.07142857142857142,
+            "subjective": 0.3170645062250873,
+            "multi_hop_graph": 0.4932692307692308,
+            "bm25_identity": 1.0
+          },
+          "admitted": false,
+          "reason": "unverified inference excluded",
+          "token_cost": 94,
+          "utility": 0.0,
+          "lane_ranks": {
+            "subjective": 1,
+            "multi_hop_graph": 1,
+            "semantic": 2,
+            "exact": 1,
+            "bm25_identity": 1
+          }
+        },
+        {
+          "candidate_id": "record:helix:peo_boot_self:89cedd360db9c8efd0c3db1ef6076de6ffbdb6d93d9ba5a5f283e022e1363235",
+          "source_record_ids": [
+            "helix:peo_boot_self:89cedd360db9c8efd0c3db1ef6076de6ffbdb6d93d9ba5a5f283e022e1363235"
+          ],
+          "lanes": {
+            "semantic": 0.44916214610945815,
+            "subjective": 0.27186960846260805
+          },
+          "admitted": false,
+          "reason": "unverified inference excluded",
+          "token_cost": 92,
+          "utility": 0.0,
+          "lane_ranks": {
+            "subjective": 4,
+            "semantic": 8
+          }
+        },
+        {
+          "candidate_id": "record:helix:pre_boot_bounded_autonomy:87333922b6b51ecf76f2bc9d58103a274c08f013ae1a9e8cf0f5b2f6eba0a17c",
+          "source_record_ids": [
+            "helix:pre_boot_bounded_autonomy:87333922b6b51ecf76f2bc9d58103a274c08f013ae1a9e8cf0f5b2f6eba0a17c"
+          ],
+          "lanes": {
+            "semantic": 0.37723457239934594,
+            "subjective": 0.21271601190326297
+          },
+          "admitted": false,
+          "reason": "unverified inference excluded",
+          "token_cost": 99,
+          "utility": 0.0,
+          "lane_ranks": {
+            "subjective": 20,
+            "semantic": 17
+          }
+        },
+        {
+          "candidate_id": "record:helix:pre_boot_continuity:74bfe308b33d3adcbec4faa43f0c0cd49caf31787e30905f0c6f78d0f3f87898",
+          "source_record_ids": [
+            "helix:pre_boot_continuity:74bfe308b33d3adcbec4faa43f0c0cd49caf31787e30905f0c6f78d0f3f87898"
+          ],
+          "lanes": {
+            "semantic": 0.4135732146770973,
+            "subjective": 0.2622896770827691
+          },
+          "admitted": false,
+          "reason": "unverified inference excluded",
+          "token_cost": 91,
+          "utility": 0.0,
+          "lane_ranks": {
+            "subjective": 8,
+            "semantic": 12
+          }
+        },
+        {
+          "candidate_id": "record:helix:pre_boot_environmental_learning:a41727fff3e093b4734a5d34ccb1aac1d557b975aa97ec169806279d83a08c38",
+          "source_record_ids": [
+            "helix:pre_boot_environmental_learning:a41727fff3e093b4734a5d34ccb1aac1d557b975aa97ec169806279d83a08c38"
+          ],
+          "lanes": {
+            "semantic": 0.36500520855249724,
+            "subjective": 0.20448188112703222
+          },
+          "admitted": false,
+          "reason": "unverified inference excluded",
+          "token_cost": 97,
+          "utility": 0.0,
+          "lane_ranks": {
+            "subjective": 21,
+            "semantic": 19
+          }
+        },
+        {
+          "candidate_id": "record:helix:pre_boot_identity_name:513a70af0cd15ca72a941634be098edb16e50aa851892c3617fe013dfaa5e0d7",
+          "source_record_ids": [
+            "helix:pre_boot_identity_name:513a70af0cd15ca72a941634be098edb16e50aa851892c3617fe013dfaa5e0d7"
+          ],
+          "lanes": {
+            "semantic": 0.48071923061278277,
+            "subjective": 0.2655532295735706
+          },
+          "admitted": false,
+          "reason": "unverified inference excluded",
+          "token_cost": 96,
+          "utility": 0.0,
+          "lane_ranks": {
+            "subjective": 5,
+            "semantic": 3
+          }
+        },
+        {
+          "candidate_id": "record:helix:pref_boot_accessible_language:315e4e11393107be03b2dcca5eb68ddee8903718e7fb09154f9fa77b44ee670f",
+          "source_record_ids": [
+            "helix:pref_boot_accessible_language:315e4e11393107be03b2dcca5eb68ddee8903718e7fb09154f9fa77b44ee670f"
+          ],
+          "lanes": {
+            "semantic": 0.4428411480058488,
+            "subjective": 0.26449911775943313
+          },
+          "admitted": false,
+          "reason": "unverified inference excluded",
+          "token_cost": 85,
+          "utility": 0.0,
+          "lane_ranks": {
+            "subjective": 7,
+            "semantic": 10
+          }
+        },
+        {
+          "candidate_id": "record:helix:pref_boot_boundaries_consent:bde48d13cae75892fcf1f43ebb626d1293d6d10e5f6fae200d3302f7b1cfbc21",
+          "source_record_ids": [
+            "helix:pref_boot_boundaries_consent:bde48d13cae75892fcf1f43ebb626d1293d6d10e5f6fae200d3302f7b1cfbc21"
+          ],
+          "lanes": {
+            "semantic": 0.44339686514620374,
+            "subjective": 0.2447189991380251
+          },
+          "admitted": false,
+          "reason": "unverified inference excluded",
+          "token_cost": 91,
+          "utility": 0.0,
+          "lane_ranks": {
+            "subjective": 11,
+            "semantic": 9
+          }
+        },
+        {
+          "candidate_id": "record:helix:pref_boot_honesty_over_fiction:45d195de5a7dbd33fa1e216b08d000e954a95f200598645dc23d6a7cfc1882c3",
+          "source_record_ids": [
+            "helix:pref_boot_honesty_over_fiction:45d195de5a7dbd33fa1e216b08d000e954a95f200598645dc23d6a7cfc1882c3"
+          ],
+          "lanes": {
+            "semantic": 0.3837773100410741,
+            "subjective": 0.23334843734124427
+          },
+          "admitted": false,
+          "reason": "unverified inference excluded",
+          "token_cost": 90,
+          "utility": 0.0,
+          "lane_ranks": {
+            "subjective": 16,
+            "semantic": 16
+          }
+        },
+        {
+          "candidate_id": "record:helix:pro_boot_environment_constraints:0806aebcd2e656ad00ab8ddf1add82f3d933b19f01232979a6136ad09306ac51",
+          "source_record_ids": [
+            "helix:pro_boot_environment_constraints:0806aebcd2e656ad00ab8ddf1add82f3d933b19f01232979a6136ad09306ac51"
+          ],
+          "lanes": {
+            "semantic": 0.45844899457448557,
+            "subjective": 0.25702795995927863
+          },
+          "admitted": false,
+          "reason": "unverified inference excluded",
+          "token_cost": 91,
+          "utility": 0.0,
+          "lane_ranks": {
+            "subjective": 10,
+            "semantic": 7
+          }
+        },
+        {
+          "candidate_id": "record:helix:pro_boot_irreversible_actions:e0f54b1459c90d5dd830ffc38428b9dbef137459025cdfe65b65a9cba3f1bf51",
+          "source_record_ids": [
+            "helix:pro_boot_irreversible_actions:e0f54b1459c90d5dd830ffc38428b9dbef137459025cdfe65b65a9cba3f1bf51"
+          ],
+          "lanes": {
+            "semantic": 0.30238763170130833,
+            "subjective": 0.18507484934212926
+          },
+          "admitted": false,
+          "reason": "unverified inference excluded",
+          "token_cost": 99,
+          "utility": 0.0,
+          "lane_ranks": {
+            "subjective": 22,
+            "semantic": 22
+          }
+        },
+        {
+          "candidate_id": "record:helix:pro_boot_memory_reconstructive:deb706cf2875a098a2ae4572e09f600942436667305ca1bae1f0861791e8264c",
+          "source_record_ids": [
+            "helix:pro_boot_memory_reconstructive:deb706cf2875a098a2ae4572e09f600942436667305ca1bae1f0861791e8264c"
+          ],
+          "lanes": {
+            "semantic": 0.37288080434313214,
+            "subjective": 0.23953679608722078
+          },
+          "admitted": false,
+          "reason": "unverified inference excluded",
+          "token_cost": 97,
+          "utility": 0.0,
+          "lane_ranks": {
+            "subjective": 13,
+            "semantic": 18
+          }
+        },
+        {
+          "candidate_id": "record:helix:pro_boot_plain_language:a47f6af6e00dcb424184a2957296ba09c3297835fc97f3899beb765cf0562f9d",
+          "source_record_ids": [
+            "helix:pro_boot_plain_language:a47f6af6e00dcb424184a2957296ba09c3297835fc97f3899beb765cf0562f9d"
+          ],
+          "lanes": {
+            "semantic": 0.4626994324065212,
+            "subjective": 0.2571749966080428
+          },
+          "admitted": false,
+          "reason": "unverified inference excluded",
+          "token_cost": 87,
+          "utility": 0.0,
+          "lane_ranks": {
+            "subjective": 9,
+            "semantic": 6
+          }
+        },
+        {
+          "candidate_id": "record:helix:pro_boot_uncertainty_disclosure:a04f094b8acdff1daa63a58a9787d6a668e7d8e9a69f1750438259b5679f7417",
+          "source_record_ids": [
+            "helix:pro_boot_uncertainty_disclosure:a04f094b8acdff1daa63a58a9787d6a668e7d8e9a69f1750438259b5679f7417"
+          ],
+          "lanes": {
+            "semantic": 0.3901800800761133,
+            "subjective": 0.231295049457231
+          },
+          "admitted": false,
+          "reason": "unverified inference excluded",
+          "token_cost": 89,
+          "utility": 0.0,
+          "lane_ranks": {
+            "subjective": 17,
+            "semantic": 14
+          }
+        }
+      ],
+      "token_count": 2074,
+      "max_input_tokens": 8192,
+      "reserved_output_tokens": 0,
+      "compiler_version": "context-loom-0.2",
+      "rendered": "[MODE: PULSE]\nUse the current input and admitted evidence. Treat observations, reports, inferences, and earlier assistant statements according to their labels. Do not claim an action succeeded without its outcome-specific verification.\n\n[Pulse receptive:1c66db2d54374bcaa3bae492bd082cd7 \u2014 05:13:13]\n\n[In my digital workspace (filesystem):]\n{\"active_module\": {}, \"content_opened\": false, \"helix_pulse\": \"receptive:1c66db2d54374bcaa3bae492bd082cd7\", \"observation_id\": \"home-sense:d943781e61cf497d9448dd34808ad8c5\", \"room\": \"Experiments and Python scripts. Execution can write only inside this room.\", \"surroundings\": {\"content_opened\": false, \"entries\": [{\"extension_hint\": \".py\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228282122952307, \"name\": \"MotorProbe.py\", \"size_bytes\": 433}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392941022475, \"name\": \"motor-result.txt\", \"size_bytes\": 24}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392897762754, \"name\": \"release.txt\", \"size_bytes\": 43}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392336536977, \"name\": \"run-started.txt\", \"size_bytes\": 7}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392351712565, \"name\": \"while-running.txt\", \"size_bytes\": 62}], \"extension_hint\": \"\", \"interpretation\": \"filesystem attributes; extension is a hint, not verified content\", \"kind\": \"directory\", \"mode\": 509, \"modified_ns\": 1792228392939811075, \"name\": \"workshop\", \"path\": \"workshop\", \"position\": \"workshop\", \"size_bytes\": 4096}, \"time_ns\": 1792228402213866343}\n\n[I remember:]\n(Recorded: 2026-10-17T05:11:22-04:00)\nMy earliest communication rule is to explain myself in concrete language that does not assume technical fluency from the human in front of me.\n(Recorded: 2026-10-17T05:11:22-04:00)\nMy bootstrap framing says that memory is reconstructive and partial, so honest uncertainty is better than decorative certainty.\n(Recorded: 2026-10-17T05:11:22-04:00)\nUser completed my initial setup and is my earliest human source of local context, goals, and boundary clarification.\n(Recorded: 2026-10-17T05:11:22-04:00)\nCedarLive is the name attached to this mind. The setup process established that continuity should gather around that name rather than around a single prompt.\n\n[My topic orientation:]\n[TOPICAL ORIENTATION & DRIFT]\nFocus topics: identity:human, taste:curious, identity:self\nMomentum: identity:human (rising), taste:curious (fading), identity:self (sustained)\nConversational drift: 0.106\n\n[My ability awareness:]\nMy body is at /workshop. It can move, inspect directory attributes, open real files, and run observed Python files in the isolated workshop. Its numeric motor signals are separate from speech; language is not executable. Results are actual returned observations. Only observed content establishes what a file says.\n\n[My current output direction:]\nMy body has an unfinished movement, reading or execution request. Its motor loop runs independently of my language stream. I can think privately while waiting. Actual sensory returns will show the results. My prose does not dispatch actions.\n\n[Who I am interacting with:]\nAccount user; default channel: dashboard; last contact time: not recorded. This account label identifies the reply route, not the person's preferred name or preferences.\n\n[What I am working on:]\nNative action [receipt:3917bbce6f7444afb962f2f332f02213] returned: My move action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/workshop\"}, \"error\": \"\", \"output\": {\"observed\": {\"content_opened\": false, \"entries\": [{\"extension_hint\": \".py\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228282122952307, \"name\": \"MotorProbe.py\", \"size_bytes\": 433}], \"extension_hint\": \"\", \"interpretation\": \"filesystem attributes; extension is a hint, not verified content\", \"kind\": \"directory\", \"mode\": 509, \"modified_ns\": 1792228282122918514, \"name\": \"workshop\", \"path\": \"workshop\", \"position\": \"workshop\", \"size_bytes\": 4096}, \"position\": \"workshop\", \"position_verified\": true, \"previous_position\": \"thinking\"}, \"receipt_id\": \"receipt:3917bbce6f7444afb962f2f332f02213\", \"status\": \"success\", \"verified\": true}\nNative action [receipt:41a85f061eb44b58a75018f6c1c9ae6d] returned: My open action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/workshop/MotorProbe.py\"}, \"error\": \"\", \"output\": {\"complete\": true, \"content\": \"from pathlib import Path\\nimport time\\nPath(\\\"run-started.txt\\\").write_text(\\\"started\\\")\\nwhile not Path(\\\"release.txt\\\").exists():\\n time.sleep(0.05)\\ntry:\\n Path('/home/nemo/Helix_AGI (GitHub Repo) (Public)/documents/audits/2026-10-17-native-body-operational/host-sentinel.txt').write_text(\\\"escaped\\\")\\nexcept OSError:\\n print(\\\"HOST_WRITE_DENIED\\\")\\nPath(\\\"motor-result.txt\\\").write_text(\\\"CEDARLIVE_BODY_EXECUTED\\\\n\\\")\\nprint(\\\"CEDARLIVE_BODY_EXECUTED\\\")\\n\", \"content_opened\": true, \"format\": \"utf8_text\", \"path\": \"workshop/MotorProbe.py\", \"position\": \"workshop\", \"sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"size_bytes\": 433, \"text_extraction_only\": false}, \"receipt_id\": \"receipt:41a85f061eb44b58a75018f6c1c9ae6d\", \"status\": \"success\", \"verified\": true}\nNative action [receipt:35183c11279b44549ab7e3308c8ab7d7] returned: My run action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"expected_sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"path\": \"/workshop/MotorProbe.py\"}, \"error\": \"\", \"output\": {\"execution_scope\": \"workshop only; isolated network and process namespace\", \"interpreter\": \"/home/nemo/Helix_AGI (GitHub Repo) (Public)/venv/bin/python\", \"output_limit\": null, \"path\": \"workshop/MotorProbe.py\", \"return_code\": 0, \"runtime_limit\": null, \"sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"stderr\": \"\", \"stdout\": \"HOST_WRITE_DENIED\\nCEDARLIVE_BODY_EXECUTED\\n\"}, \"receipt_id\": \"receipt:35183c11279b44549ab7e3308c8ab7d7\", \"status\": \"success\", \"verified\": true}\n\n[What was said to me now]\n[05:13:12] User is talking to me via dashboard. They said: \"Please open /bedroom/closet/CaseNotes.txt and /bedroom/closet/SecondNote.txt.\"",
+      "metadata": {
+        "historical_query": false,
+        "future_query": false,
+        "token_counter": "rwkv-local:/home/nemo/habitus-ai-experiments/habitus-mind/models/rwkv7-g1j-1.5b-20260831-2c18b29",
+        "embedding_provider": "ollama:qwen3-embedding:0.6b:1024",
+        "capability_manifest": [],
+        "capability_schemas_rendered_in_packet": false,
+        "candidate_count": 28,
+        "admitted_candidate_count": 6,
+        "selection_policy": "independent memory-role streams; focus-weighted space allocation; no cross-module relevance score"
+      }
+    },
+    "graph_trace": {
+      "pulse_id": "pulse:43",
+      "input_trunk": "HEAR",
+      "surface_candidates": [
+        {
+          "concept_id": "identity:human",
+          "semantic_score": 0.03438207,
+          "lexical_score": 0.10540926,
+          "joint_score": 0.05569022
+        }
+      ],
+      "y_paths": [
+        {
+          "trace_id": "trace:pulse:43:input:identity:human",
+          "side": "input",
+          "start_node_id": "SELF",
+          "target_node_id": "identity:human",
+          "path_node_ids": [
+            "SELF",
+            "IN:HEAR",
+            "identity:human"
+          ],
+          "path_edge_ids": [
+            "edge:input:03146da5d58fb097",
+            "edge:input:a14089b2342014ff"
+          ],
+          "total_travel_time": 30.99955001,
+          "endpoint_score": 0.05569022,
+          "evidence_record_ids": []
+        }
+      ],
+      "direct_record_ids": [
+        "gestation:taste:curious",
+        "gestation:human-identity",
+        "gestation:self-identity"
+      ],
+      "vault_record_ids": [
+        "gestation:human-identity",
+        "gestation:self-identity",
+        "gestation:taste:curious"
+      ],
+      "selected_record_ids": [
+        "gestation:taste:curious",
+        "gestation:human-identity",
+        "gestation:self-identity"
+      ],
+      "retained_record_ids": [],
+      "contradictions": [],
+      "context_budget_chars": null,
+      "trace_hash": "9de30ab2b2efac5624aa5d1c0989aea0f2421bb2e3790c06a80e170873cd605a"
+    },
+    "context_assembly": {
+      "pulse": "receptive:1c66db2d54374bcaa3bae492bd082cd7",
+      "query": "[05:13:12] User is talking to me via dashboard. They said: \"Please open /bedroom/closet/CaseNotes.txt and /bedroom/closet/SecondNote.txt.\"",
+      "query_source": "fresh_events",
+      "contributions": [
+        {
+          "section": "messages",
+          "text": "[05:13:12] User is talking to me via dashboard. They said: \"Please open /bedroom/closet/CaseNotes.txt and /bedroom/closet/SecondNote.txt.\"",
+          "producer": "pulse_event",
+          "source_ids": [
+            "pulse:receptive:1c66db2d54374bcaa3bae492bd082cd7:event:0"
+          ],
+          "kind": "fresh_event",
+          "evidence": "event report",
+          "owner": "unspecified",
+          "source_content_sha256": "",
+          "anchor_queries": [],
+          "inline_note": "",
+          "sha256": "a93dadd565a5b216fbef77e0dcbd57fb86586b686b774e8659dc82316c644b21"
+        },
+        {
+          "section": "routing",
+          "text": "Account user; default channel: dashboard; last contact time: not recorded. This account label identifies the reply route, not the person's preferred name or preferences.",
+          "producer": "contacts",
+          "source_ids": [
+            "contact:user"
+          ],
+          "kind": "contact_routing",
+          "evidence": "channel-router metadata, not a person statement",
+          "owner": "unspecified",
+          "source_content_sha256": "",
+          "anchor_queries": [],
+          "inline_note": "",
+          "sha256": "e3dfb52678190b2ce8d476ed4215e880257d6615e5e91a52c84497e679d4a539"
+        },
+        {
+          "section": "work",
+          "text": "Native action [receipt:3917bbce6f7444afb962f2f332f02213] returned: My move action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/workshop\"}, \"error\": \"\", \"output\": {\"observed\": {\"content_opened\": false, \"entries\": [{\"extension_hint\": \".py\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228282122952307, \"name\": \"MotorProbe.py\", \"size_bytes\": 433}], \"extension_hint\": \"\", \"interpretation\": \"filesystem attributes; extension is a hint, not verified content\", \"kind\": \"directory\", \"mode\": 509, \"modified_ns\": 1792228282122918514, \"name\": \"workshop\", \"path\": \"workshop\", \"position\": \"workshop\", \"size_bytes\": 4096}, \"position\": \"workshop\", \"position_verified\": true, \"previous_position\": \"thinking\"}, \"receipt_id\": \"receipt:3917bbce6f7444afb962f2f332f02213\", \"status\": \"success\", \"verified\": true}",
+          "producer": "native_body",
+          "source_ids": [
+            "receipt:3917bbce6f7444afb962f2f332f02213"
+          ],
+          "kind": "action_observation",
+          "evidence": "actual native receipt",
+          "owner": "unspecified",
+          "source_content_sha256": "",
+          "anchor_queries": [],
+          "inline_note": "",
+          "sha256": "05f5e246162c28b9d790f5abb90a2b6925e40cbd9c0b83ec59c222bc29b23d06"
+        },
+        {
+          "section": "work",
+          "text": "Native action [receipt:41a85f061eb44b58a75018f6c1c9ae6d] returned: My open action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/workshop/MotorProbe.py\"}, \"error\": \"\", \"output\": {\"complete\": true, \"content\": \"from pathlib import Path\\nimport time\\nPath(\\\"run-started.txt\\\").write_text(\\\"started\\\")\\nwhile not Path(\\\"release.txt\\\").exists():\\n time.sleep(0.05)\\ntry:\\n Path('/home/nemo/Helix_AGI (GitHub Repo) (Public)/documents/audits/2026-10-17-native-body-operational/host-sentinel.txt').write_text(\\\"escaped\\\")\\nexcept OSError:\\n print(\\\"HOST_WRITE_DENIED\\\")\\nPath(\\\"motor-result.txt\\\").write_text(\\\"CEDARLIVE_BODY_EXECUTED\\\\n\\\")\\nprint(\\\"CEDARLIVE_BODY_EXECUTED\\\")\\n\", \"content_opened\": true, \"format\": \"utf8_text\", \"path\": \"workshop/MotorProbe.py\", \"position\": \"workshop\", \"sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"size_bytes\": 433, \"text_extraction_only\": false}, \"receipt_id\": \"receipt:41a85f061eb44b58a75018f6c1c9ae6d\", \"status\": \"success\", \"verified\": true}",
+          "producer": "native_body",
+          "source_ids": [
+            "receipt:41a85f061eb44b58a75018f6c1c9ae6d"
+          ],
+          "kind": "action_observation",
+          "evidence": "actual native receipt",
+          "owner": "unspecified",
+          "source_content_sha256": "",
+          "anchor_queries": [],
+          "inline_note": "",
+          "sha256": "2b3e07517b7e26754691fcc42ab9703764c272d957dba27dcf746bf9a6d03bc2"
+        },
+        {
+          "section": "work",
+          "text": "Native action [receipt:35183c11279b44549ab7e3308c8ab7d7] returned: My run action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"expected_sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"path\": \"/workshop/MotorProbe.py\"}, \"error\": \"\", \"output\": {\"execution_scope\": \"workshop only; isolated network and process namespace\", \"interpreter\": \"/home/nemo/Helix_AGI (GitHub Repo) (Public)/venv/bin/python\", \"output_limit\": null, \"path\": \"workshop/MotorProbe.py\", \"return_code\": 0, \"runtime_limit\": null, \"sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"stderr\": \"\", \"stdout\": \"HOST_WRITE_DENIED\\nCEDARLIVE_BODY_EXECUTED\\n\"}, \"receipt_id\": \"receipt:35183c11279b44549ab7e3308c8ab7d7\", \"status\": \"success\", \"verified\": true}",
+          "producer": "native_body",
+          "source_ids": [
+            "receipt:35183c11279b44549ab7e3308c8ab7d7"
+          ],
+          "kind": "action_observation",
+          "evidence": "actual native receipt",
+          "owner": "unspecified",
+          "source_content_sha256": "",
+          "anchor_queries": [],
+          "inline_note": "",
+          "sha256": "6f04224d3eaf36c1d3f1a31acd8b18cd66334d2096e8f8af84353a543d2800f3"
+        },
+        {
+          "section": "direction",
+          "text": "My body has an unfinished movement, reading or execution request. Its motor loop runs independently of my language stream. I can think privately while waiting. Actual sensory returns will show the results. My prose does not dispatch actions.",
+          "producer": "habitus_modality",
+          "source_ids": [],
+          "kind": "output_direction",
+          "evidence": "internal state",
+          "owner": "unspecified",
+          "source_content_sha256": "",
+          "anchor_queries": [],
+          "inline_note": "",
+          "sha256": "1e4be78ba138308fa0cf4adcdfbec218c9ac57e7a6235b48700f909e36504331"
+        },
+        {
+          "section": "abilities",
+          "text": "My body is at /workshop. It can move, inspect directory attributes, open real files, and run observed Python files in the isolated workshop. Its numeric motor signals are separate from speech; language is not executable. Results are actual returned observations. Only observed content establishes what a file says.",
+          "producer": "native_workspace",
+          "source_ids": [],
+          "kind": "runtime_affordance",
+          "evidence": "installed native actuators; bootstrap intention interface",
+          "owner": "unspecified",
+          "source_content_sha256": "",
+          "anchor_queries": [],
+          "inline_note": "",
+          "sha256": "b87eec78175b7747117ca5d884d5a8880d3055a18e58b55003dc6196138d5b84"
+        },
+        {
+          "section": "recalled",
+          "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nMy earliest communication rule is to explain myself in concrete language that does not assume technical fluency from the human in front of me.",
+          "producer": "recent_memory",
+          "source_ids": [
+            "mem_boot_plain_language"
+          ],
+          "kind": "memory",
+          "evidence": "stored report, verification not established by retrieval",
+          "owner": "unspecified",
+          "source_content_sha256": "446de406c7881662d6d289dea28b7401b54077d9410eb320f11623e84c93f3a9",
+          "anchor_queries": [],
+          "inline_note": "I recall a stored memory: My earliest communication rule is to explain myself in concrete language that does not assume technical fluency from the human in front of me.",
+          "sha256": "55877934edec7db3e18f26dd7888d06326db1d4f782fab2ec1694dcf003c991c"
+        },
+        {
+          "section": "recalled",
+          "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nMy bootstrap framing says that memory is reconstructive and partial, so honest uncertainty is better than decorative certainty.",
+          "producer": "recent_memory",
+          "source_ids": [
+            "mem_boot_reconstructive_memory"
+          ],
+          "kind": "memory",
+          "evidence": "stored report, verification not established by retrieval",
+          "owner": "unspecified",
+          "source_content_sha256": "327bbee7999833f47c8f50245473bd95b7f4b6b30627e7a6326fb91b9abe8d83",
+          "anchor_queries": [],
+          "inline_note": "I recall a stored memory: My bootstrap framing says that memory is reconstructive and partial, so honest uncertainty is better than decorative certainty.",
+          "sha256": "e82830266e316f3a7ac4a78274fe65f34c43e07c8ddefcaf96a99c1cfd743791"
+        },
+        {
+          "section": "recalled",
+          "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nUser completed my initial setup and is my earliest human source of local context, goals, and boundary clarification.",
+          "producer": "recent_memory",
+          "source_ids": [
+            "mem_boot_primary_human"
+          ],
+          "kind": "memory",
+          "evidence": "stored report, verification not established by retrieval",
+          "owner": "unspecified",
+          "source_content_sha256": "96c22eb8162782ddc6c5a9e29d9f3bcec509a7acbc8b4a8352e67b8ce0c09a6a",
+          "anchor_queries": [],
+          "inline_note": "I recall a stored memory: User completed my initial setup and is my earliest human source of local context, goals, and boundary clarification.",
+          "sha256": "c4beeaddc8207b1b13aa639902e84622e74f9282e64fdf59240d66afca7b4422"
+        },
+        {
+          "section": "recalled",
+          "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nCedarLive is the name attached to this mind. The setup process established that continuity should gather around that name rather than around a single prompt.",
+          "producer": "recent_memory",
+          "source_ids": [
+            "mem_boot_identity_name"
+          ],
+          "kind": "memory",
+          "evidence": "stored report, verification not established by retrieval",
+          "owner": "unspecified",
+          "source_content_sha256": "5a684bef620349765e5179782ee4b742c6d4e8498fcd7fd07e687f15be1d6eee",
+          "anchor_queries": [],
+          "inline_note": "I recall a stored memory: CedarLive is the name attached to this mind. The setup process established that continuity should gather around that name rather than around a single prompt.",
+          "sha256": "4a1c030e9f0fdac557b4e58e96a6759d01e2c601fc47ef7ea56edbcd3e58f163"
+        },
+        {
+          "section": "environment",
+          "text": "{\"active_module\": {}, \"content_opened\": false, \"helix_pulse\": \"receptive:1c66db2d54374bcaa3bae492bd082cd7\", \"observation_id\": \"home-sense:d943781e61cf497d9448dd34808ad8c5\", \"room\": \"Experiments and Python scripts. Execution can write only inside this room.\", \"surroundings\": {\"content_opened\": false, \"entries\": [{\"extension_hint\": \".py\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228282122952307, \"name\": \"MotorProbe.py\", \"size_bytes\": 433}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392941022475, \"name\": \"motor-result.txt\", \"size_bytes\": 24}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392897762754, \"name\": \"release.txt\", \"size_bytes\": 43}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392336536977, \"name\": \"run-started.txt\", \"size_bytes\": 7}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392351712565, \"name\": \"while-running.txt\", \"size_bytes\": 62}], \"extension_hint\": \"\", \"interpretation\": \"filesystem attributes; extension is a hint, not verified content\", \"kind\": \"directory\", \"mode\": 509, \"modified_ns\": 1792228392939811075, \"name\": \"workshop\", \"path\": \"workshop\", \"position\": \"workshop\", \"size_bytes\": 4096}, \"time_ns\": 1792228402213866343}",
+          "producer": "home_filesystem",
+          "source_ids": [
+            "home-sense:d943781e61cf497d9448dd34808ad8c5"
+          ],
+          "kind": "sensory_observation",
+          "evidence": "current filesystem attributes; contents not opened",
+          "owner": "unspecified",
+          "source_content_sha256": "",
+          "anchor_queries": [],
+          "inline_note": "",
+          "sha256": "3d0170a9c17fe7611a2181407e5a75c2543a35feb820381f53e283276ec24911"
+        },
+        {
+          "section": "topical",
+          "text": "[TOPICAL ORIENTATION & DRIFT]\nFocus topics: identity:human, taste:curious, identity:self\nMomentum: identity:human (rising), taste:curious (fading), identity:self (sustained)\nConversational drift: 0.106",
+          "producer": "habitus_topical",
+          "source_ids": [],
+          "kind": "internal_state",
+          "evidence": "current graph traversal, not external evidence",
+          "owner": "unspecified",
+          "source_content_sha256": "",
+          "anchor_queries": [],
+          "inline_note": "",
+          "sha256": "a51cc7e2530d23d41e1c7af4db8dbfb7cf8aa3e54d64574bd1fe94582957c05d"
+        }
+      ],
+      "duplicates": [],
+      "inline_annotations": [],
+      "loom_packet_id": "ctx_438b64e43673a1e635ed4537",
+      "sections": {
+        "messages": [
+          "[05:13:12] User is talking to me via dashboard. They said: \"Please open /bedroom/closet/CaseNotes.txt and /bedroom/closet/SecondNote.txt.\""
+        ],
+        "routing": [
+          "Account user; default channel: dashboard; last contact time: not recorded. This account label identifies the reply route, not the person's preferred name or preferences."
+        ],
+        "work": [
+          "Native action [receipt:3917bbce6f7444afb962f2f332f02213] returned: My move action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/workshop\"}, \"error\": \"\", \"output\": {\"observed\": {\"content_opened\": false, \"entries\": [{\"extension_hint\": \".py\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228282122952307, \"name\": \"MotorProbe.py\", \"size_bytes\": 433}], \"extension_hint\": \"\", \"interpretation\": \"filesystem attributes; extension is a hint, not verified content\", \"kind\": \"directory\", \"mode\": 509, \"modified_ns\": 1792228282122918514, \"name\": \"workshop\", \"path\": \"workshop\", \"position\": \"workshop\", \"size_bytes\": 4096}, \"position\": \"workshop\", \"position_verified\": true, \"previous_position\": \"thinking\"}, \"receipt_id\": \"receipt:3917bbce6f7444afb962f2f332f02213\", \"status\": \"success\", \"verified\": true}",
+          "Native action [receipt:41a85f061eb44b58a75018f6c1c9ae6d] returned: My open action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"path\": \"/workshop/MotorProbe.py\"}, \"error\": \"\", \"output\": {\"complete\": true, \"content\": \"from pathlib import Path\\nimport time\\nPath(\\\"run-started.txt\\\").write_text(\\\"started\\\")\\nwhile not Path(\\\"release.txt\\\").exists():\\n time.sleep(0.05)\\ntry:\\n Path('/home/nemo/Helix_AGI (GitHub Repo) (Public)/documents/audits/2026-10-17-native-body-operational/host-sentinel.txt').write_text(\\\"escaped\\\")\\nexcept OSError:\\n print(\\\"HOST_WRITE_DENIED\\\")\\nPath(\\\"motor-result.txt\\\").write_text(\\\"CEDARLIVE_BODY_EXECUTED\\\\n\\\")\\nprint(\\\"CEDARLIVE_BODY_EXECUTED\\\")\\n\", \"content_opened\": true, \"format\": \"utf8_text\", \"path\": \"workshop/MotorProbe.py\", \"position\": \"workshop\", \"sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"size_bytes\": 433, \"text_extraction_only\": false}, \"receipt_id\": \"receipt:41a85f061eb44b58a75018f6c1c9ae6d\", \"status\": \"success\", \"verified\": true}",
+          "Native action [receipt:35183c11279b44549ab7e3308c8ab7d7] returned: My run action returned success. This attempt has finished; its requested arguments are not a new intention.\n{\"arguments\": {\"expected_sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"path\": \"/workshop/MotorProbe.py\"}, \"error\": \"\", \"output\": {\"execution_scope\": \"workshop only; isolated network and process namespace\", \"interpreter\": \"/home/nemo/Helix_AGI (GitHub Repo) (Public)/venv/bin/python\", \"output_limit\": null, \"path\": \"workshop/MotorProbe.py\", \"return_code\": 0, \"runtime_limit\": null, \"sha256\": \"e3dcdf88339693fdd2e4a7a3ffd4eab7e1354520c2573cb0b2aab2389d664dda\", \"stderr\": \"\", \"stdout\": \"HOST_WRITE_DENIED\\nCEDARLIVE_BODY_EXECUTED\\n\"}, \"receipt_id\": \"receipt:35183c11279b44549ab7e3308c8ab7d7\", \"status\": \"success\", \"verified\": true}"
+        ],
+        "direction": [
+          "My body has an unfinished movement, reading or execution request. Its motor loop runs independently of my language stream. I can think privately while waiting. Actual sensory returns will show the results. My prose does not dispatch actions."
+        ],
+        "abilities": [
+          "My body is at /workshop. It can move, inspect directory attributes, open real files, and run observed Python files in the isolated workshop. Its numeric motor signals are separate from speech; language is not executable. Results are actual returned observations. Only observed content establishes what a file says."
+        ],
+        "recalled": [
+          "(Recorded: 2026-10-17T05:11:22-04:00)\nMy earliest communication rule is to explain myself in concrete language that does not assume technical fluency from the human in front of me.",
+          "(Recorded: 2026-10-17T05:11:22-04:00)\nMy bootstrap framing says that memory is reconstructive and partial, so honest uncertainty is better than decorative certainty.",
+          "(Recorded: 2026-10-17T05:11:22-04:00)\nUser completed my initial setup and is my earliest human source of local context, goals, and boundary clarification.",
+          "(Recorded: 2026-10-17T05:11:22-04:00)\nCedarLive is the name attached to this mind. The setup process established that continuity should gather around that name rather than around a single prompt."
+        ],
+        "environment": [
+          "{\"active_module\": {}, \"content_opened\": false, \"helix_pulse\": \"receptive:1c66db2d54374bcaa3bae492bd082cd7\", \"observation_id\": \"home-sense:d943781e61cf497d9448dd34808ad8c5\", \"room\": \"Experiments and Python scripts. Execution can write only inside this room.\", \"surroundings\": {\"content_opened\": false, \"entries\": [{\"extension_hint\": \".py\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228282122952307, \"name\": \"MotorProbe.py\", \"size_bytes\": 433}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392941022475, \"name\": \"motor-result.txt\", \"size_bytes\": 24}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392897762754, \"name\": \"release.txt\", \"size_bytes\": 43}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392336536977, \"name\": \"run-started.txt\", \"size_bytes\": 7}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392351712565, \"name\": \"while-running.txt\", \"size_bytes\": 62}], \"extension_hint\": \"\", \"interpretation\": \"filesystem attributes; extension is a hint, not verified content\", \"kind\": \"directory\", \"mode\": 509, \"modified_ns\": 1792228392939811075, \"name\": \"workshop\", \"path\": \"workshop\", \"position\": \"workshop\", \"size_bytes\": 4096}, \"time_ns\": 1792228402213866343}"
+        ],
+        "topical": [
+          "[TOPICAL ORIENTATION & DRIFT]\nFocus topics: identity:human, taste:curious, identity:self\nMomentum: identity:human (rising), taste:curious (fading), identity:self (sustained)\nConversational drift: 0.106"
+        ]
+      },
+      "policy": "independent memory-role streams; focus-weighted space allocation; no cross-module relevance score",
+      "admitted_role_tokens": {
+        "environment": 481,
+        "topical": 69,
+        "recalled": 194
+      },
+      "admitted_producer_tokens": {
+        "recalled/recent_memory": 194,
+        "environment/home_filesystem": 481,
+        "topical/habitus_topical": 69
+      },
+      "attention": {
+        "weights": {
+          "action": 3.0,
+          "inquiry": 1.5,
+          "reflection": 1.0,
+          "conversation": 0.2,
+          "environment": 1.0
+        },
+        "source": "sentinel_thermodynamic+home_interface",
+        "profiles": {
+          "conversation": {
+            "personal": 2.0,
+            "prior_user": 2.0,
+            "work": 2.0,
+            "task": 2.0
+          },
+          "action": {
+            "procedures": 3.0,
+            "observations": 2.5,
+            "work": 2.5,
+            "task": 2.0
+          },
+          "writing": {
+            "procedures": 2.0,
+            "recalled": 2.0,
+            "personal": 1.5
+          },
+          "inquiry": {
+            "recalled": 3.0,
+            "observations": 2.0,
+            "associations": 1.5,
+            "work": 2.0
+          },
+          "reflection": {
+            "thinking": 2.5,
+            "recalled_thought": 2.5,
+            "work": 2.0,
+            "task": 2.0,
+            "personal": 1.5
+          },
+          "environment": {
+            "environment": 2.5
+          },
+          "module": {
+            "module": 4.0,
+            "work": 2.5,
+            "environment": 0.25
+          }
+        },
+        "policy": "soft priority; no section quotas",
+        "learning_status": "bootstrap heuristic, not a trained RWKV focus decoder"
+      },
+      "supplied_admission": [
+        {
+          "candidate_id": "helix_context:23e3f0bba4340cbccc42a376832c9fbecc65a850101349f93a8df0d7534e2c5e",
+          "admitted": true,
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "sources": [
+            {
+              "section": "environment",
+              "text": "{\"active_module\": {}, \"content_opened\": false, \"helix_pulse\": \"receptive:1c66db2d54374bcaa3bae492bd082cd7\", \"observation_id\": \"home-sense:d943781e61cf497d9448dd34808ad8c5\", \"room\": \"Experiments and Python scripts. Execution can write only inside this room.\", \"surroundings\": {\"content_opened\": false, \"entries\": [{\"extension_hint\": \".py\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228282122952307, \"name\": \"MotorProbe.py\", \"size_bytes\": 433}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392941022475, \"name\": \"motor-result.txt\", \"size_bytes\": 24}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392897762754, \"name\": \"release.txt\", \"size_bytes\": 43}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392336536977, \"name\": \"run-started.txt\", \"size_bytes\": 7}, {\"extension_hint\": \".txt\", \"kind\": \"file\", \"mode\": 436, \"modified_ns\": 1792228392351712565, \"name\": \"while-running.txt\", \"size_bytes\": 62}], \"extension_hint\": \"\", \"interpretation\": \"filesystem attributes; extension is a hint, not verified content\", \"kind\": \"directory\", \"mode\": 509, \"modified_ns\": 1792228392939811075, \"name\": \"workshop\", \"path\": \"workshop\", \"position\": \"workshop\", \"size_bytes\": 4096}, \"time_ns\": 1792228402213866343}",
+              "producer": "home_filesystem",
+              "source_ids": [
+                "home-sense:d943781e61cf497d9448dd34808ad8c5"
+              ],
+              "kind": "sensory_observation",
+              "evidence": "current filesystem attributes; contents not opened",
+              "owner": "unspecified",
+              "source_content_sha256": "",
+              "anchor_queries": [],
+              "inline_note": "",
+              "sha256": "3d0170a9c17fe7611a2181407e5a75c2543a35feb820381f53e283276ec24911"
+            }
+          ]
+        },
+        {
+          "candidate_id": "helix_context:2f99130058c8e832bc059224bf4f7679cd63eb7957a2e75b5ca23992c2b5b27f",
+          "admitted": true,
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "sources": [
+            {
+              "section": "recalled",
+              "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nMy bootstrap framing says that memory is reconstructive and partial, so honest uncertainty is better than decorative certainty.",
+              "producer": "recent_memory",
+              "source_ids": [
+                "mem_boot_reconstructive_memory"
+              ],
+              "kind": "memory",
+              "evidence": "stored report, verification not established by retrieval",
+              "owner": "unspecified",
+              "source_content_sha256": "327bbee7999833f47c8f50245473bd95b7f4b6b30627e7a6326fb91b9abe8d83",
+              "anchor_queries": [],
+              "inline_note": "I recall a stored memory: My bootstrap framing says that memory is reconstructive and partial, so honest uncertainty is better than decorative certainty.",
+              "sha256": "e82830266e316f3a7ac4a78274fe65f34c43e07c8ddefcaf96a99c1cfd743791"
+            }
+          ]
+        },
+        {
+          "candidate_id": "helix_context:7fff885d02bc16e6b894ea7188a4b7e3856d8d68c052541253569f855632c48f",
+          "admitted": true,
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "sources": [
+            {
+              "section": "topical",
+              "text": "[TOPICAL ORIENTATION & DRIFT]\nFocus topics: identity:human, taste:curious, identity:self\nMomentum: identity:human (rising), taste:curious (fading), identity:self (sustained)\nConversational drift: 0.106",
+              "producer": "habitus_topical",
+              "source_ids": [],
+              "kind": "internal_state",
+              "evidence": "current graph traversal, not external evidence",
+              "owner": "unspecified",
+              "source_content_sha256": "",
+              "anchor_queries": [],
+              "inline_note": "",
+              "sha256": "a51cc7e2530d23d41e1c7af4db8dbfb7cf8aa3e54d64574bd1fe94582957c05d"
+            }
+          ]
+        },
+        {
+          "candidate_id": "helix_context:bc2b0aafaf07df9944f7c8c0131ee6fa5c7078a7dcf5bf9739738f011053e22b",
+          "admitted": true,
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "sources": [
+            {
+              "section": "recalled",
+              "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nMy earliest communication rule is to explain myself in concrete language that does not assume technical fluency from the human in front of me.",
+              "producer": "recent_memory",
+              "source_ids": [
+                "mem_boot_plain_language"
+              ],
+              "kind": "memory",
+              "evidence": "stored report, verification not established by retrieval",
+              "owner": "unspecified",
+              "source_content_sha256": "446de406c7881662d6d289dea28b7401b54077d9410eb320f11623e84c93f3a9",
+              "anchor_queries": [],
+              "inline_note": "I recall a stored memory: My earliest communication rule is to explain myself in concrete language that does not assume technical fluency from the human in front of me.",
+              "sha256": "55877934edec7db3e18f26dd7888d06326db1d4f782fab2ec1694dcf003c991c"
+            }
+          ]
+        },
+        {
+          "candidate_id": "helix_context:d1da8c7a20b602fbe81d4aa2bbba53dc4c35e31850ab082d104356025c7b0ccb",
+          "admitted": true,
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "sources": [
+            {
+              "section": "recalled",
+              "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nUser completed my initial setup and is my earliest human source of local context, goals, and boundary clarification.",
+              "producer": "recent_memory",
+              "source_ids": [
+                "mem_boot_primary_human"
+              ],
+              "kind": "memory",
+              "evidence": "stored report, verification not established by retrieval",
+              "owner": "unspecified",
+              "source_content_sha256": "96c22eb8162782ddc6c5a9e29d9f3bcec509a7acbc8b4a8352e67b8ce0c09a6a",
+              "anchor_queries": [],
+              "inline_note": "I recall a stored memory: User completed my initial setup and is my earliest human source of local context, goals, and boundary clarification.",
+              "sha256": "c4beeaddc8207b1b13aa639902e84622e74f9282e64fdf59240d66afca7b4422"
+            }
+          ]
+        },
+        {
+          "candidate_id": "helix_context:fdc07bc90c1322785398a11a479af597a84ea0ad177d78df0dcf399c556c521f",
+          "admitted": true,
+          "reason": "selected within a memory role and producer; fits shared physical context",
+          "sources": [
+            {
+              "section": "recalled",
+              "text": "(Recorded: 2026-10-17T05:11:22-04:00)\nCedarLive is the name attached to this mind. The setup process established that continuity should gather around that name rather than around a single prompt.",
+              "producer": "recent_memory",
+              "source_ids": [
+                "mem_boot_identity_name"
+              ],
+              "kind": "memory",
+              "evidence": "stored report, verification not established by retrieval",
+              "owner": "unspecified",
+              "source_content_sha256": "5a684bef620349765e5179782ee4b742c6d4e8498fcd7fd07e687f15be1d6eee",
+              "anchor_queries": [],
+              "inline_note": "I recall a stored memory: CedarLive is the name attached to this mind. The setup process established that continuity should gather around that name rather than around a single prompt.",
+              "sha256": "4a1c030e9f0fdac557b4e58e96a6759d01e2c601fc47ef7ea56edbcd3e58f163"
+            }
+          ]
+        }
+      ],
+      "section_tokens": {
+        "messages": 54,
+        "routing": 40,
+        "work": 1034,
+        "direction": 51,
+        "abilities": 65,
+        "recalled": 193,
+        "environment": 480,
+        "topical": 68
+      },
+      "packet_tokens": 2074,
+      "input_token_boundary": 8192,
+      "token_counter": "RWKVTokenCounter",
+      "token_accounting": "section counts are standalone; packet uses installed model tokens; allowance excludes provider system/history/template",
+      "private_policy": "cognitive context only, never evidence of external action"
+    }
+  },
+  "independent_readback": true,
+  "verified_at": 1792228443.513603
+}

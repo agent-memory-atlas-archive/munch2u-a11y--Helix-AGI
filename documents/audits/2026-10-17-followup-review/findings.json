@@ -1,0 +1,71 @@
+{
+  "revision": "55e2123e6d26d7dafeb30b14f4f8ff20335bbeee",
+  "kind": "source review plus focused implementation reproductions, not a full-product evaluation",
+  "findings": [
+    {
+      "priority": "P1",
+      "issue": "Natural prose and negation become action intentions",
+      "source": "core/mindscape_intention.py:432",
+      "scope": "production foreground decoder -> Mindscape.act -> native authorization; diagnostic did not execute the requested run",
+      "example": "I will not run /workshop/cleanup.py. decodes to run /workshop/cleanup.py; I feel happy today. decodes to sense happy"
+    },
+    {
+      "priority": "P1",
+      "issue": "Nursery sleep persistence is incompatible with canonical memory schemas",
+      "source": "core/nursery/simulator.py:86",
+      "scope": "optional nursery helper; still not invoked by setup/main/wizard",
+      "evidence": "Normally seeded premises/propositions are lists; string-key assignment raises TypeError. Fresh nursery output uses dictionaries incompatible with BeliefStore. Journal entries lack the required checksum and are silently skipped by CognitiveJournal.load_all."
+    },
+    {
+      "priority": "P1",
+      "issue": "Nursery scratchpad paths can escape its workspace",
+      "source": "core/nursery/sandbox.py:43",
+      "scope": "DigitalSandbox API; demonstrated only inside disposable temp directory, not the separate production workshop sandbox",
+      "evidence": "write_scratchpad ../../outside.txt modified the file outside sandbox.workspace"
+    },
+    {
+      "priority": "P1",
+      "issue": "Task obligations are checked by action type rather than requested file",
+      "source": "core/mindscape_intention.py:229",
+      "scope": "production pending-task completion checker and new subconscious resolver",
+      "evidence": "One verified open of unrelated.txt satisfied obligations to open both /one.txt and /two.txt; resolver returned None"
+    },
+    {
+      "priority": "P1",
+      "issue": "Subconscious write fallback invents script contents",
+      "source": "core/mindscape_intention.py:524",
+      "scope": "new production obligation-to-action fallback",
+      "evidence": "A pending write/run for requested.py produces write content # Generated experiment, without the requested program or a model-authored implementation"
+    },
+    {
+      "priority": "P2",
+      "issue": "Natural parser lowercases case-sensitive filesystem paths",
+      "source": "core/mindscape_intention.py:429",
+      "scope": "production action parser",
+      "evidence": "CaseNotes.txt becomes casenotes.txt"
+    },
+    {
+      "priority": "P2",
+      "issue": "A greeting before a file command disables the observation-required gate",
+      "source": "core/mindscape_intention.py:162",
+      "scope": "production pending-task observation gate; native impulse may independently select an action",
+      "evidence": "Please open /.../welcome.txt is gated; Hello Juniper. Please open /.../welcome.txt is not"
+    }
+  ],
+  "source_sha256": {
+    "core/agent_creation.py": "3d953c150b5df15874605fef0fe0399033b986d7aecf27e32617ab4669d47c0b",
+    "core/mindscape.py": "dcbead43f5db749bcf81c9a999501a8bddb225a1f1059ad9247fa82af314077c",
+    "core/mindscape_intention.py": "a7130fa64c979e383bc807bd8419f092661382b1e949b65035eb317cf02c62f8",
+    "core/nursery/sandbox.py": "922c30324510dd853b1b913742356a7505372b94476e33817ab6fa12bbf3b548",
+    "core/nursery/simulator.py": "8e9a452ff96483dcbc9b1be94dcbcb0278d045350e8d823a56d1daeb30c6d97f",
+    "core/pulse_loop.py": "ec352e0bb484b9de5e4fdb2049de4004ad40f28276628daa30d1c0ffbeb2517d",
+    "llm/providers/rwkv_provider.py": "a020bfe29e47c98d87b4d2e6b38f15467c77bb39160565ae1226a3efcd2bb5b1",
+    "memory/belief_store.py": "7add04f139634f5f7291ab6ac9f88545502b648c7a295c4c48202a94501958c7",
+    "memory/cognitive_journal.py": "7557223965432df9505aff973e00f7e503a4e967ca9bbfbbf263372b627979bc"
+  },
+  "live_boundary": "Previous ccc6326 trial remains a historical failed attempt; 895e266 handles role-only output as quiet contemplation but has no fresh live validation here. 55e2123 changes nursery disk writes and default reflex generator; old static-helper findings are superseded by the current detailed findings above.",
+  "artifacts": [
+    "component-diagnostics.json"
+  ],
+  "changes_made": "audit artifacts only; no product source changes or persistent test-agent mutation"
+}

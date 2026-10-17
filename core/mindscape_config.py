@@ -47,7 +47,8 @@ def defaults(root=ROOT):
             "device": "cpu",
             "gestation": "if_missing",
             "context_focus_profiles": {},
-            "action_intent_source": "bicameral_rwkv",
+            "action_intent_source": "native_motor",
+            "sensory_interval_seconds": 1.0,
         },
     }
 
@@ -71,10 +72,18 @@ def resolve(config, root=ROOT):
         raise ValueError("The native ContinualRwkv joint bridge is CPU-only; select device=cpu")
     if result["mindscape"]["gestation"] not in {"if_missing", "resume_only"}:
         raise ValueError("gestation must be if_missing or resume_only")
-    if result["mindscape"]["action_intent_source"] not in {"granite_private", "rwkv_bicameral", "bicameral_rwkv"}:
-        raise ValueError("action_intent_source must be granite_private or bicameral_rwkv")
+    if result["mindscape"]["action_intent_source"] not in {"native_motor", "granite_private", "rwkv_bicameral", "bicameral_rwkv"}:
+        raise ValueError("action_intent_source must be native_motor")
+    # Migrate old launch files to the body route; speech no longer dispatches.
+    result["mindscape"]["action_intent_source"] = "native_motor"
+    # The legacy speech-to-task hook belongs to a different action composition.
+    result["task_cognition_mode"] = "off"
     if not isinstance(result["mindscape"]["modules_require_room"], bool):
         raise ValueError("modules_require_room must be a boolean")
+    import math
+    cadence = float(result["mindscape"]["sensory_interval_seconds"])
+    if not math.isfinite(cadence) or cadence <= 0:
+        raise ValueError("sensory_interval_seconds must be finite and positive (filesystem observation cadence)")
     if int(result["local_context_window"]) <= 0:
         raise ValueError("local_context_window must be positive")
     from core.context_focus import resolve_profiles

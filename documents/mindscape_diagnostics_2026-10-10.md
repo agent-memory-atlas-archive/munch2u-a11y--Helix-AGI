@@ -1,5 +1,11 @@
 # Helix–MightyMem mindscape diagnostics
 
+> **Historical snapshot.** “Latest,” “current,” “open” and “paused” below refer
+> to October 10 and its original source. This is not the current action contract.
+> The later [October 17 record](audits/2026-10-17-native-body-operational/README.md)
+> covers a different native body implementation; it does not retroactively
+> validate this snapshot or establish general conversational coherence.
+
 **Review snapshot: 10 October 2026, America/New_York.**
 
 The setup launcher loads the local composition and the native action/return path

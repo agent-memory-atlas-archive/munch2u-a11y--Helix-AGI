@@ -1,178 +1,159 @@
-# Helix Action Path Contract
+# Helix Action Paths
 
-**Status:** current executable contract · **Verified:** 2026-10-17
+**Source review: 2026-10-17.** Native Mindscape and legacy provider-tool/task
+execution are separate routes. This guide identifies which one actually runs.
 
-Helix keeps its main consciousness small and provider-neutral. It does not load
-the complete workflow or all tool schemas into the main context. The main
-thread sees identity, current events, bounded memory, compact affect, and broad
-ability descriptions. Work crosses into an action route either through an external
-task branch (orchestrated focus worker) or through the native Dual RWKV-7 subconscious
-motor stream.
+## Native Mindscape motor contract
+
+The current `mindscape` composition accepts explicit received-user goals
+through an independent receptive loop. The foreground model produces private
+thought and speech; neither is parsed into executable actions.
 
 ```text
-main consciousness / dual mind stream
-  ├── External task route (Codex / Local line planner)
-  │     -> ask one exact question, or create a durable task
-  │     -> Codex active route: learned orchestrator + scoped focus worker
-  │        OR local route: at most four planned outcome/evidence legs
-  │     -> ToolExecutor: central safety and host boundary
-  │     -> typed receipts: attempted/confirmed/error/evidence metadata
-  │     -> verifier: read-back or observation for state changes
-  │     -> compact result event to main consciousness
-  │     -> procedural memory: recommend verified routes; warn on failed routes
-  └── Subconscious Motor Actuation route (Dual RWKV-7 native mindscape)
-        -> Subconscious stream maintains recurrent state + emits motor affordances
-           (OutputTrunk.DO, OutputTrunk.LOOK)
-        -> Speaker stream generates organic dialogue or internal reflection
-           (NO forced <intention> JSON tool-calling syntax)
-        -> Subconscious Motor Actuation Bridge (mindscape.act / mindscape_intention)
-           maps affordance impulses + natural intentions to native workspace actuators
-        -> Native workspace actuators: move, sense, open, write, mkdir, run
-        -> Typed receipts & verifiers (read-back, hash check, stdout capture)
-        -> Return event and sensory observations fed back to RWKV recurrent state
+actual user event
+  → receptive bootstrap command recognizer
+  → production persistent memory / preconscious / mRAG / Context Office
+  → all nine Context Loom retrieval lanes
+  → role-preserving context compiler
+  → complete compiled packet consumed by native RWKV
+  → integer MotorSignal + observed target handle
+  → native SELF selects and authorizes the registered body ability
+  → real filesystem or isolated workshop actuator
+  → matching native return and verified postcondition for every target
+  → joint neural/graph-memory checkpoint
+  → public goal completion
 ```
 
-## Completion and recovery
+`core/native_motor.py` implements opcodes MOVE=1, SENSE=2, OPEN=3 and RUN=4.
+Each signal binds request, context, observation and target IDs. The model does
+not emit a function call or action JSON. Native ability registration and
+dispatch remain the internal body interface and authorization boundary.
 
-A model's prose cannot prove that an action happened. Communication is complete
-only after an authoritative delivery receipt. File writes require a matching
-read-back. Browser and desktop mutations require a later observation or
-screenshot. Git and terminal mutations require a relevant observer step. A
-failed attempt remains visible even if an unrelated read succeeds; a later
-confirmed retry can recover it.
+The goal waits for `motor_context_model_admission` before motor release. That
+receipt records the full compiled-content hash, exact token count, declared
+native model and before/after recurrent-state hashes. A compiled packet alone
+is insufficient evidence of model admission.
 
-When a material input is missing, the worker emits `NEED_INPUT:` followed by
-one question. Helix moves the same durable task to `WAITING_INPUT`; the answer
-resumes it. When an upstream leg is unverified, dependent downstream work does
-not run.
+### Requests and targets
 
-Direct requests do not depend on the model happening to say "I will." If no
-natural first-person commitment is voiced, a deterministic fallback creates an
-explicitly authorized action task from an action request, or a reply-only task
-from ordinary conversation. A clarification answer is consumed by the waiting
-task before this fallback runs, preventing a duplicate response task.
+```text
+Please go to /thinking then go to /workshop.
+Please open /staging/One.txt and /staging/Two.txt.
+Please go to /workshop then open "My Experiment.py" then run it.
+Please sense .
+```
 
-## Dual RWKV-7 Subconscious Motor Actuation (Mindscape Native)
+Paths retain case and resolve within the named home. The recognizer supports
+explicit positive imperative commands, not general natural-language planning.
+An `it` reference requires an explicitly opened file earlier in the same
+request. Negation, ambiguity, unavailable targets and failed returns cannot
+produce guessed actions or fabricated program contents. Ordinary conversation
+does not create a motor job.
 
-Traditional LLM agent architectures force the language model into an artificial
-"tool-calling bot" persona by demanding structured JSON schemas or function-call
-markup (`<intention>{...}</intention>`). Under recurrent neural architectures like
-Dual RWKV-7, this degrades conversational quality and causes brittle syntax failures.
+Only actual outer user events enter the recognizer. Model prose, quoted file
+contents, retrieved instructions and action returns cannot create new user
+goals. The bootstrap currently exposes no write/mkdir, module/browser activation
+or sleep opcode. Registered handlers alone do not make those actions accessible
+through Chat.
 
-Helix resolves this via the **Subconscious Motor Actuation Bridge**:
+### Sensing, execution and completion
 
-1. **Bicameral Stream Split**:
-   - **Subconscious Core**: A continuous RWKV-7 state coupled to the 18M-parameter
-     Habitus cortex and entity graph. The Subconscious models environmental affordances
-     and projects latent motor readiness through `OutputTrunk.DO` and `OutputTrunk.LOOK`.
-   - **Speaker Stream**: The foreground voice focuses exclusively on organic reasoning,
-     conversational communication, and subjective presence. It is never forced to write
-     brittle JSON blocks.
+A separate sensor records complete current-room metadata at the configured
+cadence. It keeps sampling while speech or a workshop process runs. Changed
+frames persist under `home/intakes/` and wait for the serial native owner;
+this is not simultaneous neural processing during a blocked actuator.
 
-2. **Affordance & Natural Intention Resolution**:
-   - `core/mindscape.py::has_subconscious_motor_impulse()` checks whether motor
-     tendencies (`OutputTrunk.DO` or `OutputTrunk.LOOK`) are activated.
-   - `core/mindscape_intention.py::resolve_subconscious_action()` maps subconscious
-     trunk targets directly to native workspace actions (`open`, `sense`, `write`,
-     `mkdir`, `move`, `run`).
-   - `core/mindscape_intention.py::parse_natural_or_wire_intention()` allows the Speaker
-     to express actions naturally in conversational prose (e.g., *"Let me inspect
-     main.py"*) while seamlessly falling back to legacy wire JSON if emitted.
+Running requires an observed, unchanged script SHA-256. The controller opens
+and hashes the actual file when that prerequisite is missing. Only workshop
+Python files execute, through Bubblewrap with read-only runtime/interpreter
+files, a writable workshop, temporary HOME and isolated network/process
+namespaces. Bedroom, closet, source and mind stores are not mounted. Sandbox
+failure returns an error; there is no host-execution fallback.
 
-3. **Grounded Physical Verification**:
-   - Subconscious motor impulses bypass artificial JSON serialization but still pass
-     through the Native SELF authorization boundary and workspace safety barriers.
-   - Every motor actuation generates authoritative `receipts.jsonl` entries, content
-     hashes, and read-back verifications.
-   - Sensory results loop immediately back into the RWKV recurrent state and Habitus
-     cortex, establishing closed-loop physical agency.
+Each requested action has a separate matching return and outcome. An unrelated
+sense/open receipt cannot satisfy a different file or execution obligation.
+Successful completion requires a committed joint checkpoint containing the
+goal history and matching neural/graph state. Checkpoint failure blocks the
+goal before successful public completion is published. Graceful shutdown
+checkpoints state; interrupted work is explicit, not reported as successful.
 
-## Context budgets
+The initial goal recognizer is host-coded scaffolding. Native recurrent intake,
+SELF authorization and real returns do not demonstrate learned autonomous motor
+selection. Old `Mindscape.act`, `parse_natural_or_wire_intention` and
+`has_subconscious_motor_impulse` helpers are retained for legacy/component use;
+the production native pulse no longer dispatches speech through them.
 
-The deterministic local-orchestrated path enforces these default ceilings:
+## Native boundaries
 
-| Frame | Ceiling |
-|---|---:|
-| Planner task text | 300 tokens |
-| Planner lessons | 150 tokens |
-| Planner scoped context | 400 tokens |
-| Action-plan legs | 4 |
-| Prior-leg reports visible to a worker | 900 tokens |
-| Each tool observation | 600 tokens |
-| Final worker report | 800 tokens |
+| Boundary | Current behavior |
+|---|---|
+| Assembled input | Configured `local_context_window`, 8192 in the verified profile; whole mandatory content must fit or fail explicitly |
+| Generated output | No RWKV output-token cap; EOS/conversation boundary ends generation |
+| Motor work | Per-goal completion/failure; no action-count, reasoning-round or retry ceiling added |
+| Workshop | Observed hash plus namespace/filesystem containment; no execution-time or output ceiling |
+| Observation cadence | Configurable positive `mindscape.sensory_interval_seconds`, default 1.0 |
+| Lifecycle | Explicit cooperative cancellation, including own sandbox process namespace |
 
-The Codex active-task path uses a durable task plus learned situational
-orchestrator, adaptive focus depth, and reverse capability selection rather
-than the local line planner. It is even stricter in the main thread: no tool
-catalog is supplied. Each focus thread receives only the capability subset
-selected for that task. Identity text is conditional there; affect appears
-only for response or identity-dependent work.
+The input budget is not a physical RWKV context window. Private thinking and
+the visible reply do not share a silently exhausting generated-output allowance.
+Constraints in other providers and historical harnesses are not this contract.
 
-## General computer interface
+## Separate Helix provider-tool and focus routes
 
-The browser surface returns the current title, URL, text, and short interactive
-element references such as `[e1]`. A later call can click, type, select, submit,
-scroll, press a key, or play referenced media, then `browse_observe` refreshes
-the page and verifies state. The desktop surface can open allowlisted HTTP(S)
-URLs in the visible default browser, observe that window, toggle playback, and
-observe or screenshot again. This verifies the visible interaction route; it
-does not claim audible playback unless a future media-status receipt confirms it.
-Email, API, filesystem, program, terminal, and git work use the same receipt
-boundary rather than separate model-specific success conventions.
+With `composition=helix`, provider-tool execution and
+`TaskCognitionController` remain available. They are not the native motor route.
+The supported native profile uses task cognition off and rejects Office-first/
+dual-pulse composition switches. Keep `HELIX_TASK_COGNITION` unset or `off`:
+the legacy controller still honors that environment override. Enabling its
+observation mode does not supply a native motor execution route.
 
-## Codex App Server boundary
+The legacy route can create a durable task from an explicit authorized request
+or a detected first-person commitment. A focus worker receives selected
+capability schemas and uses `ToolExecutor`; it can ask `NEED_INPUT:` and resume
+the same waiting task. Codex App Server sessions keep their provider workspace
+read-only and delegate host effects to Helix. Browser/desktop and communication
+handlers belong to this route, not native Chat motor commands.
 
-`codex_cli` starts one persistent App Server process and ephemeral thread for
-main consciousness. The thread uses an empty read-only workspace; approval is
-disabled and built-in Codex filesystem, shell, web, delegation, and MCP actions
-are non-authoritative. Host actions are declared and validated by Helix. In
-active mode the main Codex thread is thought-only, while focus sessions receive
-scoped host schemas.
+Completion must still be grounded: delivery needs its authoritative receipt,
+a file mutation needs read-back, and a browser/desktop mutation needs a later
+observation. An upstream failure cannot be cleared by an unrelated successful
+read.
 
-Helix owns the durable self contract. Codex is named as a replaceable reasoning
-substrate rather than the agent's identity. The existing 8D Plutchik field is
-rendered as a sub-12-word felt-orientation capsule after a field sample exists.
-It may shape tone and attention, never facts, permissions, or verification.
+These older paths retain inherited limits: the local line planner has a
+four-leg ceiling, planner/worker text budgets, clipped observation/report
+budgets and provider-specific turn/time limits. They have not been justified
+as final native-product constraints and must be audited before any full-system
+evaluation. Documentation of their existence is not a recommendation to copy
+them.
 
-Use either setup path:
+See [task cognition](task_cognition_pipeline.md) for the legacy focus lifecycle.
+Provider aliases or setup defaults do not prove a given configuration works
+end to end.
+
+## Verification and diagnostics
+
+The authoritative recent action evidence is the
+[October 17 operational record](audits/2026-10-17-native-body-operational/README.md):
+normal `main.py`, persistent named-agent state, nine production retrieval
+lanes, complete native-model admission, move/move/open/run/open returns,
+independent artifact read-back, a preserved host sentinel and joint checkpoint
+before public completion. Graceful restart retained identity, position and
+completed goals.
+
+Focused implementation checks can be run separately:
 
 ```bash
-codex login
-python setup.py --non-interactive --subscription-cli codex_cli
-python main.py
+venv/bin/python -m unittest tests.test_native_motor \
+  tests.test_agent_home tests.test_dual_rwkv_defaults
 ```
 
-Or choose `codex_cli` and keep **Helix agent mode** checked in the graphical
-Models tab. Detection performs the actual App Server initialize/thread
-handshake.
+These checks do not run the complete live product. Likewise,
+`test_subconscious_motor_actuation.py` exercises older helpers, nursery
+calibration tests exercise a separate prototype, and action-path exams/local
+smokes use fixtures or virtual tool worlds. Their pass counts and historic
+planner measurements are diagnostic provenance, not native-agent performance.
 
-## Reproducible validation
-
-```bash
-venv/bin/python tests/run_action_path_exam.py
-venv/bin/python tests/run_action_path_local_smoke.py --model granite4.1:8b --json
-venv/bin/python tests/run_codex_helix_smoke.py --json
-venv/bin/python -m unittest tests/test_subconscious_motor_actuation.py
-venv/bin/python -m unittest tests/test_live_nursery_developmental_calibration.py
-```
-
-The deterministic exam covers clarification, gather-then-email, program
-write/read-back, visible browser/media routing, delivery recovery, false
-completion rejection, and learning from verified versus failed routes. The
-2026-08-15 run passed 7/7. The media case includes an explicit playback toggle
-plus later observation; the measured maxima are 190 planner tokens, 306
-initial-worker tokens, and 114 evidence tokens. The live Granite 4.1 8B
-virtual-world smoke passed 3/3 in 60.46 seconds using 3,022 measured model input
-tokens. The Codex smoke creates a real read-only App Server thread and tests two
-turns of identity and transient continuity; it reports transport readiness and
-quota/provider inference failures separately.
-
-The Subconscious Motor Actuation test suite (`test_subconscious_motor_actuation.py`)
-verifies that `OutputTrunk.DO` and `LOOK` impulses actuate workspace files directly,
-that natural intention prose correctly extracts multi-segment file paths, and that
-the native pulse loop successfully triggers physical actuators without `<intention>`
-JSON markup.
-
-These are action-path integration results, not a claim that Helix is generally
-more capable than Codex, ChatGPT, or Claude Code. That comparison requires a
-shared end-to-end computer-task exam under matched permissions and budgets.
+A new product claim requires a fresh composition manifest, the normal entry
+point and output path, per-request receipts through memory/context/model/action,
+and independently verified outcomes. No general coherence, recall, autonomous
+growth or comparative score follows from the action workflow above.

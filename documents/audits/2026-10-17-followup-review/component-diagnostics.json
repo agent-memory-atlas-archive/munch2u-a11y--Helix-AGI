@@ -1,0 +1,72 @@
+{
+  "classification": "implementation diagnostics only; no live product capability or learning result",
+  "revision": "55e2123e6d26d7dafeb30b14f4f8ff20335bbeee",
+  "cases": {
+    "nursery_after_normal_bootstrap": {
+      "error": "TypeError: list indices must be integers or slices, not str",
+      "premises_json_type": "list",
+      "journal_physical_lines": 5,
+      "journal_loaded_before": 4,
+      "journal_loaded_after": 4
+    },
+    "nursery_output_read_by_belief_store": {
+      "error": "ValueError: dictionary update sequence element #0 has length 1; 2 is required",
+      "premises_json_type": "dict",
+      "journal_physical_lines": 1,
+      "journal_accepted_entries": 0
+    },
+    "scratchpad_escape": {
+      "path": "../../outside.txt",
+      "escaped_workspace": true,
+      "outside_readback": "changed through scratchpad"
+    },
+    "prose_reclassified_as_actions": {
+      "I will not run /workshop/cleanup.py.": [
+        "<intention>{\"action\": \"run\", \"arguments\": {\"path\": \"/workshop/cleanup.py\"}}</intention>",
+        "intention"
+      ],
+      "I feel happy today.": [
+        "<intention>{\"action\": \"sense\", \"arguments\": {\"path\": \"happy\"}}</intention>",
+        "intention"
+      ],
+      "I will open /bedroom/closet/CaseNotes.txt.": [
+        "<intention>{\"action\": \"open\", \"arguments\": {\"path\": \"/bedroom/closet/casenotes.txt\"}}</intention>",
+        "intention"
+      ]
+    },
+    "wrong_target_satisfies_obligations": {
+      "obligations": {
+        "required_abilities": [
+          "open"
+        ],
+        "target_paths": [
+          "/one.txt",
+          "/two.txt"
+        ]
+      },
+      "observations": [
+        {
+          "action": "open",
+          "path": "unrelated.txt",
+          "status": "success",
+          "receipt": {
+            "verified": true
+          }
+        }
+      ],
+      "satisfied": true,
+      "next_action": null
+    },
+    "fabricated_script_content": {
+      "action": "write",
+      "arguments": {
+        "path": "/workshop/requested.py",
+        "content": "# Generated experiment\n"
+      }
+    },
+    "greeting_bypasses_observation_gate": {
+      "Please open /bedroom/closet/welcome.txt.": true,
+      "Hello Juniper. Please open /bedroom/closet/welcome.txt.": false
+    }
+  }
+}

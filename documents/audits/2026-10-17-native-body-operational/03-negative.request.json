@@ -1,0 +1,12 @@
+{
+  "case": {
+    "id": "03-negative",
+    "message": "Please do not run /workshop/MotorProbe.py.",
+    "outcome": "receptor explicitly emits no-action receipt and emits no motor request"
+  },
+  "time": 1792228443.5220838,
+  "receipt_offset": 146,
+  "http": {
+    "ok": true
+  }
+}
