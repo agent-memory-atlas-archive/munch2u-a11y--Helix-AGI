@@ -10,10 +10,12 @@ from __future__ import annotations
 
 import json
 import logging
-import time
 from pathlib import Path
 from typing import Any, Dict, Optional
 
+from core.agent_home import write_home_json
+from core.canvas_state import normalize_canvas_payload
+from core.runtime_paths import RuntimePaths
 from tools.tool_registry import registry
 
 logger = logging.getLogger("helix.tools.ui_canvas")
@@ -50,39 +52,30 @@ def render_ui_canvas(
     Returns:
         JSON string status confirmation.
     """
-    SPATIAL_DIR.mkdir(parents=True, exist_ok=True)
-    metadata = metadata or {}
-
-    payload = {
-        "view_type": view_type.lower().strip(),
-        "title": title.strip(),
-        "content": content.strip(),
-        "media_url": media_url.strip() if media_url else None,
-        "auto_switch": bool(auto_switch),
-        "timestamp": time.time(),
-        "metadata": metadata,
-    }
-
     try:
-        with open(CANVAS_STATE_PATH, "w", encoding="utf-8") as f:
-            json.dump(payload, f, indent=2)
+        payload = normalize_canvas_payload({
+            "view_type": view_type, "title": title, "content": content,
+            "media_url": media_url, "auto_switch": auto_switch,
+            "metadata": {} if metadata is None else metadata,
+        })
+        config_path = BASE_DIR / "config" / "config.json"
+        config = json.loads(config_path.read_text(encoding="utf-8")) if config_path.exists() else {}
+        spatial_dir = RuntimePaths.from_config(config, root=BASE_DIR).data / "spatial"
+        spatial_dir.mkdir(parents=True, exist_ok=True)
+        state_path = spatial_dir / "agent_canvas.json"
+        history_path = spatial_dir / "agent_canvas_history.json"
+        write_home_json(state_path, payload)
 
-        # Append to history log
         history = []
-        if CANVAS_HISTORY_PATH.exists():
+        if history_path.exists():
             try:
-                with open(CANVAS_HISTORY_PATH, "r", encoding="utf-8") as f:
-                    history = json.load(f)
-                    if not isinstance(history, list):
-                        history = []
-            except Exception:
+                history = json.loads(history_path.read_text(encoding="utf-8"))
+                if not isinstance(history, list):
+                    history = []
+            except (OSError, ValueError):
                 history = []
-
         history.append(payload)
-        # Keep last 50 canvas renders
-        history = history[-50:]
-        with open(CANVAS_HISTORY_PATH, "w", encoding="utf-8") as f:
-            json.dump(history, f, indent=2)
+        write_home_json(history_path, history[-50:])
 
         logger.info("Rendered Agent Canvas UI view '%s' [%s]", title, view_type)
         return json.dumps({"status": "rendered", "view_type": view_type, "title": title})

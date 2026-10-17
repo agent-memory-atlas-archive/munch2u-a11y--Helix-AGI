@@ -1516,7 +1516,8 @@ async function loadModuleCode(name) {
     b.classList.toggle('active', b.textContent === name);
   });
   try {
-    const res = await fetch(`'/api/modules/'${encodeURIComponent(name)}`);
+    const res = await fetch(`/api/modules/${encodeURIComponent(name)}`);
+    if (!res.ok) throw new Error(`Module load failed (${res.status})`);
     const data = await res.json();
     const tEl = document.getElementById('module-active-title');
     const cEl = document.getElementById('module-code-view');
@@ -1592,6 +1593,7 @@ if (closeStagingBtn) closeStagingBtn.onclick = () => { if (stagingModal) staging
 async function fetchStagedFiles() {
   try {
     const res = await fetch('/api/staged_files');
+    if (!res.ok) throw new Error(`Staging list failed (${res.status})`);
     const data = await res.json();
     const items = data.staged || [];
     if (stagedBadgeEl) stagedBadgeEl.textContent = items.length;
@@ -1609,8 +1611,12 @@ async function fetchStagedFiles() {
           <span class="staged-name">${escapeHtml(item.name)}</span>
           <span class="staged-meta"> (${item.size} bytes)</span>
         </div>
-        <button class="staged-del-btn" onclick="deleteStagedFile('${encodeURIComponent(item.name)}')">Remove</button>
       `;
+      const remove = document.createElement('button');
+      remove.className = 'staged-del-btn';
+      remove.textContent = 'Remove';
+      remove.onclick = () => window.deleteStagedFile(encodeURIComponent(item.name));
+      row.appendChild(remove);
       stagedListEl.appendChild(row);
     });
   } catch (err) {
@@ -1620,8 +1626,9 @@ async function fetchStagedFiles() {
 
 window.deleteStagedFile = async function(encName) {
   try {
-    await fetch(`'/api/staged_files/'${encName}`, { method: 'DELETE' });
-    fetchStagedFiles();
+    const res = await fetch(`/api/staged_files/${encName}`, { method: 'DELETE' });
+    if (!res.ok) throw new Error(`File removal failed (${res.status})`);
+    await fetchStagedFiles();
   } catch (err) {
     console.error('Failed to delete staged file:', err);
   }
@@ -1659,7 +1666,8 @@ async function uploadStagedFile(file) {
   const formData = new FormData();
   formData.append('file', file);
   try {
-    await fetch('/api/stage_file', { method: 'POST', body: formData });
+    const res = await fetch('/api/stage_file', { method: 'POST', body: formData });
+    if (!res.ok) throw new Error(`File upload failed (${res.status})`);
   } catch (err) {
     console.error('Failed to upload staged file:', err);
   }

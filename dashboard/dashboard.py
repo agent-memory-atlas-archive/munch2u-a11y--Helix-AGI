@@ -39,6 +39,8 @@ BASE_DIR = Path(__file__).parent.parent.resolve()
 if __package__ in {None, ""}:
     sys.path.insert(0, str(BASE_DIR))
 from core.runtime_paths import RuntimePaths
+from core.canvas_state import normalize_canvas_payload
+from core.agent_home import write_home_json
 LOG_PATH = BASE_DIR / "logs" / "helix.log"
 BELIEFS_DIR = BASE_DIR / "data" / "beliefs"
 SPATIAL_DIR = BASE_DIR / "data" / "spatial"
@@ -500,6 +502,7 @@ def create_app():
         from dashboard_comms import get_comms
 
     paths = _selected_paths()
+    canvas_dir = paths.data / "spatial"
     app = Flask(__name__, static_folder=None)
     tailer = LogTailer(LOG_PATH)
     comms = get_comms()
@@ -601,15 +604,18 @@ def create_app():
     @app.route("/api/canvas", methods=["GET", "POST"])
     def api_canvas():
         """Get or update current Agent-controlled UI Canvas state."""
-        canvas_path = SPATIAL_DIR / "agent_canvas.json"
+        canvas_path = canvas_dir / "agent_canvas.json"
         if request.method == "POST":
-            data = request.get_json(force=True, silent=True) or {}
             try:
-                with open(canvas_path, "w", encoding="utf-8") as f:
-                    json.dump(data, f, indent=2)
+                data = normalize_canvas_payload(request.get_json(force=True, silent=True))
+            except ValueError as exc:
+                return jsonify({"error": str(exc)}), 400
+            try:
+                canvas_dir.mkdir(parents=True, exist_ok=True)
+                write_home_json(canvas_path, data)
                 return jsonify({"ok": True})
-            except Exception as e:
-                return jsonify({"error": str(e)}), 500
+            except OSError as exc:
+                return jsonify({"error": str(exc)}), 500
 
         if canvas_path.exists():
             try:
@@ -630,7 +636,7 @@ def create_app():
     def api_canvas_history():
         """Get recent Agent Canvas UI history."""
         limit = _coerce_int(request.args.get("limit", 20), default=20, minimum=1, maximum=100)
-        history_path = SPATIAL_DIR / "agent_canvas_history.json"
+        history_path = canvas_dir / "agent_canvas_history.json"
         if history_path.exists():
             try:
                 with open(history_path, "r", encoding="utf-8") as f:
@@ -747,13 +753,18 @@ def create_app():
         """List or add modules in the agent's modules directory."""
         import ast
         if request.method == "POST":
-            data = request.get_json(force=True, silent=True) or {}
-            name = Path(data.get("name", "")).name
-            code = data.get("code", "")
+            data = request.get_json(force=True, silent=True)
+            if not isinstance(data, dict):
+                return jsonify({"error": "Module payload must be an object."}), 400
+            raw_name, code = data.get("name"), data.get("code")
+            if not isinstance(raw_name, str) or not isinstance(code, str):
+                return jsonify({"error": "Both module name and code must be text."}), 400
+            raw_name = raw_name.strip()
+            if not raw_name or Path(raw_name).name in {"", ".", "..", ".py"} or not code.strip():
+                return jsonify({"error": "Both module name and code are required."}), 400
+            name = Path(raw_name).name
             if not name.endswith(".py"):
                 name += ".py"
-            if not name or not code.strip():
-                return jsonify({"error": "Both module name and code are required."}), 400
             
             # Syntax validation via AST
             try:
@@ -763,7 +774,13 @@ def create_app():
             
             modules_dir.mkdir(parents=True, exist_ok=True)
             dest = modules_dir / name
-            dest.write_text(code, encoding="utf-8")
+            try:
+                with dest.open("x", encoding="utf-8") as stream:
+                    stream.write(code)
+            except FileExistsError:
+                return jsonify({"error": "Module already exists; choose another name."}), 409
+            except OSError as exc:
+                return jsonify({"error": str(exc)}), 500
 
             # Update home.json if present
             home_json = paths.home / "home.json"
@@ -789,6 +806,7 @@ def create_app():
         mod_list = []
         for mf in sorted(modules_dir.glob("*.py")):
             doc = ""
+            code_text = ""
             try:
                 code_text = mf.read_text(encoding="utf-8")
                 tree = ast.parse(code_text)
@@ -799,7 +817,7 @@ def create_app():
                 "name": mf.name,
                 "doc": doc.strip(),
                 "size": mf.stat().st_size,
-                "lines": len(code_text.splitlines()) if "code_text" in locals() else 0
+                "lines": len(code_text.splitlines())
             })
         return jsonify({"modules": mod_list})
 

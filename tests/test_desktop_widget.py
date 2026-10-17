@@ -9,6 +9,7 @@ from unittest.mock import patch
 
 import dashboard.dashboard_comms as dashboard_comms
 import dashboard.dashboard as dashboard_module
+from core.runtime_paths import RuntimePaths
 from desktop_widget.overlay import (
     WIDGET_CLOSED_SIZE,
     WIDGET_OPEN_SIZE,
@@ -80,7 +81,7 @@ class DesktopWidgetTests(unittest.TestCase):
             previous = dashboard_comms._instance
             dashboard_comms._instance = dashboard_comms.DashboardComms(temp_path / "messages.json")
             try:
-                with patch.object(dashboard_module, "SPATIAL_DIR", temp_path / "spatial"):
+                with patch.object(dashboard_module, "_selected_paths", return_value=RuntimePaths(temp_path, temp_path / "home")):
                     app = dashboard_module.create_app()
                     app.config.update(TESTING=True)
                     client = app.test_client()

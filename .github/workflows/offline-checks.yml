@@ -17,6 +17,7 @@ jobs:
           python-version: ${{ matrix.python }}
       - run: python -m pip install -r requirements-dev.txt
       - run: python tests/run_all_tests.py --group offline
+      - run: node --test tests/dashboard_routes.test.cjs
   wizard:
     runs-on: ubuntu-latest
     env:
