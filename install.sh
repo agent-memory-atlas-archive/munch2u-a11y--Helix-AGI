@@ -21,10 +21,7 @@ echo ""
 PYTHON=""
 for candidate in python3 python; do
     if command -v "$candidate" &>/dev/null; then
-        version=$("$candidate" --version 2>&1 | grep -oP '\d+\.\d+')
-        major=$(echo "$version" | cut -d. -f1)
-        minor=$(echo "$version" | cut -d. -f2)
-        if [ "$major" -gt 3 ] || { [ "$major" -eq 3 ] && [ "$minor" -ge 11 ]; }; then
+        if "$candidate" -c 'import sys; raise SystemExit(sys.version_info < (3, 11))' 2>/dev/null; then
             PYTHON="$candidate"
             break
         fi
@@ -59,18 +56,11 @@ fi
 # ── Install dependencies ──────────────────────────────────────
 echo ""
 echo "Checking dependencies..."
+# Only the UI bootstrap is needed to choose a runtime. The wizard installs
+# the selected runtime after configuration, with errors reported to the user.
+"$PYTHON" -c 'import sys; raise SystemExit(0 if sys.version_info >= (3, 11) else "The selected virtual environment requires Python 3.11+")'
 "$PYTHON" -m pip install --quiet --upgrade pip
-
-# Install PyQt6 first (needed for the wizard GUI)
-"$PYTHON" -m pip install --quiet PyQt6 PyQt6-WebEngine || {
-    echo "⚠ PyQt6 installation failed. You may need to install system Qt libraries:"
-    echo "   sudo apt install python3-pyqt6 python3-pyqt6.qtwebengine"
-}
-
-# Install remaining requirements
-if [ -f "requirements-mindscape.txt" ]; then
-    "$PYTHON" -m pip install --quiet -r requirements-mindscape.txt
-fi
+"$PYTHON" -m pip install --quiet -r requirements-wizard.txt
 
 echo "✓ Dependencies ready"
 echo ""

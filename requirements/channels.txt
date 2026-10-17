@@ -1,0 +1,5 @@
+# channels dependency group; shared by the compatibility full install.
+python-telegram-bot>=21.0
+# Optional channels, only when enabled:
+# discord.py>=2.0
+# slack-bolt>=1.18.0

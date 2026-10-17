@@ -1,0 +1,3 @@
+# Install the setup UI before choosing/installing the full runtime.
+-r requirements/common.txt
+-r requirements/gui.txt

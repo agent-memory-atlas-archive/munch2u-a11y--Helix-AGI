@@ -1,0 +1,6 @@
+# providers dependency group; shared by the compatibility full install.
+google-genai>=1.0.0
+anthropic>=0.90.0
+openai>=1.0.0
+llama-cpp-python>=0.2.0
+ollama>=0.1.0

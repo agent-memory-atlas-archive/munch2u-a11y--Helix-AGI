@@ -1,0 +1,10 @@
+# memory dependency group; shared by the compatibility full install.
+chromadb>=0.4.0
+sentence-transformers>=2.2.0
+umap-learn>=0.5.0
+hdbscan>=0.8.0
+faiss-cpu>=1.8.0
+spacy>=3.7.0
+tiktoken>=0.5.0
+# Optional precision model: python -m spacy download en_core_web_sm
+# Semantic fallback remains available without the spaCy model.

@@ -1,55 +1,8 @@
-# LLM Providers
-google-genai>=1.0.0
-anthropic>=0.90.0
-openai>=1.0.0
-
-# Memory & Spatial Navigation
-chromadb>=0.4.0
-sentence-transformers>=2.2.0
-numpy>=1.24.0
-scipy>=1.10.0
-umap-learn>=0.5.0
-hdbscan>=0.8.0
-# mRAG foreground vector search. Qwen3-Embedding-0.6B emits native 1024D
-# vectors through the existing Ollama dependency. SemanticIndex stays exact
-# numpy for small stores and upgrades to exact FAISS FlatIP by default.
-faiss-cpu>=1.8.0
-# Unified retrieval — semantic lane. spaCy drives conceptual tagging and
-# noun-chunk extraction. The lane has a regex fallback, but best precision
-# uses:  python -m spacy download en_core_web_sm
-spacy>=3.7.0
-# Optional but recommended: without tiktoken the injection token budget falls
-# back to a chars/4 heuristic.
-tiktoken>=0.5.0
-
-# Tools & APIs
-python-telegram-bot>=21.0
-google-api-python-client>=2.0.0
-google-auth-httplib2>=0.1.0
-google-auth-oauthlib>=1.0.0
-duckduckgo-search>=8.0.0
-beautifulsoup4>=4.12.0
-playwright>=1.40.0
-
-# Local AI / Audio / Misc
-llama-cpp-python>=0.2.0
-ollama>=0.1.0
-faster-whisper>=1.0.0
-piper-tts>=1.2.0
-# edge-tts>=6.1.0
-sounddevice>=0.4.0
-opencv-python>=4.8.0
-python-dotenv>=1.0.0
-pyyaml>=6.0
-psutil>=5.9.0
-requests>=2.31.0
-
-# Dashboard & GUI
-flask>=3.0.0
-PyQt6>=6.6.0
-PyQt6-WebEngine>=6.6.0
-
-# Communication Channels (optional — install only channels you enable in setup.py)
-# discord.py>=2.0       # Discord bot support (uncomment if using Discord)
-# slack-bolt>=1.18.0    # Slack bot support (uncomment if using Slack)
-# Note: WhatsApp and Webhook channels use requests + flask, already listed above.
+# Compatibility full installation. Existing package requirements are preserved.
+-r requirements/common.txt
+-r requirements/memory.txt
+-r requirements/providers.txt
+-r requirements/tools.txt
+-r requirements/perception.txt
+-r requirements/gui.txt
+-r requirements/channels.txt

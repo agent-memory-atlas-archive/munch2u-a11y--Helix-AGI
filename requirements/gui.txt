@@ -1,0 +1,3 @@
+# gui dependency group; shared by the compatibility full install.
+PyQt6>=6.6.0
+PyQt6-WebEngine>=6.6.0
