@@ -74,10 +74,10 @@ as an integrated startup stage.
 
 ## Command-line creation
 
-The CLI currently plans the named paths, creates home rooms and seeds missing
-memory, but does **not** call `provision_creation` to write the initial
-`creation.json`. Native startup expects that manifest for a new identity.
-Use the wizard or complete the explicit provisioning step below.
+The explicit Mindscape CLI route uses the same identity provisioning service as
+the wizard. It validates the selected home and existing identity, writes
+`creation.json`, and seeds only missing bootstrap files. It does not gestate
+neural state until native startup.
 
 For a **new, unused** example name and data/home directories, replace the model
 and dependency paths with your actual directories:
@@ -91,22 +91,14 @@ venv/bin/python setup.py --non-interactive --composition mindscape \
   --primary-channel dashboard --data-dir data/agents/Example \
   --agent-home data/homes/Example
 
-venv/bin/python - <<'PY'
-import json
-from pathlib import Path
-from core.agent_creation import provision_creation
-from core.mindscape_config import resolve
-config = json.loads(Path("config/config.json").read_text())
-provision_creation(resolve(config))
-PY
 ```
 
-Run commands from the Helix root. Explicit `--provider rwkv` matters: the
-composition flag alone can follow the CLI's older Ollama provider selection.
-The configuration-only route still seeds missing bootstrap files and updates
-provider/model/channel environment selections; it is not a read-only command.
-It preserves other credential values. Omitting `--composition-only` runs the
-broader CLI setup but does not repair the missing provisioning call.
+Run commands from the Helix root. Explicit Mindscape composition defaults to
+RWKV; Ollama remains selectable with `--provider ollama --model <name>`. Hosted
+providers require the separate Helix composition. The configuration-only route
+still provisions the selected identity, seeds missing bootstrap files and
+updates provider/model/channel environment selections; it is not read-only.
+It preserves other credential values.
 
 For an existing agent, avoid recreating identity. Review its saved paths and
 start it directly. `--resume-only` makes missing native checkpoints an error.
@@ -146,8 +138,10 @@ later reply without generating a `SPEAK` command or action JSON.
 
 The Chat body route supports move/sense/open/run. Additional module handlers
 are covered in the [home guide](agent-home.md). For current body state, use
-`GET /api/motor` or **Environment and actions**; older room/Module Studio views
-retain legacy home-path assumptions.
+`GET /api/motor` or **Environment and actions**. Room status, staging and
+Module Studio resolve the same configured home. Room position reads the selected
+`LATEST.json` checkpoint in read-only mode; it never chooses an agent by folder
+order. Restart the dashboard after changing the selected agent configuration.
 
 ## State, limits and shutdown
 

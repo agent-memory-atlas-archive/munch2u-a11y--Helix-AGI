@@ -20,7 +20,8 @@
         "tests/test_self_state.py",
         "tests/test_setup_parenting_guidance.py",
         "tests/test_runtime_configuration.py",
-        "tests/test_native_dependency_manifest.py"
+        "tests/test_native_dependency_manifest.py",
+        "tests/test_runtime_paths.py"
       ]
     },
     "integration": {

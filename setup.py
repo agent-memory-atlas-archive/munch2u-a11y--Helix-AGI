@@ -65,6 +65,8 @@ def apply_config_updates(base_dir: Path, updates: dict) -> bool:
             print(f"  ⚠ Could not read {config_path}: {e}")
             return False
 
+    if "mindscape" in updates:
+        updates = {**updates, "mindscape": {**config.get("mindscape", {}), **updates["mindscape"]}}
     config.update(updates)
     config_path.parent.mkdir(parents=True, exist_ok=True)
     try:
@@ -91,7 +93,7 @@ def local_mode_config(provider: str = "rwkv", model: str = "", context_window: i
             "local_context_window": context_window or 8192,
             "mindscape": {
                 "rwkv_model": chosen_model,
-                "action_intent_source": "bicameral_rwkv",
+                "action_intent_source": "native_motor",
             },
         }
     return {
@@ -149,7 +151,7 @@ def main():
     parser.add_argument(
         "--provider",
         choices=["codex_cli", "claude_cli", "gemini", "anthropic", "ollama", "llama_cpp", "rwkv", "bicameral_rwkv"],
-        default="gemini",
+        default=None,
         help="Primary conscious LLM provider",
     )
     parser.add_argument(
@@ -210,7 +212,12 @@ def main():
     )
     parser.add_argument("--vision-provider", choices=["local", "gemini"], default="local", help="Vision provider (local model or Gemini)")
     args = parser.parse_args()
+    # Keep the legacy provider default outside the explicit native composition.
+    if args.provider is None:
+        args.provider = "rwkv" if args.composition == "mindscape" else "gemini"
 
+    if args.composition == "mindscape" and args.provider not in {"rwkv", "bicameral_rwkv", "ollama"}:
+        parser.error("Mindscape requires --provider rwkv or ollama; use --composition helix for hosted providers")
     base_dir = Path(__file__).parent.resolve()
 
     if args.composition is not None:
@@ -221,13 +228,16 @@ def main():
         if args.composition == "mindscape":
             updates = {**defaults(base_dir), **existing, **updates}
             updates["mindscape"] = {**defaults(base_dir)["mindscape"], **existing.get("mindscape", {})}
+            updates["local_context_window"] = args.local_context_window
             if args.archetype:
                 updates["agent_archetype"] = args.archetype
             if args.primary_channel:
                 updates["primary_channel"] = args.primary_channel
             if args.data_dir:
                 updates["data_dir"] = str(Path(args.data_dir).resolve())
-            from core.agent_creation import creation_settings
+            from core.agent_creation import creation_settings, provision_creation
+            if args.agent_home is not None:
+                updates["mindscape"]["home"] = str(args.agent_home.resolve())
             creation_dict = {
                 **updates,
                 "agent_name": args.agent_name,
@@ -237,9 +247,9 @@ def main():
             }
             if args.data_dir:
                 creation_dict["data_dir"] = str(Path(args.data_dir).resolve())
-            creation_res = creation_settings(creation_dict, root=base_dir)
+            creation_res = creation_settings(creation_dict, root=base_dir, home=args.agent_home.resolve() if args.agent_home else None)
             updates.update(creation_res)
-            for key, value in (("package_path", args.mightymem_path), ("rwkv_model", args.rwkv_model), ("workspace", args.workspace), ("home", args.agent_home)):
+            for key, value in (("package_path", args.mightymem_path), ("rwkv_model", args.rwkv_model), ("workspace", args.workspace)):
                 if value is not None:
                     updates["mindscape"][key] = str(value.resolve())
             if args.resume_only:
@@ -253,8 +263,6 @@ def main():
                 updates["local_model"] = args.model
                 updates["llm_model"] = args.model
                 updates = activate(updates)
-                from core.agent_home import prepare_home
-                prepare_home(updates)
                 args.local_mode, args.provider = True, "rwkv"
             else:
                 updates.update(pulse_mode="standard", local_provider="ollama", llm_provider="ollama")
@@ -264,9 +272,8 @@ def main():
                 if not args.model:
                     args.model = updates["local_model"]
                 updates = activate(updates)
-                from core.agent_home import prepare_home
-                prepare_home(updates)
                 args.local_mode, args.provider = True, "ollama"
+            provision_creation(updates)
         if not apply_config_updates(base_dir, updates):
             raise SystemExit("Composition configuration was not saved")
         if args.composition_only:

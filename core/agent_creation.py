@@ -43,7 +43,7 @@ def validate_channel(config, credentials=None):
     return primary
 
 
-def creation_settings(config, *, root, credentials=None):
+def creation_settings(config, *, root, credentials=None, home=None):
     """Plan paths and validate without creating files or gestating a mind."""
     root = Path(root).resolve()
     result = dict(config)
@@ -59,7 +59,16 @@ def creation_settings(config, *, root, credentials=None):
     if not parent.is_absolute():
         parent = root / parent
     module["home_parent"] = str(parent.resolve())
-    module["home"] = str((parent / result["agent_name"]).resolve())
+    previous_name = config.get("creation", {}).get("agent_name")
+    supplied_home = module.get("home")
+    selected_home = Path(home or supplied_home).expanduser() if (home or supplied_home) else root / "data/agent_home"
+    if not selected_home.is_absolute():
+        selected_home = root / selected_home
+    selected_home = selected_home.resolve()
+    if home is None and (selected_home == root / "data/agent_home" or (
+            previous_name and previous_name != result["agent_name"] and selected_home == parent / previous_name)):
+        selected_home = parent / result["agent_name"]
+    module["home"] = str(selected_home)
     result["mindscape"] = module
     data = config.get("data_dir", "data")
     old_name = config.get("creation", {}).get("agent_name")

@@ -130,8 +130,8 @@ conversation-quality benchmark.
 The Chat motor route currently supports move, sense, open and run. Module/web
 activation and file creation have separate handler interfaces; the optional
 nursery remains a [prototype](documents/nursery_status.md).
-Use **Environment and actions** for current body state; some older room/module
-views still use legacy home paths.
+Use **Environment and actions** for current body state. Dashboard room/module
+views and staging use the selected agent home.
 
 ## Documentation
 

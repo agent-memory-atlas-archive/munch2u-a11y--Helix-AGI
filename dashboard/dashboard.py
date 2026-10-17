@@ -3,7 +3,7 @@
 Helix — Cognitive Dashboard
 
 Real-time monitoring dashboard for the Helix cognitive architecture.
-Runs alongside main.py, reads files only — never modifies Helix state.
+Runs alongside main.py: reads telemetry and accepts explicit staging/module edits.
 
 Usage:
     python dashboard/dashboard.py              # default: localhost:5050
@@ -19,6 +19,8 @@ import math
 import os
 import re
 import time
+import sys
+import sqlite3
 from collections import deque
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -34,6 +36,9 @@ log.setLevel(logging.WARNING)
 
 # ── Path Configuration ────────────────────────────────────────────────
 BASE_DIR = Path(__file__).parent.parent.resolve()
+if __package__ in {None, ""}:
+    sys.path.insert(0, str(BASE_DIR))
+from core.runtime_paths import RuntimePaths
 LOG_PATH = BASE_DIR / "logs" / "helix.log"
 BELIEFS_DIR = BASE_DIR / "data" / "beliefs"
 SPATIAL_DIR = BASE_DIR / "data" / "spatial"
@@ -55,6 +60,10 @@ def _read_config() -> Dict[str, Any]:
     except Exception:
         pass
     return {}
+
+def _selected_paths():
+    return RuntimePaths.from_config(_read_config(), root=BASE_DIR, default_data=DATA_DIR)
+
 
 # Spatial state files written by SpatialMind.save_state()
 BELIEF_STATE = SPATIAL_DIR / "belief_space_state.json"
@@ -380,7 +389,7 @@ def read_spatial() -> Dict[str, Any]:
     }
 
 
-def read_status() -> Dict[str, Any]:
+def read_status(paths=None) -> Dict[str, Any]:
     """Read belief stats and last known gauges from log."""
     stats = {"total": 0, "categories": {}}
     if BELIEFS_DIR.exists():
@@ -436,31 +445,15 @@ def read_status() -> Dict[str, Any]:
         except Exception:
             pass
 
-    # Determine agent spatial location & room
-    home_dir = DATA_DIR / "agent_home"
-    if not home_dir.exists():
-        candidates = list((DATA_DIR / "agents").glob("*/home.json")) if (DATA_DIR / "agents").exists() else []
-        if candidates:
-            home_dir = candidates[0].parent
-
-    current_room = "."
-    sqlite_candidates = [DATA_DIR / "mindscape" / "joint" / "mind.sqlite"]
-    if (DATA_DIR / "agents").exists():
-        sqlite_candidates.extend((DATA_DIR / "agents").glob("*/mindscape/joint/mind.sqlite"))
-    
-    for sq in sqlite_candidates:
-        if sq.exists():
-            try:
-                import sqlite3
-                conn = sqlite3.connect(sq)
-                cur = conn.cursor()
-                cur.execute("SELECT value FROM metadata WHERE key = 'agent_workspace_position';")
-                row = cur.fetchone()
-                if row and row[0]:
-                    current_room = row[0]
-                    break
-            except Exception:
-                pass
+    # Read only the selected agent and its published checkpoint lineage.
+    paths = paths or _selected_paths()
+    home_dir = paths.home
+    home_error = None
+    try:
+        current_room = paths.workspace_position()
+    except (OSError, ValueError, KeyError, TypeError, sqlite3.Error) as error:
+        current_room = "."
+        home_error = str(error)
 
     rooms = {}
     room_entries = []
@@ -473,7 +466,7 @@ def read_status() -> Dict[str, Any]:
             except Exception:
                 pass
         target_path = home_dir if current_room in (".", "") else home_dir / current_room
-        if target_path.exists() and target_path.is_dir():
+        if target_path.resolve().is_relative_to(home_dir) and target_path.is_dir():
             for item in sorted(target_path.iterdir()):
                 if item.name.startswith("."):
                     continue
@@ -493,6 +486,7 @@ def read_status() -> Dict[str, Any]:
         "room": current_room,
         "rooms": rooms,
         "room_entries": room_entries,
+        "home_status_error": home_error,
     }
 
 
@@ -505,6 +499,7 @@ def create_app():
     except ImportError:
         from dashboard_comms import get_comms
 
+    paths = _selected_paths()
     app = Flask(__name__, static_folder=None)
     tailer = LogTailer(LOG_PATH)
     comms = get_comms()
@@ -599,7 +594,7 @@ def create_app():
 
     @app.route("/api/status")
     def api_status():
-        return jsonify(read_status())
+        return jsonify(read_status(paths))
 
     # ── Agent Canvas UI Endpoints ──────────────────────────────────────────
 
@@ -654,10 +649,7 @@ def create_app():
     @app.route("/api/motor")
     def api_motor_state():
         """Actual body state and returns, independent of a language reply."""
-        cfg = _read_config()
-        data = Path(cfg.get("data_dir", "data"))
-        if not data.is_absolute():
-            data = BASE_DIR / data
+        data = paths.data
         state_path = data / "mindscape/motor-state.json"
         if not state_path.exists():
             return jsonify({"status": "not_started", "jobs": []})
@@ -695,13 +687,13 @@ def create_app():
 
     # ── Safe File Staging Endpoints ──────────────────────────────────────────
 
-    staging_dir = Path(_read_config().get("mindscape", {}).get("home", DATA_DIR / "agent_home")) / "staging"
-    staging_dir.mkdir(parents=True, exist_ok=True)
+    staging_dir = paths.home / "staging"
 
     @app.route("/api/stage_file", methods=["POST"])
     def api_stage_file():
         """Safely stage a file into the agent's staging room for gradual observation."""
         try:
+            staging_dir.mkdir(parents=True, exist_ok=True)
             if "file" in request.files:
                 f = request.files["file"]
                 filename = Path(f.filename).name
@@ -723,7 +715,7 @@ def create_app():
         """List all files currently in the agent's safe staging area."""
         try:
             items = []
-            for item in sorted(staging_dir.iterdir()):
+            for item in sorted(staging_dir.iterdir()) if staging_dir.exists() else ():
                 if item.is_file() and not item.name.startswith("."):
                     items.append({
                         "name": item.name,
@@ -748,8 +740,7 @@ def create_app():
 
     # ── Module Studio & Pseudo-IDE Endpoints ─────────────────────────────────
 
-    modules_dir = DATA_DIR / "agent_home" / "modules"
-    modules_dir.mkdir(parents=True, exist_ok=True)
+    modules_dir = paths.home / "modules"
 
     @app.route("/api/modules", methods=["GET", "POST"])
     def api_modules():
@@ -770,11 +761,12 @@ def create_app():
             except SyntaxError as e:
                 return jsonify({"error": f"Python Syntax Error: {e.msg} at line {e.lineno}"}), 400
             
+            modules_dir.mkdir(parents=True, exist_ok=True)
             dest = modules_dir / name
             dest.write_text(code, encoding="utf-8")
 
             # Update home.json if present
-            home_json = DATA_DIR / "agent_home" / "home.json"
+            home_json = paths.home / "home.json"
             if home_json.exists():
                 try:
                     with open(home_json, "r") as f:
