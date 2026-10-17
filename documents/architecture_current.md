@@ -229,8 +229,8 @@ is in the configured MightyMem dependency and must be preserved for reproduction
 Gemini, Anthropic, Ollama and other adapters. Office-first is an opt-in context
 experiment there. Native Mindscape normalizes its action source to
 `native_motor` and selects task cognition off in its resolved configuration.
-Keep the saved task mode off and `HELIX_TASK_COGNITION` unset/off: the legacy
-controller still honors environment overrides. Observation mode does not add
+Keep `HELIX_TASK_COGNITION` unset/off: native configuration rejects a
+conflicting override, and its controller retains task mode off. Observation mode does not add
 native motor execution, and is outside the recorded supported composition.
 
 Those routes have inherited planner, token, observation, tool-round and timeout

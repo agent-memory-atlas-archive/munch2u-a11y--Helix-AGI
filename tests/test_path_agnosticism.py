@@ -13,6 +13,10 @@ def test_production_and_scripts_paths_are_agnostic():
         "scripts/live_interactive_agent_session.py",
         "scripts/mrag_port_parity.py",
     ]
+    # Include the production packages, not only entry points and scripts.
+    for directory in ("core", "brain", "memory", "llm", "tools", "comms", "dashboard", "wizard"):
+        critical_files.extend(path.relative_to(repo_root).as_posix()
+                              for path in (repo_root / directory).rglob("*.py"))
     # Add all test python files
     for test_file in (repo_root / "tests").glob("*.py"):
         if test_file.name != "test_path_agnosticism.py":
@@ -32,4 +36,4 @@ def test_production_and_scripts_paths_are_agnostic():
 
 if __name__ == "__main__":
     test_production_and_scripts_paths_are_agnostic()
-    print("ALL CODE AND TEST PATHS ARE FULLY AGNOSTIC")
+    print("Production path scan passed (historical audits excluded)")

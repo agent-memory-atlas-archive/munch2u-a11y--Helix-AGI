@@ -27,19 +27,8 @@ from bootstrap import (
 )
 
 DEFAULT_LOCAL_MODEL = "granite4.1:3b"
-DEFAULT_RWKV_MODEL = os.environ.get(
-    "RWKV_MODEL_PATH",
-    str(
-        next(
-            (c for c in [
-                Path.home() / "habitus-ai-experiments" / "habitus-mind" / "models" / "rwkv7-g1j-1.5b-20260831-2c18b29",
-                Path.home() / "models" / "rwkv7-g1j-1.5b-20260831-2c18b29",
-                Path("models") / "rwkv7-g1j-1.5b-20260831-2c18b29",
-            ] if c.exists()),
-            Path.home() / "models" / "rwkv7-g1j-1.5b-20260831-2c18b29",
-        )
-    ),
-)
+from core.model_paths import default_rwkv_model
+DEFAULT_RWKV_MODEL = default_rwkv_model(Path(__file__).resolve().parent)
 
 
 def upsert_env_values(path: Path, updates: dict) -> None:

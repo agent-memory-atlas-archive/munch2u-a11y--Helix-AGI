@@ -39,6 +39,10 @@ class TaskCognitionController:
     ):
         requested = os.environ.get("HELIX_TASK_COGNITION", mode or "off").strip().lower()
         self.mode = requested if requested in _MODES else "off"
+        if getattr(pulse_loop, "mindscape", None) is not None:
+            # The resolved native composition owns action dispatch, including
+            # if the environment changes after startup validation.
+            self.mode = "off"
         tool_capable = (
             provider_config is not None
             and provider_config.provider_type in {"gemini", "anthropic", "codex", "codex_cli"}

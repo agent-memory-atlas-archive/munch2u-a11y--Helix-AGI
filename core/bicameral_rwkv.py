@@ -12,10 +12,9 @@ from pathlib import Path
 import numpy as np
 import threading
 
-# Ensure MightyMem package is available for habitus_ai imports
-MIGHTYMEM_PATH = Path("/home/nemo/MightyMem").resolve()
-if str(MIGHTYMEM_PATH) not in sys.path:
-    sys.path.insert(0, str(MIGHTYMEM_PATH))
+# Use the configured source contract; never introduce a competing host path.
+from core.mindscape_config import activate_native_source, selected_native_source
+activate_native_source(selected_native_source())
 
 from habitus_ai.rwkv7_language import Rwkv7Backend
 

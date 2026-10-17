@@ -41,6 +41,18 @@ support and cooperative cancellation changes in `habitus_ai/continual_rwkv.py`.
 Its dependency patch and source hashes are in the
 [operational audit](audits/2026-10-17-native-body-operational/README.md).
 A clean Helix checkout alone does not supply those external source changes.
+Verify a reconstructed dependency against the exact recorded file hashes with:
+
+```bash
+python scripts/verify_native_dependency.py --package-path /absolute/path/to/MightyMem
+```
+
+This read-only comparison includes recorded dirty-source bytes. It does not
+apply the patch, load weights, or certify a newer dependency. A mismatch returns
+nonzero; preserve pre-existing dependency edits and use a separate checkout when
+reconstructing the recorded revision. No new fully locked native environment is
+claimed by this cleanup.
+
 
 ## Guided creation
 

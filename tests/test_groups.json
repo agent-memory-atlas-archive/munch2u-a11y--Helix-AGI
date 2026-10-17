@@ -18,7 +18,9 @@
         "tests/test_path_agnosticism.py",
         "tests/test_scratchpad_postpone.py",
         "tests/test_self_state.py",
-        "tests/test_setup_parenting_guidance.py"
+        "tests/test_setup_parenting_guidance.py",
+        "tests/test_runtime_configuration.py",
+        "tests/test_native_dependency_manifest.py"
       ]
     },
     "integration": {

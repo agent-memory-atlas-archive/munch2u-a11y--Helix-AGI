@@ -11,25 +11,14 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
+_ACTIVE_NATIVE_SOURCE = None
 
 
 def defaults(root=ROOT):
     root = Path(root).resolve()
-    default_rwkv_candidates = [
-        os.environ.get("RWKV_MODEL_PATH"),
-        str(Path.home() / "habitus-ai-experiments/habitus-mind/models/rwkv7-g1j-1.5b-20260831-2c18b29"),
-        str(root.parent / "habitus-ai-experiments/habitus-mind/models/rwkv7-g1j-1.5b-20260831-2c18b29"),
-        str(Path.home() / "models/rwkv7-g1j-1.5b-20260831-2c18b29"),
-        str(root / "models/rwkv7-g1j-1.5b-20260831-2c18b29"),
-    ]
-    rwkv_path = next((c for c in default_rwkv_candidates if c and Path(c).exists()), default_rwkv_candidates[1])
-    default_mightymem_candidates = [
-        os.environ.get("MIGHTYMEM_PATH"),
-        str(root.parent / "MightyMem"),
-        str(Path.home() / "MightyMem"),
-        str(Path("/home/nemo/MightyMem")),
-    ]
-    mightymem_path = next((c for c in default_mightymem_candidates if c and Path(c).exists()), str(root.parent / "MightyMem"))
+    from core.model_paths import default_native_source, default_rwkv_model
+    rwkv_path = default_rwkv_model(root)
+    mightymem_path = default_native_source(root)
     return {
         "composition": "mindscape",
         "pulse_mode": "standard",
@@ -77,6 +66,9 @@ def resolve(config, root=ROOT):
     # Migrate old launch files to the body route; speech no longer dispatches.
     result["mindscape"]["action_intent_source"] = "native_motor"
     # The legacy speech-to-task hook belongs to a different action composition.
+    requested_tasks = os.environ.get("HELIX_TASK_COGNITION", "off").strip().lower()
+    if requested_tasks not in {"", "0", "false", "no", "off"}:
+        raise ValueError("Mindscape requires HELIX_TASK_COGNITION=off; use composition=helix for task cognition")
     result["task_cognition_mode"] = "off"
     if not isinstance(result["mindscape"]["modules_require_room"], bool):
         raise ValueError("modules_require_room must be a boolean")
@@ -113,13 +105,7 @@ def activate(config):
     from packaging.version import Version
     if Version(importlib.metadata.version("transformers")) < Version("5.15"):
         raise RuntimeError("Pinned RWKV requires transformers>=5.15; install requirements-mindscape.txt in the Helix venv")
-    for name in ("context_loom", "habitus_ai"):
-        loaded = sys.modules.get(name)
-        if loaded and Path(loaded.__file__).resolve().parent != package / name:
-            raise RuntimeError(f"{name} was already imported from a different package; restart with the declared composition")
-    sys.path[:] = [entry for entry in sys.path if entry != str(package)]
-    sys.path.insert(0, str(package))
-    importlib.invalidate_caches()
+    activate_native_source(package)
     # Native ContinualMind selects auto internally. Mask compute devices before
     # torch is imported; the audited bridge constructs its tensors on CPU.
     if "torch" in sys.modules and sys.modules["torch"].cuda.is_initialized():
@@ -132,6 +118,42 @@ def activate(config):
     if os.environ.get("HELIX_OFFICE_FIRST", "0").lower() in {"1", "true", "yes", "on"}:
         raise RuntimeError("Full mindscape uses the standard preconscious route; disable HELIX_OFFICE_FIRST")
     return settings
+
+
+def activate_native_source(package):
+    """Select one native checkout, rejecting already-imported foreign modules."""
+    global _ACTIVE_NATIVE_SOURCE
+    package = Path(package).expanduser().resolve()
+    for relative in ("context_loom/engine.py", "habitus_ai/continual_mind.py"):
+        if not (package / relative).is_file():
+            raise RuntimeError(f"Native source missing {package / relative}; configure mindscape.package_path or MIGHTYMEM_PATH")
+    for name, loaded in tuple(sys.modules.items()):
+        family = name.split(".")[0]
+        if family not in {"context_loom", "habitus_ai"} or loaded is None:
+            continue
+        filename = getattr(loaded, "__file__", None)
+        if filename is None or not Path(filename).resolve().is_relative_to(package / family):
+            raise RuntimeError(f"{name} was already imported from a different package; restart with the declared composition")
+    sys.path[:] = [entry for entry in sys.path if entry != str(package)]
+    sys.path.insert(0, str(package))
+    importlib.invalidate_caches()
+    _ACTIVE_NATIVE_SOURCE = package
+    return package
+
+
+def selected_native_source():
+    """An explicitly activated source takes precedence over saved defaults."""
+    return _ACTIVE_NATIVE_SOURCE or configured_native_source()
+
+
+def configured_native_source(root=ROOT):
+    """Allow explicit RWKV providers to use the same source choice as main."""
+    from core.model_paths import default_native_source
+    root = Path(root).resolve()
+    path = root / "config/config.json"
+    config = json.loads(path.read_text()) if path.exists() else {}
+    selected = Path(config.get("mindscape", {}).get("package_path") or default_native_source(root)).expanduser()
+    return (selected if selected.is_absolute() else root / selected).resolve()
 
 
 def local_model_receipt(config):
