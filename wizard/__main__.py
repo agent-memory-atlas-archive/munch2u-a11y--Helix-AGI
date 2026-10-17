@@ -17,7 +17,13 @@ def main():
         command = [sys.executable, str(Path(__file__).resolve().parents[1] / "setup.py")]
         command.extend(arg for arg in sys.argv[1:] if arg != "--wizard")
         return subprocess.run(command, check=False).returncode
-    from wizard.app import main as gui_main
+    try:
+        from wizard.app import main as gui_main
+    except ImportError as error:
+        print(f"GUI dependencies unavailable ({error}); falling back to CLI setup.", file=sys.stderr)
+        command = [sys.executable, str(Path(__file__).resolve().parents[1] / "setup.py")]
+        command.extend(arg for arg in sys.argv[1:] if arg != "--wizard")
+        return subprocess.run(command, check=False).returncode
     return gui_main()
 
 
