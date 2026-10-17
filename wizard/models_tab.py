@@ -7,6 +7,7 @@ directly from the running settings dashboard. Updates credentials.env on save.
 
 import os
 from pathlib import Path
+from core.credentials import read_credentials
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
     QComboBox, QGroupBox, QLineEdit, QScrollArea, QFormLayout,
@@ -18,16 +19,7 @@ CRED_PATH = Path(os.path.expanduser("~/.config/helix/credentials.env"))
 
 
 def _load_existing_creds() -> dict:
-    """Read existing credentials.env if present."""
-    creds = {}
-    if CRED_PATH.exists():
-        with open(CRED_PATH, "r") as f:
-            for line in f:
-                line = line.strip()
-                if "=" in line and not line.startswith("#"):
-                    k, _, v = line.partition("=")
-                    creds[k.strip()] = v.strip().strip('"')
-    return creds
+    return read_credentials(CRED_PATH)
 
 
 class ModelsTab(QWidget):

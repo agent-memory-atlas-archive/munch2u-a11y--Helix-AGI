@@ -19,6 +19,7 @@ import os
 import asyncio
 import logging
 import threading
+from comms.message_chunks import chunk_message
 from typing import Optional
 
 logger = logging.getLogger("helix.comms.discord")
@@ -206,23 +207,7 @@ class HelixDiscordBot:
 
     @staticmethod
     def _chunk_message(text: str, limit: int = 1900) -> list[str]:
-        """Split a message into Discord-safe chunks (2000 char limit)."""
-        if len(text) <= limit:
-            return [text]
-        chunks = []
-        remaining = text
-        while remaining and len(chunks) < 5:
-            if len(remaining) <= limit:
-                chunks.append(remaining)
-                break
-            split_at = remaining.rfind("\n\n", 0, limit)
-            if split_at < limit // 2:
-                split_at = remaining.rfind("\n", 0, limit)
-            if split_at < limit // 2:
-                split_at = limit
-            chunks.append(remaining[:split_at])
-            remaining = remaining[split_at:].lstrip("\n")
-        return chunks
+        return chunk_message(text, limit)
 
     @property
     def is_ready(self) -> bool:
