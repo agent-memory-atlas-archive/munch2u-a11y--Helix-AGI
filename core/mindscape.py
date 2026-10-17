@@ -668,25 +668,63 @@ class Mindscape:
                     if returned and not returned.get("consumed") else [])
         return self._worker.submit(read).result()
 
+    def has_subconscious_motor_impulse(self) -> bool:
+        """Return True if the recurrent cortex or pending obligations register a motor requirement."""
+        if getattr(self, "needs_native_observation", False):
+            return True
+        feeling = getattr(self, "last_sensed_feeling", None) or {}
+        if feeling.get("modality") == "INTERNAL_ACTION_REQUIRED":
+            return True
+        sensed = getattr(getattr(self, "native", None), "latest_pulse", None)
+        if sensed is not None:
+            cycle = getattr(sensed, "cycle", None)
+            selected_outputs = getattr(cycle, "selected_outputs", ()) or ()
+            try:
+                from habitus_ai.types import OutputTrunk
+                if any(getattr(item, "trunk", None) in (OutputTrunk.DO, OutputTrunk.LOOK) for item in selected_outputs):
+                    return True
+            except Exception:
+                pass
+        return False
+
     def act(self, thought, pulse):
-        """Process only a whole private intention; normal speech never calls an actuator."""
-        if not thought.strip().startswith("<intention>"):
+        """Process private intention or subconscious motor impulse."""
+        from core.mindscape_intention import (
+            parse_natural_or_wire_intention,
+            resolve_subconscious_action,
+        )
+
+        intention = parse_natural_or_wire_intention(thought)
+        if intention is None and self.has_subconscious_motor_impulse():
+            pending = self.continuation.get("pending", {})
+            obligations = pending.get("obligations") or {}
+            obs_list = pending.get("observations", [])
+            current_pos = getattr(getattr(getattr(self, "body", None), "workspace", None), "position", ".")
+            intention = resolve_subconscious_action(obligations, obs_list, current_position=current_pos, thought=thought)
+
+        if intention is None:
             return None
-        return self._worker.submit(self._act, thought, pulse).result()
+
+        return self._worker.submit(self._act_intention, intention, thought, pulse).result()
 
     def _act(self, thought, pulse):
-        from core.mindscape_intention import parse_intention
+        from core.mindscape_intention import parse_natural_or_wire_intention
+        intention = parse_natural_or_wire_intention(thought)
+        return self._act_intention(intention, thought, pulse)
+
+    def _act_intention(self, intention, thought, pulse):
         self._last_native_action_pulse = pulse
         self.continuation.pop("interface_feedback", None)
         self._admit_foreground(thought, pulse)
         action = None
         try:
-            intention = parse_intention(thought)
+            if intention is None:
+                raise ValueError("No valid intention to execute")
             action = intention["action"]
             result = self.body.execute(action, intention["arguments"])
         except (ValueError, RuntimeError, KeyError) as error:
             result = {"status": "not_completed", "error": str(error), "verified": False}
-        result.update(action=action, helix_pulse=pulse, intent_source="granite_private",
+        result.update(action=action, helix_pulse=pulse, intent_source="subconscious_or_natural",
                       intention_sha256=hashlib.sha256(thought.encode()).hexdigest())
         receipt_id = result.get("receipt", {}).get("receipt_id") or f"native-attempt:{uuid.uuid4().hex}"
         content = json.dumps(result, ensure_ascii=False, sort_keys=True, default=str)

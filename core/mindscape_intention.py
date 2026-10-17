@@ -87,18 +87,25 @@ def decode_foreground(raw):
 
     try:
         value = json.loads(text)
-        if isinstance(value, dict) and set(value) == {"message"}:
+        is_json = True
+    except (json.JSONDecodeError, ValueError):
+        value = None
+        is_json = False
+
+    if is_json and isinstance(value, dict):
+        if set(value) == {"message"}:
             if not isinstance(value["message"], str) or not value["message"].strip():
                 raise ValueError("foreground message is empty or invalid")
             return value["message"], "message"
-        if isinstance(value, dict) and "action" in value:
+        if "action" in value or "arguments" in value:
+            if "message" in value:
+                raise ValueError("cannot mix message and action in foreground output")
             if value.get("action") == "read":
                 value["action"] = "open"
             wire = "<intention>" + json.dumps(value, ensure_ascii=False) + "</intention>"
             parse_intention(wire)
             return wire, "intention"
-    except (json.JSONDecodeError, ValueError):
-        pass
+        raise ValueError("invalid foreground JSON object")
 
     # Check for embedded JSON block with action
     start = text.find("{")
@@ -119,11 +126,15 @@ def decode_foreground(raw):
             end = text.rfind("}", start, end)
         start = text.find("{", start + 1)
 
+    # Check for natural intention statement
+    natural_act = parse_natural_or_wire_intention(text)
+    if natural_act is not None:
+        wire = "<intention>" + json.dumps(natural_act, ensure_ascii=False) + "</intention>"
+        return wire, "intention"
+
     if text:
         return text, "message"
     raise ValueError("foreground message is empty or invalid")
-
-
 def observation_text(result):
     """Present complete output, error and arguments; keep telemetry in receipts."""
     receipt = result.get("receipt")
@@ -161,7 +172,7 @@ def extract_workspace_obligations(messages):
     """
     abilities = set()
     paths = set()
-    path_pattern = re.compile(r"(?:/|[a-zA-Z0-9_\-\.]+/)[a-zA-Z0-9_\-\.]+|\b[a-zA-Z0-9_\-]+\.(?:md|pdf|py|txt|json)\b")
+    path_pattern = re.compile(r"/[a-zA-Z0-9_\-\./]+|[a-zA-Z0-9_\-\.]+(?:/[a-zA-Z0-9_\-\.]+)+|\b[a-zA-Z0-9_\-]+\.(?:md|pdf|py|txt|json)\b")
 
     for msg in messages:
         text = str(msg).split("They said:", 1)[-1].strip().strip('"')
@@ -361,3 +372,162 @@ def ability_awareness(root, position):
         "My outward reply reports only supported results and any remaining work or actual blocker. "
         "Only actual returned observations establish what was read, written or executed."
     )
+
+def parse_natural_or_wire_intention(text: str):
+    """Parse an intention from wire format, JSON, functional call, or natural statement."""
+    val = (text or "").strip()
+    if not val:
+        return None
+
+    # 1. Wire format: <intention>...</intention>
+    if val.startswith("<intention>") and val.endswith("</intention>"):
+        try:
+            return parse_intention(val)
+        except Exception:
+            return None
+
+    # 2. Raw JSON format
+    if val.startswith("{") and val.endswith("}"):
+        try:
+            data = json.loads(val)
+            if isinstance(data, dict) and "action" in data:
+                if data.get("action") == "read":
+                    data["action"] = "open"
+                wire = "<intention>" + json.dumps(data, ensure_ascii=False) + "</intention>"
+                return parse_intention(wire)
+        except Exception:
+            pass
+
+    # 3. Functional call syntax: action(arg1, arg2...)
+    func_match = re.match(r"^([a-z_]+)\s*\((.*?)\)$", val, re.IGNORECASE)
+    if func_match:
+        act = func_match.group(1).lower()
+        if act == "read":
+            act = "open"
+        if act in ACTIONS:
+            args_str = func_match.group(2).strip()
+            args = {}
+            if act == "disengage":
+                return {"action": "disengage", "arguments": {}}
+            if act == "activate":
+                parts = [p.strip().strip(chr(34) + chr(39)) for p in args_str.split(",", 1)]
+                if parts:
+                    return {"action": "activate", "arguments": {"module": parts[0], "parameters": {}}}
+            else:
+                parts = [p.strip().strip(chr(34) + chr(39)) for p in args_str.split(",")]
+                if parts and parts[0]:
+                    args["path"] = parts[0]
+                    if act == "write" and len(parts) > 1:
+                        args["content"] = parts[1]
+                    if act in {"write", "run"} and len(parts) > 2:
+                        args["expected_sha256"] = parts[2]
+                    return {"action": act, "arguments": args}
+
+    # 4. Natural action imperative or declaration
+    lower = val.lower()
+
+    # Sense
+    m_sense = re.search(r"\b(?:sense|inspect|scan|feel)\s+(?:the\s+)?(?:files|directory|workspace|room)?\s*(?:in|at)?\s*([./\w\-]+)?", lower)
+    if m_sense:
+        target = (m_sense.group(1) or ".").strip()
+        if target in {"the", "files", "directory", "workspace", "room", ""}:
+            target = "."
+        return {"action": "sense", "arguments": {"path": target}}
+
+    # Move
+    m_move = re.search(r"\b(?:move|cd|go|navigate)\s+(?:to\s+|into\s+)?([./\w\-]+)", lower)
+    if m_move:
+        dest = m_move.group(1).strip()
+        if dest and dest not in {"to", "into"}:
+            if not dest.startswith("/") and not dest.startswith("."):
+                dest = "/" + dest
+            return {"action": "move", "arguments": {"path": dest}}
+
+    # Open / Read
+    m_open = re.search(r"\b(?:open|read|view|examine)\s+(?:the\s+)?(?:contents\s+of\s+)?([./\w\-]+\.\w+)", lower)
+    if m_open:
+        target_f = m_open.group(1).strip()
+        return {"action": "open", "arguments": {"path": target_f}}
+
+    # Run / Execute
+    m_run = re.search(r"\b(?:run|execute)\s+(?:the\s+)?(?:script\s+)?([./\w\-]+\.py|[./\w\-]+)", lower)
+    if m_run:
+        target_r = m_run.group(1).strip()
+        if not target_r.startswith("/") and not target_r.startswith("."):
+            target_r = "/workshop/" + target_r
+        return {"action": "run", "arguments": {"path": target_r}}
+
+    # Mkdir
+    m_mkdir = re.search(r"\b(?:mkdir|make directory|create folder)\s+([./\w\-]+)", lower)
+    if m_mkdir:
+        target_d = m_mkdir.group(1).strip()
+        return {"action": "mkdir", "arguments": {"path": target_d}}
+
+    # Disengage
+    if re.search(r"\b(?:disengage|release module|return to room)\b", lower):
+        return {"action": "disengage", "arguments": {}}
+
+    return None
+
+
+def resolve_subconscious_action(obligations, observations, current_position=".", thought=""):
+    """Resolve next concrete action directly from subconscious obligations and motor affordance."""
+    from_thought = parse_natural_or_wire_intention(thought)
+    if from_thought is not None:
+        return from_thought
+
+    required = set(obligations.get("required_abilities", ()))
+    if not required:
+        return None
+
+    completed_actions = {
+        obs.get("action") for obs in (observations or [])
+        if obs.get("status") in {"completed", "success"} or (
+            bool(obs.get("verified") or obs.get("receipt", {}).get("verified")) and obs.get("status") not in {"error", "not_completed"}
+        )
+    }
+    settled_actions = set(completed_actions)
+    for obs in (observations or []):
+        if obs.get("action") in {"open", "sense"} and obs.get("status") in {"error", "not_completed"}:
+            settled_actions.add(obs.get("action"))
+
+    target_dirs = [p for p in obligations.get("target_paths", ()) if "." not in Path(p).name]
+    target_files = [p for p in obligations.get("target_paths", ()) if "." in Path(p).name]
+    target_file = target_files[0] if target_files else "/workshop/experiment.py"
+
+    known_hashes = {}
+    for obs in (observations or []):
+        h = obs.get("sha256") or obs.get("receipt", {}).get("sha256")
+        if h:
+            p = obs.get("path") or obs.get("receipt", {}).get("path")
+            if p:
+                known_hashes[Path(p).name] = h
+    target_name = Path(target_file).name
+    sha_val = known_hashes.get(target_name)
+
+    if "move" in required and "move" not in settled_actions:
+        dest = target_dirs[0] if target_dirs else "/workshop"
+        if not dest.startswith("/") and not dest.startswith("."):
+            dest = "/" + dest
+        return {"action": "move", "arguments": {"path": dest}}
+
+    if "sense" in required and "sense" not in settled_actions:
+        return {"action": "sense", "arguments": {"path": "."}}
+
+    if "open" in required and "open" not in settled_actions:
+        return {"action": "open", "arguments": {"path": target_file}}
+
+    if "write" in required and "write" not in completed_actions:
+        args = {"path": target_file, "content": "# Generated experiment\n"}
+        if sha_val:
+            args["expected_sha256"] = sha_val
+        return {"action": "write", "arguments": args}
+
+    if "run" in required and "run" not in completed_actions:
+        args = {"path": target_file}
+        if sha_val:
+            args["expected_sha256"] = sha_val
+        return {"action": "run", "arguments": args}
+
+    return None
+

@@ -1314,7 +1314,9 @@ class PulseLoop:
         delivered_external = False
         native_action = (self.mindscape.act(thought, self._pulse_count)
                          if self.mindscape is not None
-                         and self._chat.last_context_output_kind == "intention" else None)
+                         and (getattr(self._chat, "last_context_output_kind", None) == "intention"
+                              or self.mindscape.has_subconscious_motor_impulse()
+                              or thought.strip().startswith("<intention>")) else None)
         if native_action is not None and self.sentinel is not None:
             action_status = native_action.get("status") or native_action.get("receipt", {}).get("status")
             if action_status == "completed":

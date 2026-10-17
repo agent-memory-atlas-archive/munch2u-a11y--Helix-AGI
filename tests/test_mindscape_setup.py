@@ -19,7 +19,7 @@ class CompositionContractTests(unittest.TestCase):
     def test_full_defaults_select_all_local_sources(self):
         config = resolve(defaults())
         self.assertEqual(config["composition"], "mindscape")
-        self.assertEqual(config["local_provider"], "ollama")
+        self.assertEqual(config["local_provider"], "rwkv")
         self.assertTrue(Path(config["mindscape"]["rwkv_model"]).is_absolute())
 
     def test_dual_mode_cannot_silently_replace_full_composition(self):
