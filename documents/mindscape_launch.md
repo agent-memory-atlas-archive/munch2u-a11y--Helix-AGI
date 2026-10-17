@@ -35,7 +35,7 @@ the checkpoint's cache API requires at least 5.15.
 | MightyMem ContinualMind | Joint persistent RWKV/cortex state and Habitus graph |
 | RWKV | Incoming events, own foreground output and actual return tokens; native cortex coupling |
 | Context Loom | Additional persistent evidence lanes and final pulse-context compilation |
-| Granite via Ollama | Foreground language and private native-action intentions |
+| Dual RWKV-7 (Subconscious + Speaker) / Optional Granite | Bicameral foreground language, subconscious motor affordances, and natural intentions |
 
 The native graph and Loom SQLite connections have one owning thread. Source
 paths and source hashes are recorded so a different installed `context_loom`
@@ -71,6 +71,19 @@ RWKV gradient training is disabled in this adapter. It advances recurrent state
 and couples it to the native cortex; it does not run MightyMem's standalone
 continual-learning or motor-emission loop. This distinction remains visible in
 the composition receipt.
+
+### Functional Nursery Gestation (Pre-Contact Sandbox)
+
+Before engaging in live external communication or host operations, newly gestated
+agents execute a functional, 4-stage developmental sandbox via
+`core/agent_creation.py::run_functional_nursery_gestation()` and `core/nursery/`:
+
+1. **Stage 1 (Sensory-Motor Reflex)**: Validates basic motor impulses and perceptual responses.
+2. **Stage 2 (Scratchpad Persistence)**: Validates persistent internal scratchpad I/O and state maintenance across pulses.
+3. **Stage 3 (Workspace Mutation & Tool Verification)**: Exercises native file mutation (`write`, `read_back`) and execution receipts in an isolated digital sandbox.
+4. **Stage 4 (Attuned Dialogue)**: Validates multi-turn conversational grounding and identity continuity.
+
+Results are recorded in `data/agents/<agent_id>/developmental_report_card.txt` and preserved in `creation.json`.
 
 ## Receipts and verification scope
 
@@ -131,20 +144,27 @@ not a recall, action, learning or competence benchmark. Inherited Helix retrieva
 provider and orchestration limits still need a complete audit before behavioral
 scoring. The new adapter adds no record-sampling, action, or reasoning ceiling.
 
-The separate MightyMem `SensoryMotorTurnLoop` prototype is not presented as a
-working file motor controller. Moving, sensing a PDF/Markdown file before
-opening, and receiving its contents through a learned non-tool action pathway
-still require end-to-end receipts. Loading RWKV alone does not establish them.
+### Subconscious motor actuation and workspace abilities
 
-The installed bootstrap uses a separate native workspace body with move, sense,
-open, write, mkdir and run abilities. Granite proposes private intentions using
-an internal JSON format; the native SELF kernel must select the ability before
-execution. An explicit workspace request awaiting its first actual return uses
-an intention-only foreground format, matching the completion gate. It does not
-choose an action for Granite or bypass SELF. Sense reads attributes without content; open reads UTF-8 or extracts
-PDF text. Writes require actual read-back; replacement and Python execution
-require the observed content hash. Python runs with only the workspace writable
-and no host network. These are connected handlers, not demonstrated competence.
+The installed bootstrap provides a native workspace body with move, sense,
+open, write, mkdir and run abilities. Rather than constraining the foreground
+Speaker to output rigid `<intention>` JSON markup, Helix uses the
+**Subconscious Motor Actuation Bridge**:
+
+- **Motor Affordance Impulse**: The Subconscious stream emits latent motor
+  affordances through `OutputTrunk.DO` and `OutputTrunk.LOOK`
+  (`core/mindscape.py::has_subconscious_motor_impulse()`).
+- **Natural Intention Extraction**: When the Speaker articulates natural prose
+  or commitment (e.g., *"I will check `main.py`"*),
+  `core/mindscape_intention.py::parse_natural_or_wire_intention()` resolves the
+  intended target and action, with seamless fallback to wire JSON if emitted.
+- **Physical Execution & Authoritative Receipts**: The native SELF kernel selects
+  and authorizes the corresponding workspace handler (`resolve_subconscious_action()`).
+  Sense reads attributes without content; open reads UTF-8 or extracts PDF text.
+  Writes require read-back verification; Python execution captures observed hashes
+  and stdout. Python runs in an isolated workspace with no host network.
+  Authoritative receipts are recorded in `receipts.jsonl` and fed back into the
+  recurrent tensor state.
 The latest real launcher failures and repairs are preserved in the
 [native-cycle audit](audits/2026-10-10-native-cycle-repair/README.md).
 

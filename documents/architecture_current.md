@@ -1,10 +1,10 @@
 # Helix Current Technical Architecture
 
-**Status:** current source architecture; functional readiness unproven · **Mindscape source review:** 2026-10-10 · **Base branch:** `feature/typed-memory-retrieval`
+**Status:** current source architecture · **Mindscape source review:** 2026-10-17 · **Base branch:** `feature/typed-memory-retrieval`
 
 This document is the shortest authoritative description of the live Helix runtime. Historical audits and benchmark reports are intentionally not updated to imitate this design; see the [documentation index](README.md) for their status.
 
-## Explicit local mindscape composition (2026-10-09)
+## Explicit local mindscape composition (2026-10-17)
 
 `setup.py --composition mindscape` selects the integration in
 `core/mindscape.py`; the normal `main.py -> setup_helix -> PulseLoop` remains
@@ -12,28 +12,43 @@ authoritative. Native Helix preconscious/mRAG, Context Office and 8D physics
 remain active. The adapter gestates or resumes MightyMem's `ContinualMind`
 (RWKV plus the 18,016,166-parameter Habitus cortex and its graph), projects
 canonical Helix memories into that graph and Context Loom, and compiles each
-pulse's context through Loom before the local Granite foreground call.
+pulse's context through Loom.
 
-RWKV consumes incoming events, the foreground's own private intentions and real
-action returns, and participates in the native recurrent cortex bridge. Granite
-retains foreground language. The current action bootstrap uses a complete private
-intention from Granite; the existing native SELF kernel must select the requested
-ability before its workspace actuator executes. Its actual sensory return closes
-the native experience cycle and enters the next Helix pulse. This is explicitly
-**not a trained RWKV filesystem intent decoder**. Startup and restart receipts
-must not be used as file-sensing or agent competence results. See [the launch contract](mindscape_launch.md) for the exact
-scope, source selection, persistence, and remaining validation requirements.
+The primary default runtime is the **Bicameral Dual RWKV-7 System** (Subconscious
+recurrent mind + Speaker language model) with Learned Vocabulary Membrane Grounding.
+For fallback setups, local Granite (3B or 8B) remains supported as an optional
+alternative foreground language provider.
 
-The bootstrap foreground uses a JSON wire format with separate intention and
-message variants. This is an internal serialization boundary, not an Ollama tool
-call or an action authorization. Prose quoting an intention cannot execute it.
-An explicit workspace request stays pending without an actual native return.
-While that observation gate is active, the foreground grammar accepts only a
-private intention; after an actual return, intention and message variants are
-both available. This makes the serialization match the existing delivery rule
-without preselecting an action or authorizing execution. Prose that dispatched
-nothing receives interface feedback. This initial gate
-does not yet verify completion of every step in a multi-action request.
+### Subconscious Motor Actuation Bridge
+
+Rather than forcing the Speaker to emit artificial `<intention>` JSON schemas
+or tool-call markup, Helix employs the **Subconscious Motor Actuation Bridge**:
+
+1. **Subconscious Affordance Impulses**: The persistent RWKV-7 Subconscious stream
+   tracks spatial and workspace affordances, emitting motor impulses through
+   `OutputTrunk.DO` and `OutputTrunk.LOOK` (`core/mindscape.py::has_subconscious_motor_impulse()`).
+2. **Natural Intention Parsing**: `core/mindscape_intention.py::parse_natural_or_wire_intention()`
+   allows the Speaker to voice commitments naturally in conversational prose
+   (e.g., *"I will check `main.py`"*), while maintaining full backwards compatibility
+   with wire JSON.
+3. **Native SELF Authorization & Receipts**: The native SELF kernel selects and authorizes
+   the physical actuator (`open`, `sense`, `write`, `mkdir`, `move`, `run`). File
+   writes require read-back verification and hash checks; Python executions capture
+   stdout and exit codes within an isolated workspace. Authoritative receipts
+   (`receipts.jsonl`) feed directly back into the RWKV recurrent state and Habitus
+   graph.
+
+### Functional Nursery Gestation (Pre-Contact Sandbox)
+
+During agent initialization (`core/agent_creation.py::run_functional_nursery_gestation()`),
+new agents undergo a 4-stage developmental sandbox curriculum (`core/nursery/`):
+- **Stage 1 (Sensory-Motor Reflex)**: Basic reflexive feedback loops.
+- **Stage 2 (Scratchpad Persistence)**: Persistent internal working memory across pulses.
+- **Stage 3 (Workspace Mutation & Tool Verification)**: File manipulation, read-back verification, and execution receipts.
+- **Stage 4 (Attuned Dialogue)**: Multi-turn dyadic communication and identity stability.
+
+A comprehensive technical evaluation is generated as the **Agent Developmental Report Card**
+(`developmental_report_card.txt`) and recorded in `creation.json` before live operation.
 
 As of 2026-10-10, the standard pulse renderer uses populated source sections for
 fresh messages, sensations, recalled context and internal state. The Mindscape

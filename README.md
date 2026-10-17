@@ -63,21 +63,23 @@ flowchart TD
     Pulse --> Native[Persistent RWKV / Habitus cortex and graph]
     HelixMemory --> Context[Context Loom: independent memory roles and current work]
     Native --> Context
-    Context --> Granite[Local Granite foreground]
-    Granite -->|private intention| Authorization[Native SELF ability selection]
+    Context --> DualRWKV[Dual RWKV-7 Subconscious + Speaker]
+    DualRWKV -->|subconscious motor impulse & natural intention| Authorization[Native SELF ability selection]
     Authorization --> Body[Workspace action]
     Body --> Return[Actual observation and persisted outcome]
     Return --> Pulse
     Return --> Native
-    Granite -->|message| Direction[Native outward gate and Helix recipient-ID routing]
+    DualRWKV -->|message| Direction[Native outward gate and Helix recipient-ID routing]
     Direction --> Channel[Terminal / dashboard / configured communications]
 ```
 
-Private intentions use an internal JSON format. Execution requires native
-authorization and an actual host actuator; this is not provider function calling
-or a trained RWKV intent decoder. A receipt proves its particular action outcome,
-not completion of the whole requested task. The underlying Helix application also
-retains the separate provider/tool and task-cognition routes shown below.
+The bicameral architecture separates the persistent Subconscious (tracking state, memory,
+and motor affordance impulses) from the Speaker (generating natural dialogue, reasoning,
+and intention). Subconscious impulses (`OutputTrunk.DO` / `LOOK`) and natural intentions
+drive workspace actions directly without requiring rigid `<intention>` JSON tool markup.
+Execution requires native SELF authorization and an actual host actuator. A receipt proves
+its particular action outcome, not completion of the whole requested task. The underlying
+Helix application also retains the separate provider/tool and task-cognition routes shown below.
 
 ```mermaid
 flowchart TD
@@ -213,6 +215,24 @@ Task cognition rolls out in three modes:
 | `observe` (default) | Detect, deduplicate, persist, and audit natural intentions; existing direct tool behavior remains available |
 | `active` | Main thread is thought-only; committed tasks run in scoped identity-shared focus threads |
 
+### Pre-Contact Functional Nursery Gestation
+
+Before interacting with human operators or executing live tasks, each newly instantiated agent passes through a 4-stage developmental sandbox (`core/nursery/` and `core/agent_creation.py::run_functional_nursery_gestation()`):
+
+1. **Stage 1 (Sensory-Motor Reflex)** — Evaluates baseline perceptual inputs, reflexive motor responses, and echo loops without prior assumptions.
+2. **Stage 2 (Scratchpad Persistence)** — Tests working memory integrity and internal monologue continuity using persistent Markdown scratchpads across pulses.
+3. **Stage 3 (Workspace Mutation & Tool Verification)** — Exercises physical file manipulation (`write`, `read_back`, `run`) in a sandboxed digital environment with strict hash checks and execution receipts.
+4. **Stage 4 (Attuned Dialogue)** — Tests multi-turn relational communication, conversational repair, and grounded selfhood with an attuned caregiver prompter.
+
+At the conclusion of gestation, the agent's sensory-motor coordination and cognitive stability are compiled into the **Agent Developmental Report Card** (`data/agents/<agent_id>/developmental_report_card.txt`) and recorded in `creation.json`.
+
+### Subconscious Motor Actuation Bridge
+
+Rather than forcing language models to emit rigid `<intention>` JSON markup or function-call syntax, the native Dual RWKV-7 architecture decouples motor agency into a bicameral loop:
+- **Subconscious Affordance Impulses** — The continuous RWKV-7 state emits motor affordances via `OutputTrunk.DO` and `OutputTrunk.LOOK` (`has_subconscious_motor_impulse()`).
+- **Natural Intention Parsing** — Conversational prose and natural first-person intentions (e.g. *"I will check `main.py`"*) are parsed directly by `parse_natural_or_wire_intention()`, bypassing brittle JSON wrappers.
+- **Physical Grounding & Authoritative Receipts** — Actions execute through the Native SELF boundary against isolated workspace handlers, verifying mutations via read-back and hash checks and writing receipts directly back to the recurrent tensor state.
+
 Set `HELIX_TASK_COGNITION=active` to override the local config. Active mode currently requires the standard pulse loop and a tool-capable provider (Codex CLI, Gemini, or Anthropic); unsupported combinations safely fall back to observe mode. External mutation is withheld unless the triggering event contains an explicit user request. Internal recall/read operations and direct replies use narrower scopes, and every host action still passes through `ToolExecutor` safety checks.
 
 ### Stability & Affect
@@ -285,6 +305,13 @@ helix_agi/
 │       └── summary.py         #     Final review and commit
 │
 ├── core/                      # Core cognitive modules
+│   ├── nursery/               #   Pre-contact functional developmental sandbox
+│   │   ├── sandbox.py         #     DigitalSandbox filesystem & execution environment
+│   │   ├── curriculum.py      #     NurseryCurriculum 4-stage developmental milestones
+│   │   ├── caregiver.py       #     AttunedCaregiver structured developmental prompter
+│   │   ├── growth_tracker.py  #     GrowthTracker milestone scoring & report card
+│   │   └── simulator.py       #     NurserySimulator headless developmental runner
+│   ├── agent_creation.py      #   Gestation runner & Agent Developmental Report Card
 │   ├── pulse_loop.py          #   Three-state consciousness loop
 │   ├── dual_pulse_loop.py     #   Dual-model pulse orchestration
 │   ├── preconscious.py        #   Concept-based context injection pipeline

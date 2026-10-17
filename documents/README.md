@@ -1,6 +1,6 @@
 # Helix Technical Documentation
 
-**Documentation status:** current index · **Last verified against source:** 2026-08-15
+**Documentation status:** current index · **Last verified against source:** 2026-10-17
 
 Helix documentation is divided by purpose. This distinction matters because the repository retains historical audits and benchmark reports to preserve design history and measured results.
 
@@ -13,7 +13,8 @@ These documents describe the live system on the current branch (`feature/typed-m
 | [Project README](../README.md) | Installation, configuration, features, and operator entry points |
 | [Current Architecture](architecture_current.md) | Canonical runtime wiring, retrieval lanes, Action Path, task cognition, providers, and persistence |
 | [System Manual](../SYSTEM_MANUAL.md) | Detailed subsystem behavior and operating reference |
-| [Action Path Contract](action_path.md) | ActionLeg planning, context budgets, state verifiers, computer interface, and smoke harnesses |
+| [Mindscape Launch Contract](mindscape_launch.md) | Dual RWKV-7 runtime, subconscious motor bridge, pre-contact nursery, and state persistence |
+| [Action Path Contract](action_path.md) | Subconscious motor bridge, ActionLeg planning, context budgets, state verifiers, computer interface |
 | [Task Cognition Pipeline](task_cognition_pipeline.md) | Event-driven task diagram, focus arbitration, and lifecycle |
 | [Context Architecture Fork Comparison](context_architecture_experiments.md) | Same-exam hybrid compiler versus canonical Context Office results |
 | [Test Suite Guide](../tests/TEST_SUITE_README.md) | Test organization and execution |
