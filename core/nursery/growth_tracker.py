@@ -67,7 +67,7 @@ class GrowthTracker:
         avg_chal = sum(self._constructive_challenge_history) / max(1, len(self._constructive_challenge_history))
         return avg_calm, avg_chal
 
-    def render_report_card(self, simulated_days: int = 1, sleep_cycles: int = 1) -> str:
+    def render_report_card(self, simulated_days: int = 1, sleep_cycles: int = 1, evaluation_mode: str = "Live Neural Model Gestation") -> str:
         """Render the human-readable technical Agent Developmental Report Card."""
         avg_calm, avg_chal = self.get_satisfaction_ratio()
         equilibrium_pct = int(round(avg_calm * 100))
@@ -78,6 +78,7 @@ class GrowthTracker:
             "                         Agent Developmental Report Card                        ",
             "================================================================================",
             f"Agent: {self.agent_name}  |  Creator: {self.creator_name}  |  Runtime: Local Dual RWKV-7",
+            f"Evaluation Mode: {evaluation_mode}",
             f"Simulated Cycles: {simulated_days}  |  Sleep Consolidations Completed: {sleep_cycles}",
         ]
         if self.curriculum_stage:

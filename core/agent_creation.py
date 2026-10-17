@@ -186,14 +186,17 @@ def run_functional_nursery_gestation(config, agent_generate_fn=None, cycles=4):
     )
 
     if agent_generate_fn is None:
+        evaluation_mode = "Baseline Component Diagnostic (Static Model Closure)"
         def default_generate(ambient_text):
             return f"I am {agent_name}. My workspace is initialized with {', '.join(sandbox.list_rooms())} rooms. Operating locally with {creator_name}."
         agent_generate_fn = default_generate
+    else:
+        evaluation_mode = "Live Neural Model Gestation"
 
     for _ in range(max(1, int(cycles))):
         simulator.step_cycle(agent_generate_fn=agent_generate_fn)
 
-    summary = simulator.get_developmental_summary()
+    summary = simulator.get_developmental_summary(evaluation_mode=evaluation_mode)
     report_card_text = summary["report_card"]
 
     # Write report card to disk
@@ -209,6 +212,7 @@ def run_functional_nursery_gestation(config, agent_generate_fn=None, cycles=4):
         manifest = config.get("creation", {}).copy()
 
     manifest["gestation_status"] = "gestated_in_functional_nursery"
+    manifest["nursery_evaluation_mode"] = evaluation_mode
     manifest["nursery_report_card"] = report_card_text
     manifest["nursery_simulated_days"] = summary["simulated_days"]
     manifest["nursery_sleep_cycles"] = summary["sleep_cycles"]

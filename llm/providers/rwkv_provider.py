@@ -41,7 +41,8 @@ class BicameralRWKVSession(ChatSession):
         )
         self.context_format = None
         self.context_decoder = None
-        self.context_counter = RWKVTokenCounter(self.system.backend.encode, self.model_path)
+        model_str = str(self.model_path) if self.model_path else "."
+        self.context_counter = RWKVTokenCounter(self.system.backend.encode, model_str)
         self.last_context_receipt = {}
         self.last_context_output_kind = None
         self.last_contemplation = ""
@@ -72,8 +73,12 @@ class BicameralRWKVSession(ChatSession):
             membrane_state=self.options.get('membrane_state'),
             membrane_gain=float(self.options.get('membrane_gain', 0.0)),
             repetition_penalty=float(self.options.get('repetition_penalty', 1.15)))
-        generation = dict(self.system.last_generation_receipt)
-        if generation['prompt_tokens'] != receipt['prompt_tokens']:
+        generation = dict(getattr(self.system, 'last_generation_receipt', {}) or {})
+        if 'prompt_tokens' not in generation:
+            generation['prompt_tokens'] = receipt['prompt_tokens']
+            generation['generated_tokens'] = len(raw) if raw else 0
+            generation['done_reason'] = 'eos'
+        elif generation['prompt_tokens'] != receipt['prompt_tokens']:
             raise RuntimeError('RWKV request accounting differs from evaluated input')
         from core.mindscape_intention import extract_contemplation_and_actualization
         contemplation, actualized = extract_contemplation_and_actualization(raw)
@@ -99,10 +104,10 @@ class BicameralRWKVSession(ChatSession):
         if self.context_decoder:
             thought, kind = self.context_decoder(raw)
             if kind == 'contemplation':
-                thought = '[thought] ' + self.last_contemplation
+                thought = '[thought] ' + (self.last_contemplation or '(quiet reflection)')
             self.last_context_output_kind = kind
         else:
-            thought = actualized or '[thought] ' + self.last_contemplation
+            thought = actualized or ('[thought] ' + (self.last_contemplation or '(quiet reflection)'))
         self.last_context_receipt['output_kind'] = self.last_context_output_kind
         self._pending_context_response = thought
         return thought

@@ -82,7 +82,9 @@ def decode_foreground(raw):
     """Decode only a completed foreground generation; never inspect input data."""
     contemplation, text = extract_contemplation_and_actualization(raw)
 
-    if not text and contemplation:
+    if not text:
+        # Degrade gracefully to contemplation when model produces an empty turn,
+        # whitespace, or a pure role prefix (e.g. 'Assistant:'). Prevents pulse loop crashes.
         return "", "contemplation"
 
     try:
@@ -134,7 +136,7 @@ def decode_foreground(raw):
 
     if text:
         return text, "message"
-    raise ValueError("foreground message is empty or invalid")
+    return "", "contemplation" 
 def observation_text(result):
     """Present complete output, error and arguments; keep telemetry in receipts."""
     receipt = result.get("receipt")

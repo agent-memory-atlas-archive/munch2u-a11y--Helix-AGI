@@ -43,17 +43,55 @@ class TestThoughtActualizationSeparation(unittest.TestCase):
         self.assertEqual(kind, "contemplation")
         self.assertEqual(msg, "")
 
+    def test_decode_foreground_empty_or_role_echo_degrades_to_contemplation(self):
+        # When RWKV outputs pure role headers or empty strings, it must degrade
+        # to quiet contemplation instead of raising ValueError and crashing pulse loop.
+        for raw in ["Assistant:", "Helix:", "AI:", "", "   \n\t  ", "<think></think>", "Assistant: \n\n"]:
+            msg, kind = decode_foreground(raw)
+            self.assertEqual(kind, "contemplation", f"Failed for raw={repr(raw)}")
+            self.assertEqual(msg, "", f"Failed for raw={repr(raw)}")
+
+    def test_session_send_context_on_role_echo_produces_quiet_thought(self):
+        mock_backend = MagicMock()
+        mock_backend.embedding_dimension = 2048
+        mock_backend.torch = MagicMock()
+        mock_backend.device = "cpu"
+        mock_backend.encode.return_value = [1, 2, 3]
+        
+        session = BicameralRWKVSession(
+            model_path="/tmp",
+            backend=mock_backend,
+        )
+        session.system.last_generation_receipt = {
+            'prompt_tokens': 3,
+            'generated_tokens': 1,
+            'done_reason': 'conversation_boundary',
+        }
+        session.context_decoder = decode_foreground
+        # Simulate model outputting only role header Assistant: (the exact crash in audit)
+        session.system.generate_language = MagicMock(return_value="Assistant:")
+        
+        thought = session.send_context("hello")
+        self.assertTrue(thought.startswith("[thought]"), f"Expected [thought], got {repr(thought)}")
+        self.assertEqual(session.last_context_output_kind, "contemplation")
+
     def test_session_captures_last_contemplation_and_clean_speech(self):
         # Mock backend / system to avoid loading full model weights for unit verification
         mock_backend = MagicMock()
         mock_backend.embedding_dimension = 2048
         mock_backend.torch = MagicMock()
         mock_backend.device = "cpu"
+        mock_backend.encode.return_value = [1, 2, 3]
         
         session = BicameralRWKVSession(
-            model_path="",
+            model_path="/tmp",
             backend=mock_backend,
         )
+        session.system.last_generation_receipt = {
+            'prompt_tokens': 3,
+            'generated_tokens': 10,
+            'done_reason': 'eos',
+        }
         # Mock generate_language to simulate RWKV outputting <think> followed by speech
         session.system.generate_language = MagicMock(return_value=(
             "<think>\n"

@@ -125,7 +125,7 @@ class NurserySimulator:
         self._history.append(cycle_receipt)
         return cycle_receipt
 
-    def get_developmental_summary(self) -> Dict[str, Any]:
+    def get_developmental_summary(self, evaluation_mode: str = "Live Neural Model Gestation") -> Dict[str, Any]:
         """Return a structured summary of developmental progress."""
         return {
             "agent_name": self.agent_name,
@@ -133,8 +133,10 @@ class NurserySimulator:
             "simulated_days": self.simulated_days,
             "sleep_cycles": self.sleep_cycles,
             "perseveration_detected": self.perseveration_detected,
+            "evaluation_mode": evaluation_mode,
             "report_card": self.tracker.render_report_card(
                 simulated_days=self.simulated_days,
-                sleep_cycles=self.sleep_cycles
+                sleep_cycles=self.sleep_cycles,
+                evaluation_mode=evaluation_mode,
             ),
         }
