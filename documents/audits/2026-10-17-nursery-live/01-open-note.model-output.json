@@ -1,0 +1,28 @@
+{
+  "completed_at": 1792215073.2401993,
+  "contemplation": "",
+  "context_boundary": "configured assembled input allowance; generation is recurrent",
+  "context_tokens": 8192,
+  "device": "cpu",
+  "done_reason": "conversation_boundary",
+  "evaluated_prompt_tokens": 2751,
+  "generated_tokens": 8,
+  "input_truncated": false,
+  "model": "/home/nemo/habitus-ai-experiments/habitus-mind/models/rwkv7-g1j-1.5b-20260831-2c18b29",
+  "output_token_cap": null,
+  "prompt_sha256": "028e13f52cfff06f444afcb89081b5348e69dd253b9d20ea55d706963b76037a",
+  "prompt_tokens": 2751,
+  "raw_foreground": "Assistant:",
+  "sensory_admissions": [
+    {
+      "producer": "home_filesystem",
+      "source_ids": [
+        "home-sense:696efe355a5741109c2fc593004fa2d5"
+      ],
+      "text": "{\"active_module\": {}, \"content_opened\": false, \"helix_pulse\": 1, \"observation_id\": \"home-sense:696efe355a5741109c2fc593004fa2d5\", \"room\": \"An empty, quiet room for thinking.\", \"surroundings\": {\"content_opened\": false, \"entries\": [], \"extension_hint\": \"\", \"interpretation\": \"filesystem attributes; extension is a hint, not verified content\", \"kind\": \"directory\", \"mode\": 509, \"modified_ns\": 1792213745358686731, \"name\": \"thinking\", \"path\": \"thinking\", \"position\": \"thinking\", \"size_bytes\": 4096}, \"time_ns\": 1792214936831592676}"
+    }
+  ],
+  "started_at": 1792214946.1572733,
+  "status": "complete",
+  "token_counter": "rwkv-local:/home/nemo/habitus-ai-experiments/habitus-mind/models/rwkv7-g1j-1.5b-20260831-2c18b29"
+}

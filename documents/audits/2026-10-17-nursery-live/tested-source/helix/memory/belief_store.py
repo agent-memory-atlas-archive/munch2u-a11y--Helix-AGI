@@ -1,0 +1,1413 @@
+"""
+Helix — Categorized Belief Store
+
+Manages beliefs as categorized .json lists for efficient parallel
+pre-conscious injection. Each category is its own file, allowing the
+subconscious/pre-conscious to pull exactly the right type of belief
+context for the current moment without scanning a monolithic list.
+
+Categories (layered epistemic topology):
+
+  Outer tier — formed in real-time during pulse loop:
+    - premises.json       → Foundational truths, axioms, self-observations
+    - propositions.json   → Learned/derived facts, conditional rules
+    - preferences.json    → Values, likes, behavioral norms
+
+   Inner tier — consolidated nightly by curator:
+    - people.json         → Entity profiles and relational knowledge
+    - skills.json         → Proven tool-backed workflows
+    - desires.json        → Extrapolated/precipitated preferences (deep goals)
+    - concepts.json       → Consolidated conceptual understanding
+
+Each belief entry includes:
+  - id: unique identifier
+  - content: the belief text
+  - mass: computed from cognitive mass equation (m_s + m_a)
+  - confidence: 0.0-1.0 (computed nightly by Cognitive Attrition equation)
+  - verifications: float — reaffirmation count (drives V component of attrition)
+  - stability_index: 0.0-1.0 — destabilizing (0) to stabilizing (1)
+  - relations: list[str] — IDs of logically related beliefs
+  - memory_refs: list[str] — IDs of source memories
+  - position_8d: list[float] — permanent 8D manifold coordinates
+  - encoding_lagrangian: dict — somatic state at encoding {omega, s_total, H, D_KL}
+  - created_at: ISO 8601 timestamp
+  - last_accessed: ISO 8601 timestamp
+  - access_count: times relied upon
+  - source: what formed this belief
+
+Cognitive Mass Equation (from δ∫(H + λ·D_KL)dt = 0):
+  Mass = m_s + m_a
+  m_s = confidence                    (intrinsic structural mass)
+  m_a = Ω_encoding × (1 - s_total) × (0.5 + stability)   (affective charge)
+
+  NOTE: relation count is deliberately excluded from individual mass.
+  Cluster gravity emerges from spatial density — related beliefs near
+  each other in 8D space naturally concentrate gravitational potential
+  on nearby anchors. Individual mass inflation from relations caused
+  a self-reinforcing loop: relations → mass ↑ → gravity ↑ → co-injection → more relations.
+
+Cognitive Attrition Equation (nightly):
+  C = min(1.0, (Base + w_T + w_R + w_V) × (0.5 + S))
+  Where: T=time held, R=reliance (inbound refs), V=verifications, S=stability
+"""
+
+import json
+import os
+import math
+import logging
+from datetime import datetime
+from typing import Optional, List, Dict, Any
+
+logger = logging.getLogger("helix.memory.belief_store")
+
+
+def _now_iso() -> str:
+    return datetime.now().astimezone().isoformat(timespec="seconds")
+
+
+# ── Category Definitions ─────────────────────────────────────────────
+# Layered epistemic topology. Outer tier beliefs form in real-time.
+# Inner tier beliefs consolidate nightly from outer tier clusters.
+# See core/belief_cosmology.py for spatial mechanics.
+
+BELIEF_CATEGORIES = {
+    # Outer tier (simple observations, formed in real-time)
+    "premises": "premises.json",            # Foundational truths, axioms, self-observations
+    "propositions": "propositions.json",    # Learned/derived facts, conditional rules
+    "preferences": "preferences.json",      # Values, likes, behavioral norms
+    # Inner tier (dense consolidated, formed nightly by curator)
+    "people": "people.json",                # Entity profiles (includes Helix)
+    "skills": "skills.json",                # Proven tool-backed workflows
+    "desires": "desires.json",              # Long-term goals and aspirations
+    "concepts": "concepts.json",            # Consolidated conceptual understanding
+}
+
+
+# Template for a person profile entry (stored within people.json)
+PERSON_PROFILE_TEMPLATE = {
+    "name": "",
+    "relationship": "",
+    "traits": [],
+    "communication_style": "",
+    "last_contact": "",
+    "notes": "",
+}
+
+
+class BeliefStore:
+    """Categorized belief management with individual .json files per category.
+
+    The conscious mind can save newly formed beliefs here.
+    The pre-conscious system pulls from specific categories to assemble
+    the richest possible context for each moment.
+    """
+
+    # Mass threshold for a belief to be considered "deeply held" (objective knowledge)
+    DEEP_CONVICTION_MASS = 5.0
+
+    def __init__(self, data_dir: str):
+        self.data_dir = data_dir
+        os.makedirs(data_dir, exist_ok=True)
+        self._ensure_files()
+        self._physics = None
+        self._memory = None
+
+    def set_runtime(self, physics_engine=None, memory_manager=None):
+        """Attach live runtime services used for immediate belief syncing."""
+        if physics_engine is not None:
+            self._physics = physics_engine
+        if memory_manager is not None:
+            self._memory = memory_manager
+
+    def _normalize_belief(
+        self,
+        belief: Dict[str, Any],
+        *,
+        category: Optional[str] = None,
+        recompute_mass: bool = False,
+        preserve_mass: bool = False,
+    ) -> Dict[str, Any]:
+        """Normalize belief fields into a canonical runtime shape."""
+        belief["confidence"] = max(0.0, min(1.0, float(belief.get("confidence", 0.5))))
+        belief["stability_index"] = max(0.0, min(1.0, float(belief.get("stability_index", 0.5))))
+        belief["verifications"] = float(belief.get("verifications", 1.0))
+        belief["access_count"] = int(belief.get("access_count", 0))
+        belief["relations"] = list(dict.fromkeys(belief.get("relations", []) or []))
+        belief["memory_refs"] = list(dict.fromkeys(belief.get("memory_refs", []) or []))
+        belief["tags"] = list(dict.fromkeys(belief.get("tags", []) or []))
+
+        lag = belief.get("encoding_lagrangian", {})
+        if not isinstance(lag, dict):
+            lag = {}
+        belief["encoding_lagrangian"] = {
+            "omega": max(0.0, min(1.0, float(lag.get("omega", 0.5)))),
+            "s_total": max(0.0, min(1.0, float(lag.get("s_total", 0.15)))),
+            "H": float(lag.get("H", 0.15)),
+            "D_KL": float(lag.get("D_KL", 0.0)),
+        }
+        belief["weight"] = self._resolve_weight(belief["confidence"])
+
+        mass = belief.get("mass")
+        should_recompute = (
+            recompute_mass
+            or mass is None
+            or float(mass) <= 0.0
+            or (float(mass) == 1.0 and not preserve_mass)
+        )
+        if should_recompute:
+            belief["mass"] = round(self.compute_cognitive_mass(belief), 4)
+        else:
+            belief["mass"] = round(max(0.01, float(mass)), 4)
+
+        if category:
+            belief["_category"] = category
+
+        return belief
+
+    def _append_belief_snapshot(self, belief: Dict[str, Any], category: str, embedding_384d=None):
+        """Persist the latest belief state into the journal."""
+        if not self._memory or not hasattr(self._memory, "journal"):
+            return
+
+        pulse_id = 0
+        if self._physics is not None:
+            pulse_id = int(getattr(self._physics, "_pulse_count", 0))
+
+        metadata = {
+            "category": category,
+            "mass": belief.get("mass", 1.0),
+            "confidence": belief.get("confidence", 0.5),
+            "weight": belief.get("weight", "surface"),
+            "source": belief.get("source", ""),
+            "verifications": belief.get("verifications", 1.0),
+            "stability_index": belief.get("stability_index", 0.5),
+            "relations": belief.get("relations", []),
+            "memory_refs": belief.get("memory_refs", []),
+            "created_at": belief.get("created_at", ""),
+            "last_accessed": belief.get("last_accessed", ""),
+            "access_count": belief.get("access_count", 0),
+            "tags": belief.get("tags", []),
+            "formation_type": belief.get("formation_type", ""),
+            "term": belief.get("term", ""),
+            "aliases": belief.get("aliases", []),
+            "volatile_mass": belief.get("volatile_mass", 0.0),
+        }
+        self._memory.journal.append_belief(
+            id=str(belief.get("id", "")),
+            content=belief.get("content", ""),
+            position_8d=belief.get("position_8d") or [],
+            pulse_id=pulse_id,
+            lagrangian=belief.get("encoding_lagrangian", {}),
+            metadata=metadata,
+            embedding_384d=embedding_384d,
+        )
+
+    def _sync_runtime(self, belief: Dict[str, Any], category: str):
+        """Upsert the belief into live runtime stores and persist the canonical position."""
+        normalized = dict(belief)
+        normalized["_category"] = category
+        embedding = None
+
+        try:
+            if self._physics is not None:
+                position, embedding = self._physics.sync_belief_record(normalized)
+                if position:
+                    normalized["position_8d"] = position
+        except Exception as e:
+            logger.warning("Belief runtime sync failed for %s: %s", belief.get("id", ""), e)
+
+        try:
+            self._append_belief_snapshot(normalized, category, embedding_384d=embedding)
+        except Exception as e:
+            logger.warning("Belief journal snapshot failed for %s: %s", belief.get("id", ""), e)
+        return normalized
+
+    def _resync_all_beliefs(self):
+        """Refresh the live runtime state from persisted beliefs."""
+        if self._physics is None:
+            return
+        for belief in self.get_all_beliefs_flat():
+            self._sync_runtime(belief, belief.get("_category", ""))
+
+    def generate_id(self, category: str) -> str:
+        """Generate a uniform belief ID: {prefix}_{YYYYMMDD}_{sequence}.
+
+        Example: pre_20260515_001
+        """
+        _PREFIXES = {
+            "premises": "pre",
+            "propositions": "pro",
+            "preferences": "prf",
+            "people": "ppl",
+            "skills": "skl",
+            "desires": "des",
+            "concepts": "con",
+        }
+        prefix = _PREFIXES.get(category, category[:3].lower())
+        date_str = datetime.now().strftime("%Y%m%d")
+
+        # Determine sequence by counting today's beliefs in this category
+        beliefs = self._read_category(category)
+        today_prefix = f"{prefix}_{date_str}_"
+        seq = 1
+        for b in beliefs:
+            if b.get("id", "").startswith(today_prefix):
+                seq += 1
+
+        return f"{today_prefix}{seq:03d}"
+
+    def _ensure_files(self):
+        """Create empty category files if they don't exist."""
+        for category, filename in BELIEF_CATEGORIES.items():
+            filepath = os.path.join(self.data_dir, filename)
+            if not os.path.exists(filepath):
+                with open(filepath, 'w') as f:
+                    json.dump([], f, indent=2)
+
+    def _read_category(self, category: str) -> List[Dict[str, Any]]:
+        """Read all beliefs from a category file."""
+        # Normalize singular → plural (LLM often returns singular forms)
+        _SINGULAR_MAP = {
+            "premise": "premises", "proposition": "propositions",
+            "preference": "preferences", "person": "people",
+            "skill": "skills", "desire": "desires", "concept": "concepts",
+        }
+        category = _SINGULAR_MAP.get(category, category)
+        filename = BELIEF_CATEGORIES.get(category)
+        if not filename:
+            logger.warning(f"Unknown belief category: {category}")
+            return []
+        filepath = os.path.join(self.data_dir, filename)
+        try:
+            with open(filepath, 'r') as f:
+                return json.load(f)
+        except Exception as e:
+            logger.warning(f"Failed to read {filepath}: {e}")
+            return []
+
+    def _write_category(self, category: str, beliefs: List[Dict[str, Any]]):
+        """Write all beliefs to a category file."""
+        # Normalize singular → plural
+        _SINGULAR_MAP = {
+            "premise": "premises", "proposition": "propositions",
+            "preference": "preferences", "person": "people",
+            "skill": "skills", "desire": "desires", "concept": "concepts",
+        }
+        category = _SINGULAR_MAP.get(category, category)
+        filename = BELIEF_CATEGORIES.get(category)
+        if not filename:
+            return
+        filepath = os.path.join(self.data_dir, filename)
+        serialized = []
+        for belief in beliefs:
+            clean = dict(belief)
+            clean.pop("_category", None)
+            serialized.append(clean)
+        try:
+            with open(filepath, 'w') as f:
+                json.dump(serialized, f, indent=2)
+        except Exception as e:
+            logger.warning(f"Failed to write {filepath}: {e}")
+
+    # ── Write Operations ─────────────────────────────────────────────
+
+    def add_belief(
+        self,
+        category: str,
+        belief_id: str,
+        content: str,
+        mass: float = 1.0,
+        confidence: float = 0.5,
+        source: str = "system",
+        generation: int = None,
+        component_ids: list = None,
+        verifications: float = 1.0,
+        stability_index: float = 0.5,
+        relations: list = None,
+        memory_refs: list = None,
+        position_8d: list = None,
+        encoding_lagrangian: dict = None,
+        **extra_fields,
+    ) -> bool:
+        """Add a new belief to a category.
+
+        Returns True if added, False if duplicate id exists.
+
+        Args:
+            category: Belief category (premises, propositions, etc.)
+            belief_id: Unique identifier
+            content: The belief text
+            mass: Gravitational weight (computed from cognitive mass eq)
+            confidence: 0.0-1.0 (initial, recomputed nightly by attrition eq)
+            source: What formed this belief
+            generation: Dream engine pass number (0=memory, 1=simple, 2+=compound)
+            component_ids: IDs of beliefs/memories this was synthesized from
+            verifications: Times reaffirmed (drives V in attrition equation)
+            stability_index: 0.0 (destabilizing) to 1.0 (stabilizing)
+            relations: IDs of logically related beliefs
+            memory_refs: IDs of source memories (provenance)
+            position_8d: 8D manifold coordinates [x0..x7]
+            encoding_lagrangian: Somatic state at encoding {omega, s_total, H, D_KL}
+            **extra_fields: Additional fields (term, aliases, formation_type,
+                           cluster_binding_gravity, etc.) stored as-is.
+        """
+        beliefs = self._read_category(category)
+
+        # Check for duplicate
+        for b in beliefs:
+            if b.get("id") == belief_id:
+                logger.debug(f"Belief {belief_id} already exists in {category}")
+                return False
+
+        now = _now_iso()
+        belief = {
+            "id": belief_id,
+            "content": content,
+            "mass": mass,
+            "confidence": max(0.0, min(1.0, confidence)),
+            "source": source,
+            "created_at": now,
+            "last_accessed": now,
+            "access_count": 0,
+            "verifications": float(verifications),
+            "stability_index": float(stability_index),
+            "relations": relations or [],
+            "memory_refs": memory_refs or [],
+            "position_8d": position_8d,
+            "encoding_lagrangian": encoding_lagrangian or {
+                "omega": 0.5, "s_total": 0.15, "H": 0.15, "D_KL": 0.0,
+            },
+        }
+
+        # Optional dream engine metadata
+        if generation is not None:
+            belief["generation"] = generation
+        if component_ids:
+            belief["component_ids"] = component_ids
+
+        # Store any extra fields (Layer 2: term, aliases, formation_type, etc.)
+        for key, val in extra_fields.items():
+            if key not in belief:  # Don't override core fields
+                belief[key] = val
+
+        # Ensure creation_epoch is set
+        if "creation_epoch" not in belief:
+            try:
+                total_beliefs = len(self.get_all_beliefs_flat())
+            except Exception:
+                total_beliefs = 0
+            belief["creation_epoch"] = total_beliefs
+
+        belief = self._normalize_belief(
+            belief,
+            category=category,
+            preserve_mass=mass not in (None, 1.0),
+        )
+        belief = self._sync_runtime(belief, category)
+        beliefs.append(belief)
+        self._write_category(category, beliefs)
+        logger.info(f"Added belief '{belief_id}' to {category} (mass={mass}, conf={confidence:.2f})")
+        return True
+
+    def update_belief_mass(self, category: str, belief_id: str, mass_delta: float):
+        """Increase or decrease a belief's mass (gravitational weight)."""
+        beliefs = self._read_category(category)
+        for b in beliefs:
+            if b.get("id") == belief_id:
+                b["mass"] = max(0.1, b.get("mass", 1.0) + mass_delta)
+                b["last_accessed"] = _now_iso()
+                b["access_count"] = b.get("access_count", 0) + 1
+                self._normalize_belief(b, category=category, preserve_mass=True)
+                self._write_category(category, beliefs)
+                self._sync_runtime(b, category)
+                return
+        logger.debug(f"Belief {belief_id} not found in {category}")
+
+    def touch_belief(self, category: str, belief_id: str):
+        """Increment access_count and update last_accessed for a belief."""
+        beliefs = self._read_category(category)
+        for b in beliefs:
+            if b.get("id") == belief_id:
+                b["access_count"] = b.get("access_count", 0) + 1
+                b["last_accessed"] = _now_iso()
+                # Access drives temperature (recency heat) not permanent mass.
+                # Mass is intrinsic — only confidence and affective charge.
+                self._normalize_belief(b, category=category, preserve_mass=True)
+                self._write_category(category, beliefs)
+                self._sync_runtime(b, category)
+                return
+
+    def remove_belief(self, category: str, belief_id: str) -> bool:
+        """Remove a belief from a category. Returns True if found and removed."""
+        beliefs = self._read_category(category)
+        original_count = len(beliefs)
+        beliefs = [b for b in beliefs if b.get("id") != belief_id]
+        if len(beliefs) < original_count:
+            self._write_category(category, beliefs)
+            if self._physics is not None:
+                self._physics.remove_belief_point(belief_id)
+            logger.info(f"Removed belief '{belief_id}' from {category}")
+            return True
+        return False
+
+    def archive_belief(self, category: str, belief_id: str) -> bool:
+        """Archive a belief by setting its mass to 0.01 and tagging it."""
+        beliefs = self._read_category(category)
+        for b in beliefs:
+            if b.get("id") == belief_id:
+                b["mass"] = 0.01
+                tags = b.get("tags", [])
+                if "archived" not in tags:
+                    tags.append("archived")
+                b["tags"] = tags
+                b["last_accessed"] = _now_iso()
+                self._normalize_belief(b, category=category, preserve_mass=True)
+                self._write_category(category, beliefs)
+                self._sync_runtime(b, category)
+                logger.info(f"Archived belief '{belief_id}' in {category}")
+                return True
+        logger.debug(f"Belief {belief_id} not found for archiving in {category}")
+        return False
+
+    def update_stability_index(
+        self, belief_id: str, delta: float,
+        clamp_min: float = 0.0, clamp_max: float = 1.0,
+    ) -> bool:
+        """Adjust a belief's stability_index by delta.
+
+        Called on:
+          - Verification (+0.05): new observation confirms this belief
+          - Contradiction (-0.10): new observation conflicts with this belief
+          - Creation: set from the StabilitySentinel's current omega (Ω)
+
+        Higher stability → higher cognitive mass → stronger gravity.
+        This creates the positive feedback loop: beliefs that prove
+        correct gain mass and naturally outcompete older, less stable beliefs.
+        """
+        for category in BELIEF_CATEGORIES:
+            beliefs = self._read_category(category)
+            for b in beliefs:
+                if b.get("id") == belief_id:
+                    old_si = float(b.get("stability_index", 0.5))
+                    new_si = max(clamp_min, min(clamp_max, old_si + delta))
+                    b["stability_index"] = round(new_si, 4)
+                    self._normalize_belief(
+                        b,
+                        category=category,
+                        recompute_mass=True,
+                    )
+                    self._write_category(category, beliefs)
+                    self._sync_runtime(b, category)
+                    logger.debug(
+                        f"Stability index updated: {belief_id} "
+                        f"{old_si:.3f} → {new_si:.3f} (Δ={delta:+.3f})"
+                    )
+                    return True
+        logger.debug(f"Belief {belief_id} not found for stability update")
+        return False
+
+    # ── Cross-Category Belief Lookup ─────────────────────────────────
+    #    These methods search across ALL categories because the relation
+    #    graph is cross-category (a self_identity belief can relate to a
+    #    knowledge belief). This was implicit in V3-V7 because all beliefs
+    #    lived in one file. With category files, we must scan all.
+
+    def get_belief(self, belief_id: str) -> Optional[Dict[str, Any]]:
+        """Look up a belief by ID across all categories.
+
+        Returns the belief dict with '_category' tag, or None if not found.
+        This is the primary lookup used by the relation graph, merge logic,
+        and justification chain traversal.
+        """
+        for category in BELIEF_CATEGORIES:
+            beliefs = self._read_category(category)
+            for b in beliefs:
+                if b.get("id") == belief_id:
+                    return self._normalize_belief(dict(b), category=category)
+        return None
+
+    def update_belief(self, belief_id: str, **updates) -> Optional[Dict[str, Any]]:
+        """Update fields of an existing belief.
+
+        Searches across all categories. Allowed fields:
+        content, relations, memory_refs, confidence, verifications,
+        stability_index, position_8d, mass, last_accessed, access_count.
+        """
+        allowed_fields = {
+            "content", "relations", "memory_refs", "confidence",
+            "verifications", "stability_index", "position_8d",
+            "mass", "last_accessed", "access_count",
+            "encoding_lagrangian", "tags", "tool_bindings",
+        }
+
+        for category in BELIEF_CATEGORIES:
+            beliefs = self._read_category(category)
+            for b in beliefs:
+                if b.get("id") == belief_id:
+                    for key, value in updates.items():
+                        if key in allowed_fields:
+                            b[key] = value
+
+                    # Clamp confidence
+                    if "confidence" in updates:
+                        b["confidence"] = max(0.0, min(1.0, b["confidence"]))
+
+                    self._normalize_belief(
+                        b,
+                        category=category,
+                        recompute_mass=(
+                            "confidence" in updates
+                            or "stability_index" in updates
+                            or "encoding_lagrangian" in updates
+                        ) and "mass" not in updates,
+                        preserve_mass="mass" in updates,
+                    )
+
+                    self._write_category(category, beliefs)
+                    synced = self._sync_runtime(b, category)
+                    logger.info(f"Belief updated: {belief_id} ({list(updates.keys())})")
+                    return synced
+
+        logger.warning(f"Belief not found for update: {belief_id}")
+        return None
+
+    def get_beliefs_by_tool(self, tool_name: str, limit: int = 10) -> List[Dict[str, Any]]:
+        """Return beliefs whose tool_bindings contain the given tool name.
+
+        Sorted by stability_index descending. Used by the preconscious
+        to pull targeted lessons when a tool is actively in use.
+        """
+        tool_lower = tool_name.strip().lower()
+        matches = []
+        for b in self.get_all_beliefs_flat():
+            bindings = b.get("tool_bindings", [])
+            if not isinstance(bindings, list):
+                continue
+            if any(
+                isinstance(tb, str) and tb.strip().lower() == tool_lower
+                for tb in bindings
+            ):
+                matches.append(b)
+
+        matches.sort(
+            key=lambda b: b.get("stability_index", 0.5),
+            reverse=True,
+        )
+        return matches[:limit]
+
+    # ── Relation Graph Operations (Restored from V3-V7) ──────────────
+
+    def get_related(self, belief_id: str) -> List[Dict[str, Any]]:
+        """Get all beliefs related to this belief (bidirectional).
+
+        Relations are symmetric — if A relates to B, B relates to A.
+        Searches across all categories because relations are cross-category.
+        """
+        related = []
+        belief = self.get_belief(belief_id)
+        if not belief:
+            return related
+
+        # Direct relations from this belief
+        for rel_id in belief.get("relations", []):
+            rel = self.get_belief(rel_id)
+            if rel:
+                related.append(rel)
+
+        # Other beliefs that point to this one (inbound)
+        all_beliefs = self.get_all_beliefs_flat()
+        for b in all_beliefs:
+            if b.get("id") != belief_id and belief_id in b.get("relations", []):
+                if not any(r.get("id") == b.get("id") for r in related):
+                    related.append(b)
+
+        return related
+
+    def get_justification_chain(
+        self, belief_id: str, depth: int = 2
+    ) -> List[Dict[str, Any]]:
+        """Get the peripheral 'why' chain for a belief.
+
+        Returns 1-2 layers of related beliefs that form the justification
+        path back toward core/deep beliefs. When Helix's thought touches
+        on a belief, the memory system can surface this chain as:
+
+        'I believe X because Y, and Y because Z.'
+
+        This provides intuitive justification without needing to dump
+        the entire belief graph into the context window.
+
+        Args:
+            belief_id: The belief to justify.
+            depth: How many layers deep to traverse (default 2).
+
+        Returns:
+            List of belief dicts forming the justification chain,
+            ordered from the target belief outward (deepest first).
+        """
+        belief = self.get_belief(belief_id)
+        if not belief:
+            return []
+
+        chain = []
+        visited = {belief_id}
+        current_layer = [belief]
+
+        for _ in range(depth):
+            next_layer = []
+            for b in current_layer:
+                for rel_id in b.get("relations", []):
+                    if rel_id not in visited:
+                        visited.add(rel_id)
+                        rel = self.get_belief(rel_id)
+                        if rel:
+                            chain.append(rel)
+                            next_layer.append(rel)
+            current_layer = next_layer
+
+        return chain
+
+    def get_surface_by_topic(self, topic: str, limit: int = 3) -> List[Dict[str, Any]]:
+        """Select beliefs most relevant to a topic.
+
+        Uses two signals:
+        1. Keyword overlap with the topic (direct relevance)
+        2. Relation-graph proximity to beliefs that match the topic
+
+        This replaces loading all beliefs and hoping the curator trims
+        correctly. Instead we select surgically: max `limit` beliefs,
+        directly relevant to the current thought chain.
+
+        Args:
+            topic: Space-separated topic keywords from recent thoughts.
+            limit: Maximum number of beliefs to return.
+        """
+        all_beliefs = self.get_all_beliefs_flat()
+        if not all_beliefs:
+            return []
+
+        topic_lower = topic.lower()
+        topic_words = set(topic_lower.split())
+
+        scored = []
+        for b in all_beliefs:
+            content_words = set(b.get("content", "").lower().split())
+            # Direct keyword overlap
+            overlap = len(topic_words & content_words)
+            score = overlap * b.get("confidence", 0.5)
+
+            # Bonus: if this belief relates to another belief that
+            # matches the topic, it gets a relevance boost
+            for rel_id in b.get("relations", []):
+                rel = self.get_belief(rel_id)
+                if rel:
+                    rel_words = set(rel.get("content", "").lower().split())
+                    rel_overlap = len(topic_words & rel_words)
+                    if rel_overlap > 0:
+                        score += rel_overlap * 0.5  # Weaker signal
+
+            if score > 0:
+                scored.append((score, b))
+
+        scored.sort(key=lambda x: x[0], reverse=True)
+        return [b for _, b in scored[:limit]]
+
+    def adjust_confidence(
+        self, belief_id: str, delta: float, reason: str = ""
+    ) -> Optional[Dict[str, Any]]:
+        """Adjust a belief's confidence up or down.
+
+        This is the primary mechanism for beliefs strengthening or weakening
+        over time through experience.
+
+        Args:
+            belief_id: The belief to adjust.
+            delta: Positive to strengthen, negative to weaken.
+            reason: Optional reason for logging.
+        """
+        belief = self.get_belief(belief_id)
+        if not belief:
+            return None
+
+        old = belief.get("confidence", 0.5)
+        new = max(0.0, min(1.0, old + delta))
+
+        logger.info(
+            f"Belief confidence: {belief_id} {old:.2f} → {new:.2f} "
+            f"({delta:+.2f}) {reason}"
+        )
+
+        # If confidence drops to zero, the belief effectively dies
+        if new <= 0.0:
+            logger.info(f"Belief {belief_id} lost all confidence — removing")
+            category = belief.get("_category")
+            if category:
+                self.remove_belief(category, belief_id)
+            return None
+
+        return self.update_belief(belief_id, confidence=new)
+
+    # ── Non-Destructive Merge (Restored from V3-V7) ──────────────────
+
+    def find_near_duplicates(self, threshold: float = 0.75) -> List[tuple]:
+        """Find semantically similar belief pairs.
+
+        Used during nap/sleep for deduplication. Returns pairs of
+        (belief_id_1, belief_id_2, similarity_score).
+        """
+        from difflib import SequenceMatcher
+
+        all_beliefs = self.get_all_beliefs_flat()
+        duplicates = []
+
+        for i, a in enumerate(all_beliefs):
+            for b in all_beliefs[i + 1:]:
+                sim = SequenceMatcher(
+                    None,
+                    a.get("content", "").lower(),
+                    b.get("content", "").lower(),
+                ).ratio()
+
+                if sim >= threshold:
+                    duplicates.append((a.get("id"), b.get("id"), round(sim, 3)))
+
+        return duplicates
+
+    def merge_beliefs(
+        self, keep_id: str, merge_id: str, reason: str = ""
+    ) -> Optional[Dict[str, Any]]:
+        """Merge near-duplicate beliefs. Keeps the more confident version.
+
+        Per V3 philosophy: near-duplicates are the only pathological pattern.
+        This runs during nap/sleep, NOT during waking consciousness.
+
+        NON-DESTRUCTIVE: The winner keeps its ID, absorbs the loser's
+        relations and memory_refs, and all relation pointers in the
+        entire graph that pointed to the loser are redirected to the winner.
+        The loser is then removed.
+        """
+        keep = self.get_belief(keep_id)
+        merge = self.get_belief(merge_id)
+
+        if not keep or not merge:
+            logger.warning(f"Cannot merge: {keep_id} or {merge_id} not found")
+            return None
+
+        keep_cat = keep.get("_category")
+        merge_cat = merge.get("_category")
+
+        if not keep_cat or not merge_cat:
+            logger.warning(f"Cannot merge: missing category for {keep_id} or {merge_id}")
+            return None
+
+        # Absorb memory refs from the loser
+        combined_refs = list(set(
+            keep.get("memory_refs", []) + merge.get("memory_refs", [])
+        ))
+
+        # Absorb relations from the loser
+        combined_relations = list(set(
+            keep.get("relations", []) + merge.get("relations", [])
+        ))
+        # Remove self-reference if any
+        combined_relations = [r for r in combined_relations if r != keep_id]
+
+        # Take the higher confidence
+        combined_confidence = max(
+            keep.get("confidence", 0.5),
+            merge.get("confidence", 0.5),
+        )
+
+        # Accumulate mass — gravitational accretion on merge
+        # Capped at 20.0 to prevent runaway mass from chain merges
+        combined_mass = min(
+            20.0,
+            keep.get("mass", 1.0) + merge.get("mass", 1.0),
+        )
+
+        # Sum verifications
+        combined_verifications = (
+            keep.get("verifications", 1.0) + merge.get("verifications", 1.0)
+        )
+
+        # Sum access counts
+        combined_access = (
+            keep.get("access_count", 0) + merge.get("access_count", 0)
+        )
+
+        # Update the winner with absorbed data
+        self.update_belief(
+            keep_id,
+            memory_refs=combined_refs,
+            relations=combined_relations,
+            confidence=combined_confidence,
+            mass=combined_mass,
+            verifications=combined_verifications,
+            access_count=combined_access,
+        )
+
+        # Update ALL beliefs across ALL categories: any relation pointing
+        # to the loser should now point to the winner
+        for category in BELIEF_CATEGORIES:
+            beliefs = self._read_category(category)
+            changed = False
+            for b in beliefs:
+                if merge_id in b.get("relations", []):
+                    b["relations"] = [
+                        keep_id if r == merge_id else r
+                        for r in b["relations"]
+                    ]
+                    changed = True
+            if changed:
+                self._write_category(category, beliefs)
+
+        # Remove the loser
+        self.remove_belief(merge_cat, merge_id)
+
+        logger.info(f"Beliefs merged: {merge_id} → {keep_id} ({reason})")
+        return self.get_belief(keep_id)
+
+    # ── Context Assembly (Restored from V3-V7) ───────────────────────
+
+    def get_context_beliefs(self, limit: int = 50) -> List[Dict[str, Any]]:
+        """Get beliefs that should be in the context window.
+
+        Returns the highest-confidence beliefs across all categories.
+        In V3-V7 this returned core + deep weight tiers. Here we return
+        beliefs with confidence >= 0.60 (the 'deep' threshold), sorted
+        by confidence descending.
+        """
+        all_beliefs = self.get_all_beliefs_flat()
+        # Filter to deep+ tier (confidence >= 0.60)
+        context = [b for b in all_beliefs if b.get("confidence", 0) >= 0.60]
+        context.sort(key=lambda b: b.get("confidence", 0), reverse=True)
+        return context[:limit]
+
+    def format_for_context(self, beliefs: List[Dict[str, Any]] = None) -> str:
+        """Format beliefs as a clean text block for context window injection.
+
+        Produces minimal, scannable output like:
+            • I am Helix. [0.99]
+            • I am an AI. [0.99]
+            • Alice is trustworthy. [0.95]
+        """
+        if beliefs is None:
+            beliefs = self.get_context_beliefs()
+
+        if not beliefs:
+            return ""
+
+        lines = []
+        for b in beliefs:
+            conf = b.get("confidence", 0.5)
+            lines.append(f"• {b.get('content', '')} [{conf:.2f}]")
+
+        return "\n".join(lines)
+
+    # ── Equilibrium Confidence (from V6-7) ────────────────────────────
+
+    PRUNING_THRESHOLD = 0.20
+    _ATTRITION_BASE = 0.20  # ground-state energy = vacuum threshold
+
+    def compute_equilibrium_confidence(self, belief: dict) -> float:
+        """Compute the thermodynamic equilibrium confidence for a belief.
+
+        Uses the same Calculated Cognitive Attrition equation that runs
+        nightly, applied once at insertion time. A new belief enters the
+        graph at its ground state — confidence emergent from:
+
+          C = min(1.0, (base + T + R + V) × (0.5 + S))
+
+        where:
+          base = PRUNING_THRESHOLD (vacuum energy floor)
+          T = time-survival score (0 for new beliefs)
+          R = reliance score (how many beliefs reference this one)
+          V = verification score (reaffirmation count)
+          S = stability index (from Lagrangian encoding at formation)
+
+        This ensures no arbitrary initial confidence — the number is
+        derived from the belief's actual structural properties.
+        """
+        # Time (T) — log curve: day 0 = 0, day 30 = 0.40
+        try:
+            created = belief.get("created_at", "")
+            if "T" in created:
+                formed_date = datetime.fromisoformat(created.split("T")[0])
+            else:
+                formed_date = datetime.strptime(created, "%Y-%m-%d")
+            days_held = max(0.0, (datetime.now() - formed_date).days)
+        except (ValueError, TypeError):
+            days_held = 0.0
+        t_score = 0.40 * min(1.0, math.log2(days_held + 1) / math.log2(31))
+
+        # Reliance (R) — how many OTHER beliefs reference this one
+        bid = belief.get("id", "")
+        all_beliefs = self.get_all_beliefs_flat()
+        inbound = sum(
+            1 for b in all_beliefs
+            if bid in b.get("relations", []) and b.get("id") != bid
+        )
+        r_score = 0.20 * min(1.0, inbound / 5.0)
+
+        # Verifications (V)
+        v_count = float(belief.get("verifications", 1.0))
+        v_score = 0.20 * min(1.0, v_count / 10.0)
+
+        # Stability modifier (S)
+        s_index = float(belief.get("stability_index", 0.5))
+        s_modifier = 0.5 + s_index
+
+        conf = min(1.0, (self._ATTRITION_BASE + t_score + r_score + v_score) * s_modifier)
+        return round(max(0.01, conf), 3)  # 0.01 epsilon to avoid zero-mass
+
+    # ── Read Operations (for Pre-Conscious) ──────────────────────────
+
+    def get_category(self, category: str, limit: int = 50) -> List[Dict[str, Any]]:
+        """Get beliefs from a category, sorted by mass (heaviest first)."""
+        beliefs = [
+            self._normalize_belief(dict(b), category=category)
+            for b in self._read_category(category)
+        ]
+        beliefs.sort(key=lambda b: b.get("mass", 0), reverse=True)
+        return beliefs[:limit]
+
+    def get_heaviest(self, category: str, limit: int = 5) -> List[Dict[str, Any]]:
+        """Get the heaviest (most deeply held) beliefs from a category."""
+        return self.get_category(category, limit=limit)
+
+    def get_all_beliefs_flat(self) -> List[Dict[str, Any]]:
+        """Get ALL beliefs across all categories as one flat list.
+
+        Used for the spatial representation / gravitational simulation.
+        Each entry is tagged with its category.
+        """
+        all_beliefs = []
+        for category in BELIEF_CATEGORIES:
+            beliefs = [
+                self._normalize_belief(dict(b), category=category)
+                for b in self._read_category(category)
+            ]
+            all_beliefs.extend(beliefs)
+        return all_beliefs
+
+    def search_beliefs(self, query: str, categories: Optional[List[str]] = None) -> List[Dict[str, Any]]:
+        """Simple keyword search across specified categories (or all).
+
+        Used by pre-conscious for fast, no-embedding belief matching.
+        """
+        if categories is None:
+            categories = list(BELIEF_CATEGORIES.keys())
+
+        query_words = set(query.lower().split())
+        # Filter to meaningful words (length > 3)
+        query_words = {w for w in query_words if len(w) > 3}
+
+        results = []
+        for category in categories:
+            beliefs = self._read_category(category)
+            for b in beliefs:
+                content_words = set(b.get("content", "").lower().split())
+                overlap = query_words & content_words
+                if len(overlap) >= 1:
+                    b["_category"] = category
+                    b["_match_score"] = len(overlap)
+                    results.append(b)
+
+        results.sort(key=lambda b: (b.get("_match_score", 0), b.get("mass", 0)), reverse=True)
+        return results
+
+    # ── People Profiles ──────────────────────────────────────────────
+
+    def add_person_profile(
+        self,
+        name: str,
+        relationship: str = "",
+        traits: Optional[List[str]] = None,
+        communication_style: str = "",
+        notes: str = "",
+    ) -> bool:
+        """Add a person profile as a belief in the 'people' category."""
+        belief_id = f"person_{name.lower().replace(' ', '_')}"
+        content = f"{name}"
+        if relationship:
+            content += f" — {relationship}"
+        if traits:
+            content += f". Traits: {', '.join(traits)}"
+        if communication_style:
+            content += f". Style: {communication_style}"
+        if notes:
+            content += f". {notes}"
+
+        return self.add_belief(
+            category="people",
+            belief_id=belief_id,
+            content=content,
+            mass=2.0,  # People start with decent mass
+            confidence=0.7,
+            source="profile",
+        )
+
+    def get_person(self, name: str) -> Optional[Dict[str, Any]]:
+        """Look up a person by name in the people category."""
+        beliefs = self._read_category("people")
+        name_lower = name.lower()
+        for b in beliefs:
+            if name_lower in b.get("content", "").lower():
+                return b
+        return None
+
+    # ── Stats ────────────────────────────────────────────────────────
+
+    def get_stats(self) -> Dict[str, Any]:
+        """Get belief graph statistics.
+
+        NOTE: Does NOT call find_near_duplicates() — that's O(n²) and takes
+        60+ seconds with 1000+ beliefs. Call it explicitly when needed
+        (e.g., during overnight consolidation).
+        """
+        all_beliefs = self.get_all_beliefs_flat()
+        has_relations = sum(1 for b in all_beliefs if b.get("relations"))
+        has_refs = sum(1 for b in all_beliefs if b.get("memory_refs"))
+
+        # Per-category counts
+        per_category = {}
+        for category in BELIEF_CATEGORIES:
+            beliefs = self._read_category(category)
+            per_category[category] = len(beliefs)
+
+        # Weight tier distribution (computed from confidence)
+        core = sum(1 for b in all_beliefs if b.get("confidence", 0) >= 0.85)
+        deep = sum(1 for b in all_beliefs if 0.60 <= b.get("confidence", 0) < 0.85)
+        surface = sum(1 for b in all_beliefs if b.get("confidence", 0) < 0.60)
+
+        return {
+            "total_beliefs": len(all_beliefs),
+            "with_relations": has_relations,
+            "with_memory_refs": has_refs,
+            "core": core,
+            "deep": deep,
+            "surface": surface,
+            "avg_confidence": round(
+                sum(b.get("confidence", 0.5) for b in all_beliefs) / max(len(all_beliefs), 1), 3
+            ),
+            "schema_version": 4,
+            **per_category,
+        }
+
+    # ── V8: Formatted Output for LLM Consumption ─────────────────────
+
+    def get_all_beliefs_formatted(self) -> str:
+        """Return all beliefs across all categories as readable natural language.
+
+        Used by the unconscious cycle when it needs to review the full
+        belief landscape. Each category is a section with beliefs listed
+        by mass (heaviest first).
+        """
+        parts = []
+        for category, filename in BELIEF_CATEGORIES.items():
+            beliefs = self._read_category(category)
+            if not beliefs:
+                continue
+
+            # Sort by mass (heaviest first)
+            beliefs.sort(key=lambda b: b.get("mass", 0), reverse=True)
+
+            # Format category header
+            cat_label = category.replace("_", " ").title()
+            parts.append(f"## {cat_label}")
+
+            for b in beliefs:
+                mass = b.get("mass", 1.0)
+                confidence = b.get("confidence", 0.5)
+                content = b.get("content", "")
+                access = b.get("access_count", 0)
+                parts.append(
+                    f"- [{mass:.1f}m, {confidence:.0%}c, {access}x] {content}"
+                )
+
+            parts.append("")  # Blank line between categories
+
+        return "\n".join(parts) if parts else "(no beliefs yet)"
+
+    # ── V8: Belief Backup for Unconscious Cycle ──────────────────────
+
+    def backup_beliefs(self, reason: str = "manual") -> str:
+        """Save a versioned copy of all belief files.
+
+        Creates a dated snapshot in previous_versions/beliefs_YYYYMMDD/
+        for the unconscious cycle's pre-modification backup.
+
+        Returns the backup directory path.
+        """
+        import shutil
+
+        date_str = datetime.now().strftime("%Y%m%d_%H%M%S")
+        backup_dir = os.path.join(
+            os.path.dirname(self.data_dir), "..", "previous_versions",
+            f"beliefs_{date_str}_{reason}"
+        )
+        backup_dir = os.path.normpath(backup_dir)
+        os.makedirs(backup_dir, exist_ok=True)
+
+        for category, filename in BELIEF_CATEGORIES.items():
+            src = os.path.join(self.data_dir, filename)
+            if os.path.exists(src):
+                shutil.copy2(src, os.path.join(backup_dir, filename))
+
+        logger.info(f"Beliefs backed up to {backup_dir}")
+        return backup_dir
+
+    # ── V8: Direct Belief Lookup ─────────────────────────────────────
+
+    def get_belief_by_id(self, category: str, belief_id: str) -> Optional[Dict[str, Any]]:
+        """Look up a specific belief by ID."""
+        beliefs = self._read_category(category)
+        for b in beliefs:
+            if b.get("id") == belief_id:
+                return self._normalize_belief(dict(b), category=category)
+        return None
+
+    def touch_beliefs_batch(self, category: str, belief_ids: List[str]):
+        """Batch-increment access_count for multiple beliefs. One file write.
+
+        Called by the preconscious after each pulse to record which
+        beliefs were gravitationally surfaced.
+        """
+        beliefs = self._read_category(category)
+        now = _now_iso()
+        changed = False
+        id_set = set(belief_ids)
+        for b in beliefs:
+            if b.get("id") in id_set:
+                b["access_count"] = b.get("access_count", 0) + 1
+                b["last_accessed"] = now
+                self._normalize_belief(b, category=category, preserve_mass=True)
+                changed = True
+        if changed:
+            self._write_category(category, beliefs)
+            for b in beliefs:
+                if b.get("id") in id_set:
+                    self._sync_runtime(b, category)
+
+    # ── Cognitive Mass Equation ───────────────────────────────────────
+    # From δ∫(H(q) + λ·D_KL(q‖q*))dt = 0
+    #
+    # Mass = m_s + m_a
+    #   m_s (structural density) = c × (1 + |N| / N̄)
+    #   m_a (affective charge) = Ω_encoding × (1 - s_total_encoding)
+
+    def compute_cognitive_mass(self, belief: dict) -> float:
+        """A belief's gravitational mass — derived from the Helical Lagrangian.
+
+        m_s: confidence (intrinsic structural mass)
+        m_a: Ω_encoding × (1 - s_total_encoding) × (0.5 + stability)
+
+        Individual mass is purely intrinsic — it does NOT include
+        relation count. Cluster gravity emerges from spatial density:
+        related beliefs living near each other in 8D space concentrate
+        more potential on nearby gravity anchors naturally.
+
+        This prevents the self-reinforcing loop where:
+          relations → mass ↑ → gravity ↑ → more co-injection → more relations
+        """
+        c = belief.get("confidence", 0.5)
+
+        # Structural mass = confidence only (no relation count)
+        m_s = c
+
+        # Affective charge from Lagrangian state at encoding,
+        # amplified by the belief's stability index.
+        # Higher stability → stronger affective charge → more mass.
+        enc = belief.get("encoding_lagrangian", {})
+        omega_enc = max(0.0, min(1.0, enc.get("omega", 0.5)))
+        s_total_enc = max(0.0, min(1.0, enc.get("s_total", 0.15)))
+        stability = max(0.0, min(1.0, float(belief.get("stability_index", 0.5))))
+        m_a = omega_enc * (1.0 - s_total_enc) * (0.5 + stability)
+
+        return max(0.01, m_s + m_a)
+
+    def get_mean_mass(self) -> float:
+        """Calculate the average structural mass of all beliefs in the cognitive space."""
+        total_mass = 0.0
+        count = 0
+        for category in BELIEF_CATEGORIES:
+            beliefs = self._read_category(category)
+            for b in beliefs:
+                total_mass += b.get("mass", 1.0)
+                count += 1
+        return total_mass / count if count > 0 else 1.0
+
+    def register_reliance(self, belief_id: str, current_pulse: int):
+        r"""Register that a belief was actively relied upon by the conscious mind.
+        
+        This handles the Energy ($E=mc^2$) reliance reward:
+        For non-skills: Injects a burst of cognitive Energy ($\Delta E$) into the belief.
+        For skills specifically: Routes repeated reliance into stability_index and verifications.
+        """
+        COGNITIVE_C_SQUARED = 9.0  # c = 3.0
+        import os
+        default_delta_energy = float(os.environ.get("HELIX_RELIANCE_DELTA_ENERGY", 18.0))
+        DELTA_MASS = default_delta_energy / COGNITIVE_C_SQUARED  # default +1.0 volatile mass
+
+        for category in BELIEF_CATEGORIES:
+            beliefs = self._read_category(category)
+            for b in beliefs:
+                if b.get("id") == belief_id:
+                    # 1. Reset timeline so analytical burn starts from t=0
+                    b["last_accessed_pulse"] = current_pulse
+                    b["access_count"] = b.get("access_count", 0) + 1
+                    
+                    if category == "skills":
+                        # Route repeated reliance into stability_index / verifications gains (permanent)
+                        current_stability = float(b.get("stability_index", 0.5))
+                        b["stability_index"] = round(min(1.0, current_stability + 0.05), 4)
+                        
+                        current_verifications = float(b.get("verifications", 1.0))
+                        b["verifications"] = current_verifications + 1.0
+                        
+                        # Recompute cognitive mass immediately
+                        b["mass"] = round(self.compute_cognitive_mass(b), 4)
+                        logger.debug(f"Skill belief {belief_id} reliance: stability={b['stability_index']}, verifications={b['verifications']}, mass={b['mass']}")
+                    else:
+                        # 2. Absorb Energy as Volatile Mass (non-skills)
+                        current_volatile = float(b.get("volatile_mass", 0.0))
+                        new_volatile = min(5.0, current_volatile + DELTA_MASS)
+                        b["volatile_mass"] = round(new_volatile, 4)
+                        logger.debug(f"Belief {belief_id} absorbed Energy (Volatile Mass: {current_volatile} -> {b['volatile_mass']})")
+                        
+                    self._write_category(category, beliefs)
+                    self._sync_runtime(b, category)
+                    return
+        logger.warning(f"Failed to register reliance: Belief {belief_id} not found.")
+
+    def recompute_all_masses(self):
+        """Recompute cognitive mass for every belief across all categories.
+
+        Called during the nightly cycle after attrition has updated confidence.
+        """
+        for category in BELIEF_CATEGORIES:
+            beliefs = self._read_category(category)
+            changed = False
+            for b in beliefs:
+                new_mass = self.compute_cognitive_mass(b)
+                if abs(b.get("mass", 1.0) - new_mass) > 0.001:
+                    b["mass"] = round(new_mass, 4)
+                    changed = True
+            if changed:
+                self._write_category(category, beliefs)
+        self._resync_all_beliefs()
+
+    # ── Cognitive Attrition Equation ──────────────────────────────────
+    # C = min(1.0, (Base + w_T(T) + w_R(R) + w_V(V)) × (0.5 + S))
+    #
+    # Base = 0.30 (floor survival points)
+    # T = time held (log curve, max +0.40 over 30 days)
+    # R = reliance (inbound reference count, max +0.20 if 5 refs)
+    # V = verifications (reaffirmation count, max +0.20 if 10 verifications)
+    # S = stability modifier (0.5 + stability_index)
+
+    def recalculate_all_confidences(self) -> dict:
+        """Run the Calculated Cognitive Attrition equation across all beliefs.
+
+        Should be called once per night during the dream cycle.
+        Updates confidence, resolves weight (surface/deep/core),
+        prunes dead beliefs, and decays verifications.
+
+        Returns stats dict with counts of updated/pruned/promoted/demoted.
+        """
+        now = datetime.now()
+        stats = {"pruned": 0, "demoted": 0, "promoted": 0, "updated": 0}
+
+        for category in BELIEF_CATEGORIES:
+            beliefs = self._read_category(category)
+            if not beliefs:
+                continue
+
+            # 1. Map inbound relations (R - Reliance) across this category
+            inbound_counts = {}
+            for b in beliefs:
+                for rel_id in b.get("relations", []):
+                    inbound_counts[rel_id] = inbound_counts.get(rel_id, 0) + 1
+
+            surviving = []
+            for b in beliefs:
+                old_conf = b.get("confidence", 0.0)
+
+                # 2. Time (T) → Max +0.40 over 30 days
+                try:
+                    created = b.get("created_at", "")
+                    if "T" in created:
+                        formed_date = datetime.fromisoformat(created.split("T")[0])
+                    else:
+                        formed_date = datetime.strptime(created, "%Y-%m-%d")
+                    days_held = max(0.0, (now - formed_date).days)
+                except (ValueError, TypeError):
+                    days_held = 30.0  # Default missing dates to max time
+
+                t_score = 0.40 * min(1.0, math.log2(days_held + 1) / math.log2(31))
+
+                # 3. Reliance (R) → Max +0.20 if 5 beliefs link to this
+                r_count = inbound_counts.get(b.get("id", ""), 0)
+                r_score = 0.20 * min(1.0, r_count / 5.0)
+
+                # 4. Verifications (V) → Max +0.20 if 10 verifications
+                v_count = float(b.get("verifications", 1.0))
+                v_score = 0.20 * min(1.0, v_count / 10.0)
+
+                # 5. Stability modifier (S) → 0.0 to 1.0 (default 0.5)
+                s_index = float(b.get("stability_index", 0.5))
+                s_modifier = 0.5 + s_index
+
+                # Master Equation
+                base = 0.30
+                new_conf = min(1.0, (base + t_score + r_score + v_score) * s_modifier)
+
+                # Apply V decay (-0.05/day) so V_score drops if not actively verified
+                if v_count > 0.0:
+                    b["verifications"] = max(0.0, v_count - 0.05)
+
+                # Pruning threshold
+                if new_conf < 0.20:
+                    if self._physics is not None:
+                        self._physics.remove_belief_point(b.get("id", ""))
+                    stats["pruned"] += 1
+                    logger.info(
+                        f"Belief PRUNED (attrition): {b.get('id')} "
+                        f"(conf {old_conf:.2f} → {new_conf:.2f})"
+                    )
+                    continue
+
+                # Track promotions/demotions
+                old_weight = self._resolve_weight(old_conf)
+                new_weight = self._resolve_weight(new_conf)
+                if old_weight in ("core", "deep") and new_weight == "surface":
+                    stats["demoted"] += 1
+                elif old_weight == "surface" and new_weight in ("core", "deep"):
+                    stats["promoted"] += 1
+
+                b["confidence"] = round(new_conf, 3)
+                self._normalize_belief(
+                    b,
+                    category=category,
+                    recompute_mass=True,
+                )
+                stats["updated"] += 1
+                surviving.append(b)
+
+            self._write_category(category, surviving)
+
+        # Recompute all masses after confidence changes
+        self.recompute_all_masses()
+
+        logger.info(f"Cognitive Attrition complete: {stats}")
+        return stats
+
+    @staticmethod
+    def _resolve_weight(confidence: float) -> str:
+        """Map calculated confidence to a qualitative weight category."""
+        if confidence < 0.60:
+            return "surface"
+        elif confidence < 0.85:
+            return "deep"
+        else:
+            return "core"

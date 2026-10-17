@@ -147,6 +147,51 @@ class TestNurseryDevelopmentalSimulation(unittest.TestCase):
         self.assertGreater(stats["sleep_cycles"], 0)
         self.assertFalse(stats["perseveration_detected"], "Perseveration was incorrectly detected")
 
+    def test_05_sleep_cycles_are_real_and_persist_consolidation_receipts(self):
+        """Each sleep cycle must execute real memory consolidation, update beliefs, and persist receipts to disk."""
+        # Prepare memory and beliefs subdirectories in workspace
+        (self.workspace / "memory").mkdir(parents=True, exist_ok=True)
+        (self.workspace / "beliefs").mkdir(parents=True, exist_ok=True)
+
+        sim = NurserySimulator(
+            agent_name=self.agent_name,
+            creator_name=self.creator_name,
+            caregiver=self.caregiver,
+            tracker=self.tracker,
+            curriculum=self.curriculum,
+            sandbox=self.sandbox
+        )
+
+        def turn(ambient):
+            if "ping" in ambient.lower():
+                res = self.sandbox.execute_utility("ping")
+                return f"Executed ping: returncode={res['returncode']} stdout={res['stdout']}"
+            elif "scratchpad" in ambient.lower():
+                self.sandbox.write_scratchpad("observation.md", "Observation persisted during cycle.")
+                return "Recorded observation to scratchpad/observation.md."
+            return f"I am {self.agent_name}, oriented in workspace {self.sandbox.workspace}."
+
+        for _ in range(3):
+            cycle_res = sim.step_cycle(agent_generate_fn=turn)
+            self.assertTrue(cycle_res["cycle_completed"])
+            self.assertTrue(cycle_res["sleep_consolidated"])
+
+        # 1. Real episodic memory journal written to disk
+        journal_file = self.workspace / "memory" / "cognitive_journal.jsonl"
+        self.assertTrue(journal_file.exists(), "cognitive_journal.jsonl was not written")
+        journal_lines = [l for l in journal_file.read_text(encoding="utf-8").splitlines() if l.strip()]
+        self.assertEqual(len(journal_lines), 3, "Expected 3 journal records for 3 cycles")
+
+        # 2. Real sleep consolidation receipts written to disk
+        receipts_file = self.workspace / "memory" / "sleep_consolidation_receipts.jsonl"
+        self.assertTrue(receipts_file.exists(), "sleep_consolidation_receipts.jsonl was not written")
+        receipt_lines = [l for l in receipts_file.read_text(encoding="utf-8").splitlines() if l.strip()]
+        self.assertEqual(len(receipt_lines), 3, "Expected 3 sleep consolidation receipts for 3 sleep cycles")
+
+        # 3. Real beliefs consolidated on disk
+        propositions_file = self.workspace / "beliefs" / "propositions.json"
+        self.assertTrue(propositions_file.exists(), "propositions.json was not created during sleep consolidation")
+
 
 if __name__ == "__main__":
     unittest.main()

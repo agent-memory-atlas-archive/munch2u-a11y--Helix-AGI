@@ -71,6 +71,35 @@ class TestNurseryAgentCreationIntegration(unittest.TestCase):
         self.assertIn("Memory Persistence", report_text)
         self.assertIn("Simulated Cycles: 4", report_text)
 
+    def test_default_gestation_has_no_canned_responses_and_real_sleep(self):
+        """When run without external model generator, gestation must NOT return identical canned strings and must write real sleep receipts."""
+        result_manifest = run_functional_nursery_gestation(
+            self.settings,
+            agent_generate_fn=None,  # Tests the default gestation reflex loop
+            cycles=4
+        )
+
+        data_dir = Path(self.settings["data_dir"])
+        journal_file = data_dir / "memory" / "cognitive_journal.jsonl"
+        self.assertTrue(journal_file.exists(), "cognitive_journal.jsonl was not written")
+        journal_records = [json.loads(l) for l in journal_file.read_text(encoding="utf-8").splitlines() if l.strip()]
+        self.assertEqual(len(journal_records), 4)
+
+        # Responses across the 4 cycles must NOT be identical canned strings!
+        agent_responses = [r["agent_text"] for r in journal_records]
+        self.assertEqual(len(set(agent_responses)), 4, f"Canned responses detected! Responses: {agent_responses}")
+
+        # Real sleep consolidation receipts must exist for all 4 cycles
+        receipts_file = data_dir / "memory" / "sleep_consolidation_receipts.jsonl"
+        self.assertTrue(receipts_file.exists(), "sleep_consolidation_receipts.jsonl was not written")
+        sleep_receipts = [json.loads(l) for l in receipts_file.read_text(encoding="utf-8").splitlines() if l.strip()]
+        self.assertEqual(len(sleep_receipts), 4)
+
+        # Real scratchpad file must exist
+        scratchpad_file = data_dir / "scratchpad" / "development_notes.md"
+        self.assertTrue(scratchpad_file.exists(), "scratchpad/development_notes.md was not written")
+        self.assertGreater(len(scratchpad_file.read_text(encoding="utf-8").strip()), 0)
+
 
 if __name__ == "__main__":
     unittest.main()

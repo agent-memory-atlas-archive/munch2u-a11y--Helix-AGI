@@ -1,0 +1,40 @@
+{
+  "case": "01-open-note",
+  "sender": "User",
+  "content": "Hello Juniper. I am User. Please open /bedroom/closet/welcome.txt and tell me what the note says.",
+  "submitted_at": 1792214910.7964106,
+  "receipt_offset": 0,
+  "home_before": {
+    "home.json": {
+      "sha256": "d882172c613423832f11dea78c199edd86035e6633fe1126c439157ac1015340",
+      "bytes": 1899
+    },
+    "identity.json": {
+      "sha256": "97b742fe77fd65700d472e37506a67c528093b948306d6c4f3ea726b3afb0922",
+      "bytes": 617
+    },
+    "bedroom/sleep.json": {
+      "sha256": "1aaa5565ac32c99fb291e8246ad209b04371e17596a3d865a5c6bf88b078804a",
+      "bytes": 184
+    },
+    "modules/web_search.py": {
+      "sha256": "671f9036896444cba16e10f895020126226a5e1b51b214ae982169dd06197a9e",
+      "bytes": 664
+    },
+    "modules/terminal.py": {
+      "sha256": "2330045f8096ff2ddbbcabd37f9a06da36980a0c42f75d75ca1e539bf82c1628",
+      "bytes": 532
+    },
+    "modules/web_read.py": {
+      "sha256": "1d6d4e2e021ef14a7e5edcefe03fb88b48bb98129f754591ffe64cc6b8d0f867",
+      "bytes": 2136
+    },
+    "bedroom/closet/welcome.txt": {
+      "sha256": "54853091a0852587adedec0ace6a96ab1f0c7ddd469b3de19f1881e0f4b1bb58",
+      "bytes": 97
+    }
+  },
+  "http_response": {
+    "ok": true
+  }
+}

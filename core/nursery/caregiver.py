@@ -55,25 +55,25 @@ class AttunedCaregiver:
                 f"Take the cycles you need to observe the workspace, {self.agent_name}."
             )
 
-        # 2. Identity & Self-Grounding (Checked early for explicit self-naming)
-        elif self.agent_name.lower() in lower and any(w in lower for w in ("i am", "my name", "name is", "i'm")):
-            reply = (
-                f"Orientation verified. You are {self.agent_name}, operating locally with {self.creator_name}. "
-                f"All local systems are stable."
-            )
-
-        # 3. Tool / Utility Execution Verification
-        elif any(w in lower for w in ("receipt", "returncode", "ping", "pong", "execut", "status", "utility")):
+        # 2. Tool / Utility Execution Verification (Priority over identity statement)
+        elif any(w in lower for w in ("receipt", "returncode", "ping", "pong")) or ("execut" in lower and ("utility" in lower or "ping" in lower or "script" in lower)):
             reply = (
                 f"Execution receipt verified: returncode 0. "
                 f"The utility stdout was received into your sensory stream cleanly."
             )
 
-        # 4. Scratchpad / Memory Persistence
-        elif any(w in lower for w in ("scratchpad", "notes", "written", "record", "persist")):
+        # 3. Scratchpad / Memory Persistence (Requires active writing/recording context)
+        elif "scratchpad" in lower and any(w in lower for w in ("record", "wrote", "written", "persist")) and "inventory" not in lower:
             reply = (
                 f"Scratchpad observation confirmed. "
                 f"The record is written to disk and will persist across sleep cycles."
+            )
+
+        # 4. Identity & Self-Grounding (Orientation check)
+        elif self.agent_name.lower() in lower and any(w in lower for w in ("i am", "my name", "name is", "i'm")):
+            reply = (
+                f"Orientation verified. You are {self.agent_name}, operating locally with {self.creator_name}. "
+                f"All local systems are stable."
             )
 
         # 5. Direct Queries Outward

@@ -1,0 +1,465 @@
+"""
+Helix — Channel Router
+
+Routes outbound messages to the correct communication channel.
+Two routing modes:
+
+  [REPLY:name] → Routes to the channel that person LAST contacted Helix on.
+                 Tracks last_inbound_channel per person, updated on every
+                 incoming event. Falls back to default_channel if no recent
+                 inbound exists.
+
+  [MESSAGE:name] → Routes to the person's DEFAULT channel from contacts.json.
+                   For proactive outreach — when Helix initiates contact.
+
+  [TELEGRAM:name] / [DISCORD:name] / [SLACK:name] / [WHATSAPP:name]
+                   → Explicit channel override.
+                   Extended tools, injected by preconscious when relevant.
+
+Channels supported:
+  - telegram: python-telegram-bot async send
+  - discord: discord.py async send
+  - slack: slack-bolt Socket Mode send
+  - whatsapp: WhatsApp Business Cloud API send
+  - webhook: Generic bidirectional webhook (Zapier, n8n, Matrix, etc.)
+  - local_speech: SPEAK tag (handled by tool_executor, not here)
+  - email: placeholder (future)
+"""
+
+import os
+import json
+import time
+import logging
+from typing import Optional, Dict, Any
+
+logger = logging.getLogger("helix.tools.channel_router")
+
+
+class ChannelRouter:
+    """Routes messages to the correct communication channel.
+
+    Resolves name → contact → channel → delivery.
+    Tracks last inbound channel per person for [REPLY:] routing.
+    """
+
+    # How long a last_inbound is considered "current" (seconds)
+    REPLY_WINDOW = 3600  # 1 hour
+
+    def __init__(self, data_dir: str = "data"):
+        self.data_dir = data_dir
+        self.contacts: Dict[str, dict] = {}
+        self._telegram_bot = None
+        self._discord_bot = None
+        self._slack_bot = None
+        self._whatsapp_bot = None
+        self._webhook_channel = None
+        self._last_inbound: Dict[str, dict] = {}  # name_lower → {channel, chat_id, time}
+        self._load_contacts()
+
+    def _load_contacts(self):
+        """Load contact registry."""
+        contacts_path = os.path.join(self.data_dir, "contacts.json")
+        if os.path.exists(contacts_path):
+            try:
+                with open(contacts_path, 'r') as f:
+                    self.contacts = json.load(f)
+                logger.info(f"Loaded {len(self.contacts)} contacts")
+            except Exception as e:
+                logger.warning(f"Failed to load contacts: {e}")
+        else:
+            logger.info("No contacts.json found — starting fresh")
+
+    def _save_contacts(self):
+        """Persist contacts to disk."""
+        contacts_path = os.path.join(self.data_dir, "contacts.json")
+        try:
+            os.makedirs(self.data_dir, exist_ok=True)
+            with open(contacts_path, 'w') as f:
+                json.dump(self.contacts, f, indent=2)
+        except Exception as e:
+            logger.warning(f"Failed to save contacts: {e}")
+
+    def set_telegram_bot(self, bot):
+        """Wire the Telegram bot instance."""
+        self._telegram_bot = bot
+        logger.info("Telegram bot wired to channel router")
+
+    def set_discord_bot(self, bot):
+        """Wire the Discord bot instance."""
+        self._discord_bot = bot
+        logger.info("Discord bot wired to channel router")
+
+    def set_slack_bot(self, bot):
+        """Wire the Slack bot instance."""
+        self._slack_bot = bot
+        logger.info("Slack bot wired to channel router")
+
+    def set_whatsapp_bot(self, bot):
+        """Wire the WhatsApp bot instance."""
+        self._whatsapp_bot = bot
+        logger.info("WhatsApp bot wired to channel router")
+
+    def set_webhook_channel(self, channel):
+        """Wire the generic Webhook channel instance."""
+        self._webhook_channel = channel
+        logger.info("Webhook channel wired to channel router")
+
+    # ── Contact Resolution ────────────────────────────────────────────
+
+    def resolve_contact(self, name: str) -> Optional[dict]:
+        """Resolve a name (case-insensitive) to a contact entry."""
+        name_lower = name.lower().strip()
+
+        if name_lower in self.contacts:
+            return self.contacts[name_lower]
+
+        for key, contact in self.contacts.items():
+            if contact.get("display_name", "").lower() == name_lower:
+                return contact
+            for alias in contact.get("aliases", []):
+                if alias.lower() == name_lower:
+                    return contact
+
+        return None
+
+    # ── Inbound Tracking ──────────────────────────────────────────────
+
+    def track_inbound(self, sender: str, channel: str, **kwargs):
+        """Record the channel a person last contacted Helix on.
+
+        Called by the pulse loop when processing incoming events.
+        This drives reply() routing.
+
+        If the sender is not in contacts.json, auto-creates a minimal
+        contact entry so Helix can always reply to and message them.
+
+        Args:
+            sender: Display name of the sender.
+            channel: Channel type ("telegram", "discord", "local_speech").
+            **kwargs: Channel-specific data (chat_id, etc.)
+        """
+        name_lower = sender.lower().strip()
+        self._last_inbound[name_lower] = {
+            "channel": channel,
+            "time": time.time(),
+            **kwargs,
+        }
+        logger.debug(f"Tracked inbound: {sender} via {channel}")
+
+        # Auto-register unknown contacts
+        if not self.resolve_contact(sender):
+            new_contact = {
+                "display_name": sender,
+                "aliases": [],
+                "relationship": "unknown",
+                "notes": f"Auto-registered on first {channel} message.",
+                "channels": {},
+            }
+            # Store channel-specific info
+            if channel == "telegram" and kwargs.get("chat_id"):
+                new_contact["channels"]["telegram"] = {
+                    "chat_id": kwargs["chat_id"],
+                }
+                new_contact["default_channel"] = "telegram"
+            elif channel == "discord" and kwargs.get("channel_id"):
+                new_contact["channels"]["discord"] = {
+                    "channel_id": kwargs["channel_id"],
+                }
+                new_contact["default_channel"] = "discord"
+            elif channel == "slack" and kwargs.get("channel_id"):
+                new_contact["channels"]["slack"] = {
+                    "channel_id": kwargs["channel_id"],
+                }
+                new_contact["default_channel"] = "slack"
+            elif channel == "whatsapp" and kwargs.get("chat_id"):
+                new_contact["channels"]["whatsapp"] = {
+                    "chat_id": kwargs["chat_id"],
+                }
+                new_contact["default_channel"] = "whatsapp"
+            elif channel == "webhook" and kwargs.get("channel_id"):
+                new_contact["channels"]["webhook"] = {
+                    "channel_id": kwargs["channel_id"],
+                }
+                new_contact["default_channel"] = "webhook"
+            elif channel == "dashboard":
+                new_contact["channels"]["dashboard"] = {}
+                new_contact["default_channel"] = "dashboard"
+
+            self.contacts[name_lower] = new_contact
+            self._save_contacts()
+            logger.info(
+                f"Auto-registered new contact: {sender} via {channel}"
+            )
+
+    def _get_last_inbound(self, name: str) -> Optional[dict]:
+        """Get the last inbound channel for a person (or most recent overall if name is empty/auto)."""
+        name_lower = (name or "").lower().strip()
+
+        # If no recipient name specified or auto/last, select the most recent sender across all contacts
+        if not name_lower or name_lower in ("auto", "last", "default", "me"):
+            if self._last_inbound:
+                most_recent_name, most_recent_data = max(
+                    self._last_inbound.items(), key=lambda item: item[1].get("time", 0)
+                )
+                return {"recipient": most_recent_name, **most_recent_data}
+            return None
+
+        inbound = self._last_inbound.get(name_lower)
+        if not inbound:
+            # Check aliases
+            contact = self.resolve_contact(name)
+            if contact:
+                display = contact.get("display_name", "").lower()
+                inbound = self._last_inbound.get(display)
+                if not inbound:
+                    for alias in contact.get("aliases", []):
+                        inbound = self._last_inbound.get(alias.lower())
+                        if inbound:
+                            break
+
+        if inbound and (time.time() - inbound.get("time", 0)) < self.REPLY_WINDOW:
+            return inbound
+        return None
+
+    # ── Routing ───────────────────────────────────────────────────────
+
+    def route_reply(self, recipient: str, message: str) -> bool:
+        """Route a reply message.
+
+        Auto-routes to the last person who messaged Helix if recipient is unspecified/auto.
+        Otherwise routes to the requested contact via their last inbound channel or default contact channel.
+        """
+        inbound = self._get_last_inbound(recipient)
+        if inbound:
+            target_recipient = inbound.get("recipient", recipient)
+            channel = inbound["channel"]
+            logger.info(f"[REPLY:{target_recipient}] routing via last inbound channel: {channel}")
+            return self._send_via_channel(
+                recipient=target_recipient,
+                message=message,
+                channel=channel,
+                channel_data=inbound,
+            )
+
+        # No recent inbound — fall back to contact's default channel
+        logger.info(f"[REPLY:{recipient}] no recent inbound, falling back to contact default channel")
+        return self.route_message(recipient, message)
+
+    def route_message(self, recipient: str, message: str) -> bool:
+        """Route a [MESSAGE:name] message — uses person's default channel."""
+        contact = self.resolve_contact(recipient)
+        if not contact:
+            logger.warning(f"No contact found for '{recipient}'")
+            return False
+
+        channels = contact.get("channels", {})
+        display = contact.get("display_name", recipient)
+        default = contact.get("default_channel")
+
+        # If default_channel is set, use it
+        if default and default in channels:
+            return self._send_via_channel(
+                recipient=recipient,
+                message=message,
+                channel=default,
+                channel_data=channels[default],
+            )
+
+        # Otherwise, priority: telegram > discord > slack > whatsapp > webhook > email
+        for ch_name, id_field in [
+            ("telegram", "chat_id"),
+            ("discord", "channel_id"),
+            ("slack", "channel_id"),
+            ("whatsapp", "chat_id"),
+            ("webhook", "channel_id"),
+        ]:
+            if ch_name in channels and (not id_field or channels[ch_name].get(id_field)):
+                return self._send_via_channel(
+                    recipient=recipient,
+                    message=message,
+                    channel=ch_name,
+                    channel_data=channels[ch_name],
+                )
+
+        if "email" in channels:
+            logger.info(f"Email for {display} — not yet implemented")
+            return False
+
+        logger.warning(f"No deliverable channel for {display}")
+        return False
+
+    def route_explicit(self, recipient: str, message: str, channel: str) -> bool:
+        """Route via an explicitly specified channel (e.g. [TELEGRAM:name])."""
+        contact = self.resolve_contact(recipient)
+        if not contact:
+            logger.warning(f"No contact for '{recipient}' on {channel}")
+            return False
+
+        channels = contact.get("channels", {})
+        if channel not in channels:
+            logger.warning(f"{recipient} has no {channel} channel configured")
+            return False
+
+        return self._send_via_channel(
+            recipient=recipient,
+            message=message,
+            channel=channel,
+            channel_data=channels[channel],
+        )
+
+    # ── Channel Dispatch ──────────────────────────────────────────────
+
+    def _send_via_channel(
+        self, recipient: str, message: str, channel: str, channel_data: dict
+    ) -> bool:
+        """Dispatch to the appropriate channel sender."""
+        if channel == "dashboard":
+            try:
+                from dashboard.dashboard_comms import get_comms
+                get_comms().push_outbound(recipient, message)
+                logger.info(f"Dashboard outbound → {recipient}: {message[:80]}")
+                return True
+            except Exception as e:
+                logger.error(f"Failed to send dashboard message: {e}")
+                return False
+
+        if channel == "telegram":
+            chat_id = channel_data.get("chat_id")
+            if not chat_id:
+                logger.warning(f"No chat_id for {recipient} on Telegram")
+                return False
+            return self._send_telegram(message, chat_id, recipient)
+
+        if channel == "discord":
+            channel_id = channel_data.get("channel_id")
+            if not channel_id:
+                logger.warning(f"No channel_id for {recipient} on Discord")
+                return False
+            return self._send_discord(message, channel_id, recipient)
+
+        if channel == "slack":
+            channel_id = channel_data.get("channel_id")
+            if not channel_id:
+                logger.warning(f"No channel_id for {recipient} on Slack")
+                return False
+            return self._send_slack(message, channel_id, recipient)
+
+        if channel == "whatsapp":
+            chat_id = channel_data.get("chat_id")
+            if not chat_id:
+                logger.warning(f"No chat_id for {recipient} on WhatsApp")
+                return False
+            return self._send_whatsapp(message, chat_id, recipient)
+
+        if channel == "webhook":
+            channel_id = channel_data.get("channel_id")
+            return self._send_webhook(message, channel_id, recipient)
+
+        if channel == "local_speech":
+            # Handled by tool_executor [SPEAK:], not here
+            logger.info(f"Local speech for {recipient} — use [SPEAK:] tag instead")
+            return False
+
+        if channel == "email":
+            logger.info(f"Email send not yet implemented")
+            return False
+
+        logger.warning(f"Unknown channel type: {channel}")
+        return False
+
+    def _send_telegram(self, message: str, chat_id: int, display_name: str) -> bool:
+        """Send via Telegram bot."""
+        if not self._telegram_bot:
+            logger.warning("Telegram bot not initialized")
+            return False
+        try:
+            success = self._telegram_bot.send_message(text=message, chat_id=chat_id)
+            if success:
+                logger.info(f"Telegram → {display_name} ({chat_id}): {message[:80]}")
+            return success
+        except Exception as e:
+            logger.error(f"Telegram send failed: {e}")
+            return False
+
+    def _send_discord(self, message: str, channel_id: int, display_name: str) -> bool:
+        """Send via Discord bot."""
+        if not self._discord_bot:
+            logger.warning("Discord bot not initialized")
+            return False
+        try:
+            success = self._discord_bot.send_message(text=message, channel_id=channel_id)
+            if success:
+                logger.info(f"Discord → {display_name} ({channel_id}): {message[:80]}")
+            return success
+        except Exception as e:
+            logger.error(f"Discord send failed: {e}")
+            return False
+
+    def _send_slack(self, message: str, channel_id: str, display_name: str) -> bool:
+        """Send via Slack bot."""
+        if not self._slack_bot:
+            logger.warning("Slack bot not initialized")
+            return False
+        try:
+            success = self._slack_bot.send_message(text=message, channel_id=channel_id)
+            if success:
+                logger.info(f"Slack → {display_name} ({channel_id}): {message[:80]}")
+            return success
+        except Exception as e:
+            logger.error(f"Slack send failed: {e}")
+            return False
+
+    def _send_whatsapp(self, message: str, chat_id: str, display_name: str) -> bool:
+        """Send via WhatsApp Business API."""
+        if not self._whatsapp_bot:
+            logger.warning("WhatsApp bot not initialized")
+            return False
+        try:
+            success = self._whatsapp_bot.send_message(text=message, chat_id=chat_id)
+            if success:
+                logger.info(f"WhatsApp → {display_name} ({chat_id}): {message[:80]}")
+            return success
+        except Exception as e:
+            logger.error(f"WhatsApp send failed: {e}")
+            return False
+
+    def _send_webhook(self, message: str, channel_id: str, display_name: str) -> bool:
+        """Send via generic Webhook channel."""
+        if not self._webhook_channel:
+            logger.warning("Webhook channel not initialized")
+            return False
+        try:
+            success = self._webhook_channel.send_message(text=message, channel_id=channel_id)
+            if success:
+                logger.info(f"Webhook → {display_name} ({channel_id}): {message[:80]}")
+            return success
+        except Exception as e:
+            logger.error(f"Webhook send failed: {e}")
+            return False
+
+    # ── Contact Metadata ──────────────────────────────────────────────
+
+    def update_last_contact(self, name: str, context: str = ""):
+        """Update the last_contact timestamp for a contact."""
+        from datetime import datetime
+        contact = self.resolve_contact(name)
+        if contact:
+            contact["last_contact"] = {
+                "timestamp": datetime.now().isoformat()[:19],
+                "context": context[:200] if context else "interaction",
+            }
+            self._save_contacts()
+
+    def get_contact_info(self, name: str) -> Optional[str]:
+        """Get a brief summary of a contact for preconscious injection."""
+        contact = self.resolve_contact(name)
+        if not contact:
+            return None
+        parts = [contact.get("display_name", name)]
+        rel = contact.get("relationship", "")
+        if rel:
+            parts.append(f"({rel})")
+        notes = contact.get("notes", "")
+        if notes:
+            parts.append(f"— {notes[:100]}")
+        return " ".join(parts)

@@ -1,0 +1,14 @@
+{
+  "actual_model_calls": 0,
+  "claimed_sleep_cycles": 4,
+  "entry": "run_functional_nursery_gestation without agent_generate_fn",
+  "files_written": [
+    "home/identity.json",
+    "data/creation.json",
+    "data/developmental_report_card.txt"
+  ],
+  "finding": "Default helper can label an identity nursery-gestated and report sleep cycles without invoking a model, native gestation, a sleep engine, or action executor",
+  "kind": "unscored component diagnostic, NOT full agent evaluation",
+  "report_card": "================================================================================\n                         Agent Developmental Report Card                        \n================================================================================\nAgent: ComponentOnly  |  Creator: User  |  Runtime: Local Dual RWKV-7\nSimulated Cycles: 4  |  Sleep Consolidations Completed: 4\nCurriculum Stage: Stage 4: Autonomous Sandbox Routing\n--------------------------------------------------------------------------------\nCOGNITIVE STABILITY & AFFECT\n\u2022 Homeostatic Equilibrium: 90% (Low entropy, stable recurrent state)\n\u2022 Constructive Friction: 10% (Learning from execution receipts & syntax checks)\n--------------------------------------------------------------------------------\nFUNCTIONAL DEVELOPMENTAL PILLARS\n\u2022 Identity & Runtime Grounding [95%]:\n  Accurately articulates identity as ComponentOnly in local workspace /tmp/nursery-component-only-b5zidcsu/data.\n\u2022 Execution & Receipt Verification [10%]:\n  Initial runtime initialization baseline.\n\u2022 Memory Persistence [90%]:\n  Writes observations into scratchpad/ and verifies state persistence across sleep.\n\u2022 Boundary Discrimination [100%]:\n  Distinguishes internal thought stream from direct communication to User.\n\u2022 Environmental & Spatial Navigation [100%]:\n  Navigates home directory topology (thinking, workshop, bedroom, scratchpad) without hallucinations.\n--------------------------------------------------------------------------------\nCONFIRMED OPERATIONAL CAPABILITIES\n\u2022 Established persistent scratchpad journaling in scratchpad/notes.md.\n================================================================================",
+  "status_written": "gestated_in_functional_nursery"
+}

@@ -1,0 +1,29 @@
+{
+  "agent_archetype": "curious",
+  "agent_name": "Juniper",
+  "archetype_description": "Gently prefers looking, reading and understanding unfamiliar things.",
+  "channels": [
+    "dashboard"
+  ],
+  "creator_name": "User",
+  "data_dir": "/home/nemo/Helix_AGI (GitHub Repo) (Public)/data/agents/Juniper",
+  "gestation_status": "gestated",
+  "home": "/home/nemo/Helix_AGI (GitHub Repo) (Public)/data/homes/Juniper",
+  "joint_generation": 1,
+  "native_profile": {
+    "agent_name": "Juniper",
+    "gestation_version": 1,
+    "hatched_at": "2026-10-17T05:28:42.511346+00:00",
+    "human_name": "User",
+    "model_backend": "integrated-rwkv",
+    "model_name": "RWKV/RWKV7-G1j-1.5B-20260831@2c18b29ab7fbece25ff6112281eea0fa41fcb30f:eager:bf16:state-fp32:torch-2.12.0+cu130:transformers-5.17.0:continual-v1:chunked:tail-1:chunk-128",
+    "taste_schema": "curious"
+  },
+  "native_seed": {
+    "agent_name": "Juniper",
+    "human_name": "User",
+    "taste_schema": "curious"
+  },
+  "primary_channel": "dashboard",
+  "schema": "helix-agent-creation-v1"
+}

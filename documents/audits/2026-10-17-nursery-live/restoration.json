@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "file": "config.json",
+      "restored": true,
+      "verified_byte_for_byte": true
+    },
+    {
+      "file": "credentials.env",
+      "restored": true,
+      "verified_byte_for_byte": true
+    }
+  ],
+  "process_status": {
+    "agent": "absent",
+    "dashboard": "absent"
+  },
+  "time": 1792215148.578414
+}

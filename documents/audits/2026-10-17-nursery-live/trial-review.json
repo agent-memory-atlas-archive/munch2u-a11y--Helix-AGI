@@ -1,0 +1,44 @@
+{
+  "blocker": "Foreground produced an empty assistant turn; decoder failed before completed foreground receipt, action execution, or external answer. No full nursery route is wired.",
+  "coherence_growth_and_recall": "unassessed; no usable conversation completed",
+  "completed_public_replies": 0,
+  "file_sha256_matches_original": true,
+  "foreground_model_receipts": 0,
+  "native_agent": "Juniper; freshly gestated with User and curious archetype",
+  "native_file_open_receipts": 0,
+  "native_final_store_counts": {
+    "cortex_plasticity_receipts": 0,
+    "outcomes": 0,
+    "records": 26
+  },
+  "nursery_diagnostic": "default helper labels a mind nursery-gestated and four sleep cycles without actual model or sleep execution; component provenance only",
+  "nursery_runtime_connected": false,
+  "observed_failure": {
+    "decoder": "ValueError: foreground message is empty or invalid",
+    "generation_ending": "conversation_boundary",
+    "loop": "stopped after integration failure",
+    "raw_model_output": "Assistant:"
+  },
+  "product_entrypoint": "main.py -> standard PulseLoop",
+  "product_result": null,
+  "restoration": [
+    {
+      "file": "config.json",
+      "restored": true,
+      "verified_byte_for_byte": true
+    },
+    {
+      "file": "credentials.env",
+      "restored": true,
+      "verified_byte_for_byte": true
+    }
+  ],
+  "revision": "ccc6326081e11897360e0fdc785cbefde9afe3da",
+  "source_configuration_and_lanes_verified": true,
+  "source_unchanged_during_run": true,
+  "test_process_status": {
+    "agent": "absent",
+    "dashboard": "absent"
+  },
+  "test_state_preserved": "/home/nemo/Helix_AGI (GitHub Repo) (Public)/data/agents/Juniper"
+}

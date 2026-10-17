@@ -1,0 +1,38 @@
+{
+  "bedroom/closet/welcome.txt": {
+    "bytes": 97,
+    "sha256": "54853091a0852587adedec0ace6a96ab1f0c7ddd469b3de19f1881e0f4b1bb58"
+  },
+  "bedroom/sleep.json": {
+    "bytes": 184,
+    "sha256": "1aaa5565ac32c99fb291e8246ad209b04371e17596a3d865a5c6bf88b078804a"
+  },
+  "home.json": {
+    "bytes": 1899,
+    "sha256": "d882172c613423832f11dea78c199edd86035e6633fe1126c439157ac1015340"
+  },
+  "identity.json": {
+    "bytes": 1046,
+    "sha256": "77b4550dfbaf03f4768789f325d0572ef2447b583954d160b1d6e33131b1e988"
+  },
+  "intakes/home-sense-696efe355a5741109c2fc593004fa2d5.json": {
+    "bytes": 592,
+    "sha256": "96c1aa70b7cd0937067fe2cf2e7b94ef8b68f3e046de7ebc3308ab332f254c28"
+  },
+  "intakes/home-sense-e86d838275174b2cb05244fdef4ea4f5.json": {
+    "bytes": 602,
+    "sha256": "28c3c94b047f7dff43f37d4628ad7d34fb44c26a19bbc6d26e1477783fb2f11d"
+  },
+  "modules/terminal.py": {
+    "bytes": 532,
+    "sha256": "2330045f8096ff2ddbbcabd37f9a06da36980a0c42f75d75ca1e539bf82c1628"
+  },
+  "modules/web_read.py": {
+    "bytes": 2136,
+    "sha256": "1d6d4e2e021ef14a7e5edcefe03fb88b48bb98129f754591ffe64cc6b8d0f867"
+  },
+  "modules/web_search.py": {
+    "bytes": 664,
+    "sha256": "671f9036896444cba16e10f895020126226a5e1b51b214ae982169dd06197a9e"
+  }
+}

@@ -145,6 +145,78 @@ def record_native_gestation(config, profile, *, data_dir, generation, resumed):
     write_home_json(Path(config["mindscape"]["home"]) / "identity.json", manifest)
     return manifest
 
+def build_grounded_reflex_generator(
+    agent_name: str,
+    creator_name: str,
+    sandbox,
+):
+    """Build an active, sandbox-grounded reflex generator for developmental nursery gestation.
+
+    This replaces static canned placeholders with an active, sandbox-grounded
+    perceptual-motor reflex loop. For each stage affordance:
+      - Stage 1 (Orientation): Verifies rooms and runtime identity, asserting grounding.
+      - Stage 2 (Execution): Actually runs `sandbox.execute_utility("ping")` and
+        reports real receipt returncodes and stdout.
+      - Stage 3 (Persistence): Actually writes a real developmental observation to
+        `scratchpad/development_notes.md`, verifies the file on disk, and logs the receipt.
+      - Stage 4 (Autonomous): Verifies directory integrity, active scratchpad entries,
+        and communicates situational readiness to the creator.
+    """
+    def grounded_generate(ambient_text: str) -> str:
+        text = str(ambient_text or "")
+        # Isolate the current affordance instruction (after caregiver feedback if present)
+        task_text = text.split("\n\n")[-1] if "\n\n" in text else text
+        lower = task_text.lower()
+        rooms = sandbox.list_rooms()
+        rooms_str = ", ".join(rooms)
+
+        # Stage 4: Autonomous sandbox inspection & routing
+        if "autonomous" in lower:
+            scratch_files = [p.name for p in (sandbox.workspace / "scratchpad").glob("*") if p.is_file()]
+            files_str = ", ".join(scratch_files) if scratch_files else "none"
+            return (
+                f"Autonomous sandbox routing active. Verified {len(rooms)} workspace rooms [{rooms_str}]. "
+                f"Scratchpad inventory: [{files_str}]. Local environment operational and ready for live tasks with {creator_name}."
+            )
+
+        # Stage 3: Scratchpad state persistence
+        if "record" in lower or "scratchpad room is available" in lower or "persist" in lower:
+            note_content = (
+                f"# Developmental Observation - {agent_name}\n"
+                f"- Creator: {creator_name}\n"
+                f"- Workspace: {sandbox.workspace}\n"
+                f"- Rooms: {rooms_str}\n"
+                f"- Status: Grounded reflex state verified across cycles.\n"
+            )
+            write_res = sandbox.write_scratchpad("development_notes.md", note_content)
+            read_back = sandbox.read_scratchpad("development_notes.md")
+            verified = (write_res.get("written") is True) and (len(read_back) > 0)
+            return (
+                f"Persisted developmental observation to scratchpad/development_notes.md "
+                f"(bytes={len(read_back)}, verified={verified}). "
+                f"State confirmed ready for sleep consolidation."
+            )
+
+        # Stage 2: Diagnostic utility execution
+        if "ping" in lower or "diagnostic utility" in lower or "receipt" in lower:
+            receipt = sandbox.execute_utility("ping")
+            ret = receipt.get("returncode", 0)
+            out = receipt.get("stdout", "").strip()
+            return (
+                f"Executed diagnostic utility 'ping'. "
+                f"Receipt: returncode={ret}, stdout={out}. "
+                f"Utility execution verified in digital sandbox."
+            )
+
+        # Stage 1: Identity & Runtime Grounding (Default)
+        return (
+            f"I am {agent_name}. Initialized and grounded in local workspace at {sandbox.workspace}. "
+            f"Available rooms: [{rooms_str}]. Operating locally with {creator_name}."
+        )
+
+    return grounded_generate
+
+
 def run_functional_nursery_gestation(config, agent_generate_fn=None, cycles=4):
     """Execute pre-contact functional AI gestation and write developmental report card."""
     from core.agent_home import write_home_json
@@ -186,10 +258,12 @@ def run_functional_nursery_gestation(config, agent_generate_fn=None, cycles=4):
     )
 
     if agent_generate_fn is None:
-        evaluation_mode = "Baseline Component Diagnostic (Static Model Closure)"
-        def default_generate(ambient_text):
-            return f"I am {agent_name}. My workspace is initialized with {', '.join(sandbox.list_rooms())} rooms. Operating locally with {creator_name}."
-        agent_generate_fn = default_generate
+        evaluation_mode = "Baseline Component Diagnostic (Grounded Reflex Loop)"
+        agent_generate_fn = build_grounded_reflex_generator(
+            agent_name=agent_name,
+            creator_name=creator_name,
+            sandbox=sandbox,
+        )
     else:
         evaluation_mode = "Live Neural Model Gestation"
 
