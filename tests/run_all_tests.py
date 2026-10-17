@@ -168,6 +168,46 @@ class TestSuiteRunner:
         print("=" * 70)
 
 
+GROUP_MANIFEST = Path(__file__).with_name("test_groups.json")
+
+
+def classified_groups(root=None):
+    """Account for every test module; never discover frozen audit snapshots."""
+    import json
+    root = Path(root or Path(__file__).resolve().parents[1])
+    groups = json.loads((root / "tests/test_groups.json").read_text())["groups"]
+    listed = [path for group in groups.values() for path in group["paths"]]
+    discovered = {path.relative_to(root).as_posix()
+                  for directory in ("tests", "Over_Agent_Design", "plugins")
+                  for path in (root / directory).rglob("test_*.py")}
+    duplicates = sorted({path for path in listed if listed.count(path) > 1})
+    missing = sorted(discovered - set(listed))
+    stale = sorted(set(listed) - discovered)
+    if missing or stale or duplicates:
+        raise ValueError(f"Test classification drift: unclassified={missing}, stale={stale}, duplicate={duplicates}")
+    return groups
+
+
+def run_group(name, *, allow_live=False):
+    groups = classified_groups()
+    group = groups[name]
+    print(f"{name}: {group['description']}", flush=True)
+    if name == "live" and not allow_live:
+        print("Live tests require --allow-live after reviewing prerequisites.", file=sys.stderr)
+        return 2
+    if name == "native":
+        from core.mindscape_config import defaults
+        package = Path(defaults()["mindscape"]["package_path"])
+        if not (package / "habitus_ai").is_dir() or not (package / "context_loom").is_dir():
+            print(f"BLOCKED: native source missing at {package}; set MIGHTYMEM_PATH to the actual dependency.", file=sys.stderr)
+            return 2
+    try:
+        return subprocess.run([sys.executable, "-m", "pytest", "-q", *group["paths"]],
+                              cwd=Path(__file__).resolve().parents[1]).returncode
+    except KeyboardInterrupt:
+        return 130
+
+
 def main():
     """Main entry point."""
     import argparse
@@ -186,7 +226,22 @@ def main():
         help="Run a specific test script"
     )
     
+    parser.add_argument("--group", choices=["offline", "integration", "native", "prototype", "plugin", "live"])
+    parser.add_argument("--list-groups", action="store_true")
+    parser.add_argument("--allow-live", action="store_true")
     args = parser.parse_args()
+    if args.group or args.list_groups:
+        if args.quick or args.script:
+            parser.error("--group/--list-groups cannot be combined with legacy --quick/--script")
+        try:
+            groups = classified_groups()
+        except (OSError, ValueError, KeyError) as error:
+            parser.exit(2, str(error) + "\n")
+        if args.list_groups:
+            for name, group in groups.items():
+                print(f"{name}: {len(group['paths'])} modules — {group['description']}")
+            return
+        sys.exit(run_group(args.group, allow_live=args.allow_live))
     
     runner = TestSuiteRunner()
     

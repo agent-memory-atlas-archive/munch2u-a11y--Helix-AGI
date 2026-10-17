@@ -6,6 +6,34 @@ Use the repository virtual environment for every command. Some retrieval tests
 mock the semantic encoder; end-to-end semantic runs require local Ollama with
 `qwen3-embedding:0.6b` available.
 
+## Explicit maintenance test groups
+
+For the lightweight offline gate (no weights, services, channel credentials or hardware):
+
+```bash
+python -m pip install -r requirements-dev.txt
+python tests/run_all_tests.py --list-groups
+python tests/run_all_tests.py --group offline
+```
+
+The checked-in `test_groups.json` accounts for every `test_*.py` module under
+`tests/`, `Over_Agent_Design/` and `plugins/`; a new unclassified module fails
+this gate. Frozen audit snapshots are intentionally excluded. The offline group
+is a maintenance smoke gate, not all root regressions or a product evaluation.
+The `integration` group retains broader regressions and known baseline drift;
+`native` requires the real external MightyMem source and neural dependencies;
+`prototype` and `plugin` have separate dependencies and composition boundaries.
+Review live tests before using `--group live --allow-live`.
+
+Missing native source returns **BLOCKED**, exit 2, before tests import. Other
+missing requirements surface as test errors rather than silent passing skips.
+The existing ungrouped runner and `--quick` retain their historical curated
+script lists; they are not substitutes for the native or offline groups.
+
+The read-only installation preflight is `python scripts/run_health_check.py`
+(or add `--json` for machine output). Required failures return nonzero; passing
+this offline check does not establish live service availability or launch success.
+
 ## Evidence boundary
 
 Unit, fixture, provider, simulator and retrieval-only checks are implementation

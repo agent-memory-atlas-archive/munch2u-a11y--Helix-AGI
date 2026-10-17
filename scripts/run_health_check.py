@@ -1,87 +1,101 @@
 #!/usr/bin/env python3
-"""Helix Agent System Diagnostic & Environment Health Check.
+"""Read-only installation preflight; never loads models or creates agent state."""
+from __future__ import annotations
 
-Scans virtual environment dependencies, 8D Spatial projection matrices,
-Ollama / Gemini credentials, database permissions, and benchmark test suites.
-"""
-
-import os
-import sys
+import argparse
+from dataclasses import asdict, dataclass
+import importlib.util
 import json
-import logging
 from pathlib import Path
+import shutil
+import sys
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 
-# Color codes for clean terminal output
-GREEN = "\033[92m"
-YELLOW = "\033[93m"
-RED = "\033[91m"
-RESET = "\033[0m"
+
+@dataclass(frozen=True)
+class Check:
+    component: str
+    status: str
+    detail: str
 
 
-def check_health():
-    print("\n" + "=" * 80)
-    print("  HELIX AGI SYSTEM DIAGNOSTIC & HEALTH CHECK")
-    print("=" * 80)
+def exit_code(checks):
+    return int(any(check.status == "FAIL" for check in checks))
 
-    checks = []
 
-    # 1. Virtual Environment Check
-    in_venv = sys.prefix != sys.base_prefix or "venv" in sys.executable
-    if in_venv:
-        checks.append(("Virtual Environment", "PASS", f"Active ({sys.executable})"))
+def collect_checks(root=REPO_ROOT):
+    """Inspect the selected installation without importing providers or neural code."""
+    root = Path(root).resolve()
+    checks = [Check("Python", "PASS" if sys.version_info >= (3, 11) else "FAIL", sys.version.split()[0])]
+    license_path = root / "LICENSE"
+    apache = license_path.is_file() and "Apache License" in license_path.read_text(encoding="utf-8")
+    checks.append(Check("Repository license", "PASS" if apache else "FAIL", "Apache License required"))
+    ui = ("dashboard/dashboard.py", "dashboard/dashboard_ui.html",
+          "desktop_widget/web/index.html", "desktop_widget/web/mascot.js")
+    missing_ui = [name for name in ui if not (root / name).is_file()]
+    checks.append(Check("User interfaces", "FAIL" if missing_ui else "PASS", ", ".join(missing_ui) or "Dashboard and widget present"))
+    config_path = root / "config/config.json"
+    if not config_path.is_file():
+        checks.append(Check("Configuration", "WARN", "Not configured; run the setup wizard or CLI"))
+        config = {}
     else:
-        checks.append(("Virtual Environment", "WARN", "Not running inside venv; may lack faiss/numpy"))
-
-    # 2. Dependency Imports
-    deps = ["numpy", "faiss", "dotenv", "urllib3"]
-    missing = []
-    for dep in deps:
         try:
-            __import__(dep)
-        except ImportError:
-            missing.append(dep)
-    if not missing:
-        checks.append(("Core Dependencies", "PASS", "All core libraries present (numpy, faiss, dotenv)"))
+            config = json.loads(config_path.read_text(encoding="utf-8"))
+            if not isinstance(config, dict):
+                raise ValueError("configuration must be an object")
+            from core.mindscape_config import resolve
+            config = resolve(config, root=root) or config
+            checks.append(Check("Configuration", "PASS", config.get("composition", "helix")))
+        except (OSError, ValueError, TypeError, KeyError) as error:
+            checks.append(Check("Configuration", "FAIL", str(error)))
+            return checks
+    dependencies = ["numpy", "yaml", "flask", "dotenv", "requests"]
+    if config.get("composition") == "mindscape":
+        dependencies += ["torch", "transformers", "safetensors", "packaging"]
+        module = config["mindscape"]
+        source = Path(module["package_path"])
+        required = ("context_loom/engine.py", "habitus_ai/continual_mind.py", "habitus_ai/rwkv7_language.py")
+        absent = [name for name in required if not (source / name).is_file()]
+        checks.append(Check("Native source", "FAIL" if absent else "PASS", ", ".join(absent) or str(source)))
+        model = Path(module["rwkv_model"])
+        try:
+            index = json.loads((model / "model.safetensors.index.json").read_text(encoding="utf-8"))
+            shards = set(index["weight_map"].values())
+            if not shards or any(not (model / name).resolve().is_relative_to(model.resolve()) or
+                                 not (model / name).is_file() for name in shards):
+                raise ValueError("missing or invalid checkpoint shards")
+            checks.append(Check("RWKV checkpoint", "PASS", f"Index and {len(shards)} shards present; weights not loaded"))
+        except (OSError, ValueError, KeyError, TypeError) as error:
+            checks.append(Check("RWKV checkpoint", "FAIL", str(error)))
+        checks.append(Check("Workshop sandbox", "PASS" if shutil.which("bwrap") else "FAIL",
+                            "Bubblewrap executable required; namespace permissions need an operational check"))
+        checks.append(Check("Embedding service", "WARN", "Ollama/qwen3-embedding availability not probed by this offline preflight"))
+    missing = [name for name in dependencies if importlib.util.find_spec(name) is None]
+    checks.append(Check("Python dependencies", "FAIL" if missing else "PASS", ", ".join(missing) or "Selected preflight imports available"))
+    return checks
+
+
+def check_health(root=REPO_ROOT, *, json_output=False):
+    checks = collect_checks(root)
+    if json_output:
+        print(json.dumps({"checks": [asdict(check) for check in checks], "exit_code": exit_code(checks)}, indent=2))
     else:
-        checks.append(("Core Dependencies", "FAIL", f"Missing libraries: {', '.join(missing)}"))
+        for check in checks:
+            print(f"{check.status:4}  {check.component}: {check.detail}")
+        print("Preflight failed; resolve required failures." if exit_code(checks) else
+              "Offline preflight complete; live services and runtime behavior remain unverified.")
+    return exit_code(checks)
 
-    # 3. Credentials & Config Check
-    cred_file = Path(os.environ.get("HELIX_CREDENTIALS_PATH", Path.home() / ".config" / "helix" / "credentials.env"))
-    gemini_key = os.environ.get("GEMINI_API_KEY")
-    if cred_file.exists() or gemini_key:
-        checks.append(("API Credentials", "PASS", f"Found credentials at {cred_file}"))
-    else:
-        checks.append(("API Credentials", "WARN", "No credentials.env found; API calls will require GEMINI_API_KEY"))
 
-    # 4. Cognitive Space Projection Matrix Check
-    proj_matrix = REPO_ROOT / "data" / "cognitive_projection.npy"
-    if proj_matrix.exists():
-        checks.append(("8D Projection Matrix", "PASS", f"384D->8D JL matrix present ({proj_matrix.name})"))
-    else:
-        checks.append(("8D Projection Matrix", "PASS", "Will generate dynamically on boot"))
-
-    # 5. Data Directories & Permissions
-    data_dir = REPO_ROOT / "data"
-    beliefs_dir = data_dir / "beliefs"
-    if beliefs_dir.exists() and os.access(beliefs_dir, os.W_OK):
-        checks.append(("Belief Store Directory", "PASS", f"Writable at {beliefs_dir}"))
-    else:
-        checks.append(("Belief Store Directory", "PASS", f"Will initialize writable store at {beliefs_dir}"))
-
-    # Render Results Table
-    print(f"\n{'Component':<30} | {'Status':<8} | Details")
-    print("-" * 80)
-    for name, status, detail in checks:
-        color = GREEN if status == "PASS" else (YELLOW if status == "WARN" else RED)
-        print(f"{name:<30} | {color}{status:<8}{RESET} | {detail}")
-
-    print("\n" + "=" * 80)
-    print("  HEALTH CHECK COMPLETE — HELIX IS READY TO LAUNCH")
-    print("=" * 80 + "\n")
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--root", type=Path, default=REPO_ROOT)
+    parser.add_argument("--json", action="store_true")
+    args = parser.parse_args(argv)
+    return check_health(args.root, json_output=args.json)
 
 
 if __name__ == "__main__":
-    check_health()
+    raise SystemExit(main())

@@ -1,0 +1,131 @@
+{
+  "schema": 1,
+  "groups": {
+    "offline": {
+      "description": "Deterministic maintenance smoke gate; no models, credentials, external services or hardware. Not full product coverage.",
+      "paths": [
+        "tests/test_action_planner.py",
+        "tests/test_action_protocol.py",
+        "tests/test_affect_dampening.py",
+        "tests/test_affect_office.py",
+        "tests/test_bootstrap_seed_builder.py",
+        "tests/test_constrained_decoding.py",
+        "tests/test_dashboard_public_fallback.py",
+        "tests/test_dual_rwkv_defaults.py",
+        "tests/test_health_check.py",
+        "tests/test_memory_record_envelope.py",
+        "tests/test_mindscape_setup.py",
+        "tests/test_path_agnosticism.py",
+        "tests/test_scratchpad_postpone.py",
+        "tests/test_self_state.py",
+        "tests/test_setup_parenting_guidance.py"
+      ]
+    },
+    "integration": {
+      "description": "Remaining retained root regressions; full declared dependencies may be required. Includes known baseline contract drift.",
+      "paths": [
+        "tests/test_action_path_exam.py",
+        "tests/test_agent_creation.py",
+        "tests/test_associative_transitions.py",
+        "tests/test_belief_operations.py",
+        "tests/test_case_memory_office.py",
+        "tests/test_channel_router.py",
+        "tests/test_cli_benchmark_credentials.py",
+        "tests/test_codex_agent_setup.py",
+        "tests/test_codex_cli_provider.py",
+        "tests/test_computer_interface.py",
+        "tests/test_context_focus.py",
+        "tests/test_context_office.py",
+        "tests/test_crash_reporter.py",
+        "tests/test_dashboard_comms.py",
+        "tests/test_dashboard_enhancements.py",
+        "tests/test_dashboard_injections.py",
+        "tests/test_deep_memory_benchmark.py",
+        "tests/test_desktop_widget.py",
+        "tests/test_email_reply_all.py",
+        "tests/test_emc2_retrieval.py",
+        "tests/test_first_person_context.py",
+        "tests/test_fresh_clone_cognizance.py",
+        "tests/test_integration.py",
+        "tests/test_longmemeval_sandbox.py",
+        "tests/test_memory_intake_office.py",
+        "tests/test_mindscape_continuity.py",
+        "tests/test_mindscape_monologue.py",
+        "tests/test_mrag_ablation_bench.py",
+        "tests/test_mrag_semantic_lane.py",
+        "tests/test_office_runtime.py",
+        "tests/test_ollama_retries.py",
+        "tests/test_orchestrated_tools.py",
+        "tests/test_preconscious_injection.py",
+        "tests/test_pulse_context.py",
+        "tests/test_pulse_wake.py",
+        "tests/test_ragoffice_parity_sandbox.py",
+        "tests/test_runtime_integrity.py",
+        "tests/test_semantic_encoder.py",
+        "tests/test_simulated_safety_benchmark.py",
+        "tests/test_skill_refactoring.py",
+        "tests/test_subconscious_motor_actuation.py",
+        "tests/test_task_cognition.py",
+        "tests/test_three_way_setup.py",
+        "tests/test_tool_executor.py",
+        "tests/test_tool_factory.py",
+        "tests/test_tool_learning_pipeline.py",
+        "tests/test_tuning_and_auxiliary.py",
+        "tests/test_ui_canvas_tool.py",
+        "tests/test_unified_retrieval.py"
+      ]
+    },
+    "native": {
+      "description": "Native/RWKV implementation contracts; external MightyMem and declared neural dependencies required. Not live product scores.",
+      "paths": [
+        "tests/test_agent_home.py",
+        "tests/test_dual_rwkv_evaluation.py",
+        "tests/test_expanded_large_sample_suite.py",
+        "tests/test_interactive_battery.py",
+        "tests/test_mindscape_body.py",
+        "tests/test_mindscape_roles.py",
+        "tests/test_native_motor.py",
+        "tests/test_newborn_gestation_growth.py",
+        "tests/test_rwkv_production_protocol.py",
+        "tests/test_rwkv_speaking_head.py",
+        "tests/test_thought_actualization_separation.py",
+        "tests/test_vocabulary_membrane_grounding.py"
+      ]
+    },
+    "prototype": {
+      "description": "Separate nursery and Over-Agent prototype tests; not the production composition.",
+      "paths": [
+        "tests/test_nursery_agent_creation_integration.py",
+        "tests/test_nursery_curriculum.py",
+        "tests/test_nursery_developmental_simulation.py",
+        "tests/test_nursery_functional_sandbox.py",
+        "Over_Agent_Design/test_over_agent.py",
+        "Over_Agent_Design/tests/test_desktop_widget.py",
+        "Over_Agent_Design/tests/test_document_ingester_and_web_server.py",
+        "Over_Agent_Design/tests/test_integrated_mrag.py",
+        "Over_Agent_Design/tests/test_llm_backend.py",
+        "Over_Agent_Design/tests/test_mcp_and_cli_adapters.py",
+        "Over_Agent_Design/tests/test_proactive_vision_agent.py"
+      ]
+    },
+    "plugin": {
+      "description": "Independent helix-agent-lab package checks; install its development dependencies separately.",
+      "paths": [
+        "plugins/helix-agent-lab/tests/test_core.py"
+      ]
+    },
+    "live": {
+      "description": "Model/service experiments. Review prerequisites and side effects before explicit execution.",
+      "paths": [
+        "tests/test_agent_adaptation_bench.py",
+        "tests/test_autonomous_pulse_chain.py",
+        "tests/test_helix_early_memories.py",
+        "tests/test_live_adversarial_coherence.py",
+        "tests/test_live_agent_pulse_simulation.py",
+        "tests/test_live_nursery_developmental_calibration.py",
+        "tests/test_longform_agentic_memory_bench.py",
+        "tests/test_zero_system_organic_coherence.py"
+      ]
+    }
+  }
+}

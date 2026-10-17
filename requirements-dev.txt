@@ -1,0 +1,7 @@
+# Offline maintenance gate. No model weights, channel SDKs, or native checkout.
+pytest>=8,<10
+numpy>=1.24
+PyYAML>=6
+flask>=3,<4
+requests>=2.31,<3
+python-dotenv>=1,<2

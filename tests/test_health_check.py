@@ -6,7 +6,10 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.run_health_check import Check, collect_checks, exit_code
+from scripts.run_health_check import Check, collect_checks, exit_code, check_health
+from contextlib import redirect_stdout
+import io
+import json
 
 
 class HealthCheckTests(unittest.TestCase):
@@ -31,6 +34,30 @@ class HealthCheckTests(unittest.TestCase):
             checks = {check.component: check for check in collect_checks(root)}
             self.assertEqual(checks["Repository license"].status, "PASS")
             self.assertEqual(checks["User interfaces"].status, "PASS")
+
+    def test_failed_preflight_returns_failure_without_readiness_claim(self):
+        with tempfile.TemporaryDirectory() as directory, redirect_stdout(io.StringIO()) as output:
+            status = check_health(Path(directory))
+            self.assertEqual(status, 1)
+            self.assertNotIn("READY TO LAUNCH", output.getvalue())
+            self.assertIn("Preflight failed", output.getvalue())
+
+    def test_invalid_configuration_is_failure_and_does_not_create_state(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "config").mkdir()
+            config = root / "config/config.json"
+            config.write_text("[]")
+            before = sorted(root.rglob("*"))
+            checks = collect_checks(root)
+            self.assertEqual(next(c.status for c in checks if c.component == "Configuration"), "FAIL")
+            self.assertEqual(sorted(root.rglob("*")), before)
+
+    def test_json_output_has_machine_readable_failure_status(self):
+        with tempfile.TemporaryDirectory() as directory, redirect_stdout(io.StringIO()) as output:
+            status = check_health(Path(directory), json_output=True)
+            self.assertEqual(json.loads(output.getvalue())["exit_code"], status)
+            self.assertEqual(status, 1)
 
 
 if __name__ == "__main__":
