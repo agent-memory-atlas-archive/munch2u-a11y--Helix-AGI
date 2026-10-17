@@ -144,3 +144,81 @@ def record_native_gestation(config, profile, *, data_dir, generation, resumed):
     write_home_json(path, manifest)
     write_home_json(Path(config["mindscape"]["home"]) / "identity.json", manifest)
     return manifest
+
+def run_functional_nursery_gestation(config, agent_generate_fn=None, cycles=4):
+    """Execute pre-contact functional AI gestation and write developmental report card."""
+    from core.agent_home import write_home_json
+    from core.nursery.sandbox import DigitalSandbox
+    from core.nursery.curriculum import NurseryCurriculum
+    from core.nursery.caregiver import AttunedCaregiver
+    from core.nursery.growth_tracker import GrowthTracker
+    from core.nursery.simulator import NurserySimulator
+
+    agent_name = clean_name(config.get("agent_name") or "Helix")
+    creator_name = clean_name(config.get("creator_name") or "User")
+    archetype = config.get("agent_archetype", "balanced")
+    data_dir = Path(config.get("data_dir", "data/agents/" + agent_name)).resolve()
+
+    sandbox = DigitalSandbox(workspace=data_dir)
+    curriculum = NurseryCurriculum(
+        creator_name=creator_name,
+        agent_name=agent_name,
+        sandbox=sandbox,
+    )
+    caregiver = AttunedCaregiver(
+        creator_name=creator_name,
+        agent_name=agent_name,
+        archetype=archetype,
+        curriculum=curriculum,
+        sandbox=sandbox,
+    )
+    tracker = GrowthTracker(
+        agent_name=agent_name,
+        creator_name=creator_name,
+    )
+    simulator = NurserySimulator(
+        agent_name=agent_name,
+        creator_name=creator_name,
+        caregiver=caregiver,
+        tracker=tracker,
+        curriculum=curriculum,
+        sandbox=sandbox,
+    )
+
+    if agent_generate_fn is None:
+        def default_generate(ambient_text):
+            return f"I am {agent_name}. My workspace is initialized with {', '.join(sandbox.list_rooms())} rooms. Operating locally with {creator_name}."
+        agent_generate_fn = default_generate
+
+    for _ in range(max(1, int(cycles))):
+        simulator.step_cycle(agent_generate_fn=agent_generate_fn)
+
+    summary = simulator.get_developmental_summary()
+    report_card_text = summary["report_card"]
+
+    # Write report card to disk
+    report_card_path = data_dir / "developmental_report_card.txt"
+    report_card_path.parent.mkdir(parents=True, exist_ok=True)
+    report_card_path.write_text(report_card_text, encoding="utf-8")
+
+    # Update creation.json manifest
+    creation_path = data_dir / "creation.json"
+    if creation_path.exists():
+        manifest = json.loads(creation_path.read_text(encoding="utf-8"))
+    else:
+        manifest = config.get("creation", {}).copy()
+
+    manifest["gestation_status"] = "gestated_in_functional_nursery"
+    manifest["nursery_report_card"] = report_card_text
+    manifest["nursery_simulated_days"] = summary["simulated_days"]
+    manifest["nursery_sleep_cycles"] = summary["sleep_cycles"]
+
+    write_home_json(creation_path, manifest)
+    home_dir = config.get("mindscape", {}).get("home")
+    if home_dir:
+        home_identity = Path(home_dir) / "identity.json"
+        if home_identity.parent.exists():
+            write_home_json(home_identity, manifest)
+
+    return manifest
+
