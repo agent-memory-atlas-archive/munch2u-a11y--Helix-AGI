@@ -22,7 +22,8 @@
         "tests/test_runtime_configuration.py",
         "tests/test_native_dependency_manifest.py",
         "tests/test_runtime_paths.py",
-        "tests/test_shared_helpers.py"
+        "tests/test_shared_helpers.py",
+        "tests/test_tool_executor.py"
       ]
     },
     "integration": {
@@ -71,7 +72,6 @@
         "tests/test_subconscious_motor_actuation.py",
         "tests/test_task_cognition.py",
         "tests/test_three_way_setup.py",
-        "tests/test_tool_executor.py",
         "tests/test_tool_factory.py",
         "tests/test_tool_learning_pipeline.py",
         "tests/test_tuning_and_auxiliary.py",

@@ -48,3 +48,20 @@ class RuntimeConfigurationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             with self.assertRaisesRegex(RuntimeError, "Native source missing"):
                 activate_native_source(directory)
+
+
+class TestGroupInventoryTests(unittest.TestCase):
+    def test_unclassified_modules_fail_and_frozen_snapshots_are_excluded(self):
+        import json
+        from tests.run_all_tests import classified_groups
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "tests").mkdir()
+            (root / "tests/test_groups.json").write_text(json.dumps({"groups": {"offline": {"paths": []}}}))
+            frozen = root / "documents/audits/frozen/test_evidence.py"
+            frozen.parent.mkdir(parents=True)
+            frozen.touch()
+            classified_groups(root)
+            (root / "tests/test_new.py").touch()
+            with self.assertRaisesRegex(ValueError, "unclassified=.*test_new"):
+                classified_groups(root)

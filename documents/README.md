@@ -67,3 +67,10 @@ actual production composition and verified outputs; see the
 
 Keep source wiring, operator guides and documented support in agreement.
 Preserve historical evidence and distinguish it from current behavior.
+
+## Maintenance
+
+The [cleanup branch status](maintenance/CLEANUP_STATUS.md) records implemented
+consolidation, local validation and the remaining native/GUI gates. The
+[initial cleanup review](maintenance/CLEANUP_REVIEW.md) preserves its baseline
+findings and proposed sequence. Frozen audits remain historical evidence.
