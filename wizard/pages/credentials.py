@@ -17,6 +17,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt
 from wizard.ai_helper import AiHelperBanner
 from core.agent_creation import validate_channel
+from wizard.configuration import PROVIDER_LABELS, supported_providers, select_provider, canonical_provider
 
 
 CRED_PATH = Path(os.path.expanduser("~/.config/helix/credentials.env"))
@@ -32,6 +33,7 @@ class CredentialsPage(QWidget):
         self.wizard = wizard
         self._build()
         self._load_existing()
+        self.composition_combo.currentIndexChanged.connect(self._on_composition_changed)
 
     def _build(self):
         outer = QVBoxLayout(self)
@@ -71,9 +73,9 @@ class CredentialsPage(QWidget):
         llm_form.setSpacing(10)
 
         desc = QLabel(
-            "The full Mindscape agent uses local Ollama for its foreground model.\n"
+            "Mindscape uses local RWKV by default; Ollama is an alternative foreground.\n"
             "It needs no model API key. Channel tokens are entered below.\n"
-            "API providers belong to the separate Helix composition."
+            "Choose Helix provider tools for hosted or CLI providers."
         )
         desc.setWordWrap(True)
         desc.setStyleSheet("color: #fbbf24; font-size: 11px; padding: 4px 0;")
@@ -167,21 +169,20 @@ class CredentialsPage(QWidget):
         llm_form.addRow(provider_label)
 
         self.provider_combo = QComboBox()
-        self._provider_map = {
-            "Dual RWKV (100% Local Unified Neural Architecture)": "rwkv",
-            "Codex CLI (ChatGPT subscription)": "codex_cli",
-            "Gemini (Google)": "gemini",
-            "Claude (Anthropic)": "anthropic",
-            "GPT (OpenAI)": "openai",
-            "Qwen (Alibaba)": "alibaba",
-            "Ollama (Local)": "ollama",
-            "llama.cpp (Local GGUF)": "llama_cpp",
-        }
+        self.composition_combo = QComboBox()
+        self.composition_combo.addItem("Native Mindscape", "mindscape")
+        self.composition_combo.addItem("Helix provider tools", "helix")
+        self.composition_combo.setCurrentIndex(max(0, self.composition_combo.findData(self.wizard.config.get("composition", "helix"))))
+        llm_form.addRow("Runtime:", self.composition_combo)
+        self._provider_map = {PROVIDER_LABELS[key]: key for key in supported_providers(self.composition_combo.currentData())}
+        saved = canonical_provider(self.wizard.config.get("llm_provider") or self.wizard.config.get("local_provider") or "rwkv")
+        if saved not in self._provider_map.values():
+            self._provider_map[f"Unsupported saved provider ({saved})"] = saved
         self._provider_reverse = {v: k for k, v in self._provider_map.items()}
         self.provider_combo.addItems(list(self._provider_map.keys()))
 
         # Set current from config
-        saved_provider = self.wizard.config.get("llm_provider") or self.wizard.config.get("local_provider") or "gemini"
+        saved_provider = saved
         display_name = self._provider_reverse.get(saved_provider, "Gemini (Google)")
         self.provider_combo.setCurrentText(display_name)
 
@@ -189,7 +190,7 @@ class CredentialsPage(QWidget):
         self.provider_desc = QLabel()
         self.provider_desc.setWordWrap(True)
         self.provider_desc.setStyleSheet("font-size: 10px; color: #8888aa; padding-left: 4px;")
-        self._update_provider_desc(self.provider_combo.currentText())
+        self._update_provider_desc(self._get_provider())
         self.provider_combo.currentTextChanged.connect(self._on_provider_changed)
 
         llm_form.addRow("Use as primary:", self.provider_combo)
@@ -303,6 +304,18 @@ class CredentialsPage(QWidget):
         field.setPlaceholderText("Paste your API key here")
         return field
 
+    def _on_composition_changed(self, *args):
+        current = self._get_provider()
+        self._provider_map = {PROVIDER_LABELS[key]: key for key in supported_providers(self.composition_combo.currentData())}
+        self._provider_reverse = {value: key for key, value in self._provider_map.items()}
+        self.provider_combo.blockSignals(True)
+        self.provider_combo.clear()
+        self.provider_combo.addItems(list(self._provider_map))
+        if current in self._provider_reverse:
+            self.provider_combo.setCurrentText(self._provider_reverse[current])
+        self.provider_combo.blockSignals(False)
+        self._on_provider_changed(self.provider_combo.currentText())
+
     def _get_provider(self) -> str:
         """Get the internal provider key from the display label."""
         display = self.provider_combo.currentText()
@@ -311,15 +324,15 @@ class CredentialsPage(QWidget):
     def _update_provider_desc(self, provider: str):
         """Update the description label based on selected provider."""
         descs = {
+            "rwkv": "Local RWKV checkpoint with the native Mindscape body.",
+            "claude_cli": "Uses the installed Claude Code CLI and its existing login.",
             "codex_cli": "OpenAI Codex App Server — uses your local `codex login` (including ChatGPT subscription access); no API key required.",
             "gemini": "Google Gemini — excellent tool use, free tier available. Recommended for most users.",
             "anthropic": "Anthropic Claude — strong reasoning and coding. Requires paid API key.",
-            "openai": "OpenAI GPT — widely supported, strong general performance. Requires paid API key.",
-            "alibaba": "Alibaba Qwen — competitive open-weight models via DashScope API.",
             "ollama": "Ollama (Local) — fully private, no API costs. Requires local GPU for best results.",
             "llama_cpp": "llama.cpp (Local) — run GGUF models directly on CPU/GPU without external services.",
         }
-        self.provider_desc.setText(descs.get(provider, ""))
+        self.provider_desc.setText(descs.get(provider, "No runtime adapter is available for this saved provider; choose a listed provider."))
 
     def _on_provider_changed(self, display_name: str):
         """Handle LLM provider selection changes."""
@@ -340,7 +353,7 @@ class CredentialsPage(QWidget):
         creds = _load_existing_creds()
         config_model = self.wizard.config.get("llm_model") or creds.get("HELIX_MODEL", "")
         if config_model:
-            config_provider = self.wizard.config.get("llm_provider") or creds.get("HELIX_PROVIDER", "gemini")
+            config_provider = canonical_provider(self.wizard.config.get("llm_provider") or creds.get("HELIX_PROVIDER", "gemini"))
             if provider == config_provider:
                 self.model_combo.setEditText(config_model)
 
@@ -433,18 +446,18 @@ class CredentialsPage(QWidget):
 
     def _save_and_next(self):
         """Save credential values to config and advance."""
-        cfg = self.wizard.config
-        selected_provider = self._get_provider()
-        if cfg.get("composition") == "mindscape" and selected_provider not in ("ollama", "rwkv", "bicameral_rwkv"):
-            QMessageBox.warning(self, "Choose the configured runtime", "This agent's full Mindscape gestation uses a local model (Ollama or RWKV). Select a local runtime to continue.")
+        try:
+            cfg = select_provider(
+                {**self.wizard.config, "composition": self.composition_combo.currentData()},
+                self._get_provider(), self.model_combo.currentText())
+        except ValueError as error:
+            QMessageBox.warning(self, "Choose the configured runtime", str(error))
             return
         cfg["gemini_api_key"] = self.gemini_key.text().strip()
         cfg["anthropic_api_key"] = self.anthropic_key.text().strip()
         cfg["openai_api_key"] = self.openai_key.text().strip()
         cfg["alibaba_api_key"] = self.alibaba_key.text().strip()
         cfg["ollama_url"] = self.ollama_url.text().strip() or "http://localhost:11434"
-        cfg["llm_provider"] = self._get_provider()
-        cfg["llm_model"] = self.model_combo.currentText().strip()
         
         # For legacy compatibility, save to ollama_model if ollama is selected
         if cfg["llm_provider"] == "ollama":
@@ -467,4 +480,6 @@ class CredentialsPage(QWidget):
         except ValueError as error:
             QMessageBox.warning(self, "Check communication setup", str(error))
             return
+        self.wizard.config.clear()
+        self.wizard.config.update(cfg)
         self.wizard.next_page()

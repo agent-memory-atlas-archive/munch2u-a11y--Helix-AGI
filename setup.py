@@ -212,6 +212,7 @@ def main():
     )
     parser.add_argument("--vision-provider", choices=["local", "gemini"], default="local", help="Vision provider (local model or Gemini)")
     args = parser.parse_args()
+    provider_supplied = args.provider is not None
     # Keep the legacy provider default outside the explicit native composition.
     if args.provider is None:
         args.provider = "rwkv" if args.composition == "mindscape" else "gemini"
@@ -225,6 +226,13 @@ def main():
         existing_path = base_dir / "config/config.json"
         existing = json.loads(existing_path.read_text()) if existing_path.exists() else {}
         updates = {"composition": args.composition}
+        if args.composition == "helix":
+            if args.data_dir:
+                updates["data_dir"] = str(Path(args.data_dir).resolve())
+            if provider_supplied:
+                updates.update(llm_provider=args.provider, llm_model=args.model)
+                if args.provider in {"ollama", "llama_cpp", "rwkv", "bicameral_rwkv"}:
+                    updates.update(local_provider=args.provider, local_model=args.model)
         if args.composition == "mindscape":
             updates = {**defaults(base_dir), **existing, **updates}
             updates["mindscape"] = {**defaults(base_dir)["mindscape"], **existing.get("mindscape", {})}
@@ -292,8 +300,8 @@ def main():
             cred_dir.mkdir(parents=True, exist_ok=True)
             cred_path = cred_dir / "credentials.env"
             upsert_env_values(cred_path, {
-                "HELIX_PROVIDER": updates.get("llm_provider", "rwkv"),
-                "HELIX_MODEL": updates.get("llm_model", ""),
+                "HELIX_PROVIDER": updates.get("llm_provider", existing.get("llm_provider", "rwkv")),
+                "HELIX_MODEL": updates.get("llm_model", existing.get("llm_model", "")),
                 "HELIX_COMMS_CHANNELS": updates.get("primary_channel", "dashboard"),
             })
             print(f"Configured {args.composition}. Verify actual loading with: venv/bin/python main.py --check-setup")

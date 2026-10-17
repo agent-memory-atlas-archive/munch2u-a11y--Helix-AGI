@@ -17,3 +17,15 @@ jobs:
           python-version: ${{ matrix.python }}
       - run: python -m pip install -r requirements-dev.txt
       - run: python tests/run_all_tests.py --group offline
+  wizard:
+    runs-on: ubuntu-latest
+    env:
+      QT_QPA_PLATFORM: offscreen
+      QTWEBENGINE_DISABLE_SANDBOX: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-dev.txt -r requirements-wizard.txt
+      - run: python -m pytest -q tests/test_wizard_routes.py tests/test_agent_creation.py::WizardCreationDiagnostics

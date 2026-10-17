@@ -55,7 +55,10 @@ DEFAULT_MODELS = {
 
 def get_default_models(provider: str) -> list:
     """Return default models for the specified provider."""
-    return DEFAULT_MODELS.get(provider.lower(), [])
+    if provider.lower() in {"rwkv", "bicameral_rwkv"}:
+        from core.model_paths import default_rwkv_model
+        return [default_rwkv_model()]
+    return list(DEFAULT_MODELS.get(provider.lower(), []))
 
 
 def detect_ollama_models(url: str = "http://localhost:11434") -> list:

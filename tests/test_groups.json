@@ -24,7 +24,8 @@
         "tests/test_runtime_paths.py",
         "tests/test_shared_helpers.py",
         "tests/test_tool_executor.py",
-        "tests/test_dependency_profiles.py"
+        "tests/test_dependency_profiles.py",
+        "tests/test_wizard_configuration.py"
       ]
     },
     "integration": {
@@ -77,7 +78,8 @@
         "tests/test_tool_learning_pipeline.py",
         "tests/test_tuning_and_auxiliary.py",
         "tests/test_ui_canvas_tool.py",
-        "tests/test_unified_retrieval.py"
+        "tests/test_unified_retrieval.py",
+        "tests/test_wizard_routes.py"
       ]
     },
     "native": {

@@ -44,7 +44,6 @@ DEFAULT_CONFIG = {
     "agent_name": "Helix",
     "creator_name": "",
     "data_dir": "data",
-    "llm_provider": "ollama",
     "model_name": "",
     "telegram_enabled": False,
     "telegram_token": "",
@@ -63,33 +62,25 @@ DEFAULT_CONFIG = {
     # Observe records naturally voiced intentions while leaving the legacy
     # action path intact. Set to "active" after reviewing the task audit to
     # hide schemas from main thought and enable identity-shared focus threads.
-    "task_cognition_mode": "observe",
+    "task_cognition_mode": "off",
     "task_focus_workers": 2,
     "task_focus_max_depth": 4,
 }
 
 
 def load_config() -> dict:
-    """Load config.json, falling back to defaults."""
-    if CONFIG_PATH.exists():
-        try:
-            with open(CONFIG_PATH, "r") as f:
-                cfg = json.load(f)
-            # Merge with defaults for any missing keys
-            merged = dict(DEFAULT_CONFIG)
-            merged.update(cfg)
-            return merged
-        except Exception:
-            pass
-    return dict(DEFAULT_CONFIG)
+    """Load a private, independent copy without silently converting legacy agents."""
+    from core.credentials import read_credentials
+    from wizard.configuration import load_wizard_config
+    return load_wizard_config(CONFIG_PATH, DEFAULT_CONFIG, read_credentials(CRED_PATH))
 
 
 def save_config(cfg: dict):
-    """Save config to config/config.json."""
+    """Atomically save public configuration; private values stay in credentials.env."""
+    from core.agent_home import write_home_json
+    from wizard.configuration import SECRET_FIELDS
     CONFIG_DIR.mkdir(parents=True, exist_ok=True)
-    with open(CONFIG_PATH, "w") as f:
-        secret_fields = {"gemini_api_key", "anthropic_api_key", "openai_api_key", "alibaba_api_key", "telegram_token", "discord_token"}
-        json.dump({key: value for key, value in cfg.items() if key not in secret_fields}, f, indent=2)
+    write_home_json(CONFIG_PATH, {key: value for key, value in cfg.items() if key not in SECRET_FIELDS})
 
 
 def config_exists() -> bool:
@@ -558,7 +549,7 @@ class HelixApp(QMainWindow):
             settings = resolve_mindscape(self.config)
             if settings is not None:
                 provision_creation(settings)
-                self.config["mindscape"] = settings["mindscape"]
+                self.config.update(settings)
         except (ValueError, RuntimeError) as error:
             QMessageBox.critical(self, "Composition unavailable", str(error))
             return
@@ -724,7 +715,8 @@ class HelixApp(QMainWindow):
                     status_label.setStyleSheet("font-size: 13px; color: #fbbf24; font-weight: 600;")
                     log_output.append("\nSetup incomplete. Repair the installation before launching.")
 
-        poll_timer = QTimer()
+        poll_timer = QTimer(dlg)
+        self._install_timer = poll_timer
         poll_timer.timeout.connect(_poll)
         poll_timer.start(200)
 
@@ -736,40 +728,34 @@ class HelixApp(QMainWindow):
             save_config(self.config)
             self._switch_to_dashboard()
 
-    def _write_credentials(self):
+    def _write_credentials(self, config=None):
         """Write credentials.env from wizard config."""
+        cfg = self.config if config is None else config
         CRED_DIR.mkdir(parents=True, exist_ok=True)
 
-        # Read existing credentials to preserve keys we don't manage
-        existing = {}
-        if CRED_PATH.exists():
-            with open(CRED_PATH, "r") as f:
-                for line in f:
-                    line = line.strip()
-                    if "=" in line and not line.startswith("#"):
-                        k, _, v = line.partition("=")
-                        existing[k.strip()] = v.strip().strip('"')
+        from core.credentials import read_credentials
+        existing = read_credentials(CRED_PATH)
 
         # Merge wizard values
         creds = existing.copy()
-        creds["GEMINI_API_KEY"] = self.config.get("gemini_api_key", creds.get("GEMINI_API_KEY", ""))
-        creds["ANTHROPIC_API_KEY"] = self.config.get("anthropic_api_key", creds.get("ANTHROPIC_API_KEY", ""))
-        creds["OPENAI_API_KEY"] = self.config.get("openai_api_key", creds.get("OPENAI_API_KEY", ""))
-        creds["ALIBABA_API_KEY"] = self.config.get("alibaba_api_key", creds.get("ALIBABA_API_KEY", ""))
-        creds["OLLAMA_URL"] = self.config.get("ollama_url", creds.get("OLLAMA_URL", "http://localhost:11434"))
-        creds["OLLAMA_MODEL"] = self.config.get("ollama_model", creds.get("OLLAMA_MODEL", ""))
-        creds["HELIX_TELEGRAM_TOKEN"] = self.config.get("telegram_token", creds.get("HELIX_TELEGRAM_TOKEN", ""))
-        creds["TELEGRAM_OWNER_ID"] = self.config.get("telegram_owner_id", creds.get("TELEGRAM_OWNER_ID", ""))
-        creds["HELIX_DISCORD_TOKEN"] = self.config.get("discord_token", creds.get("HELIX_DISCORD_TOKEN", ""))
-        creds["HELIX_PROVIDER"] = self.config.get("llm_provider", "gemini")
-        creds["HELIX_MODEL"] = self.config.get("llm_model", creds.get("HELIX_MODEL", ""))
-        creds["HELIX_VISION_PROVIDER"] = self.config.get("vision_provider", "local")
+        creds["GEMINI_API_KEY"] = cfg.get("gemini_api_key", creds.get("GEMINI_API_KEY", ""))
+        creds["ANTHROPIC_API_KEY"] = cfg.get("anthropic_api_key", creds.get("ANTHROPIC_API_KEY", ""))
+        creds["OPENAI_API_KEY"] = cfg.get("openai_api_key", creds.get("OPENAI_API_KEY", ""))
+        creds["ALIBABA_API_KEY"] = cfg.get("alibaba_api_key", creds.get("ALIBABA_API_KEY", ""))
+        creds["OLLAMA_URL"] = cfg.get("ollama_url", creds.get("OLLAMA_URL", "http://localhost:11434"))
+        creds["OLLAMA_MODEL"] = cfg.get("ollama_model", creds.get("OLLAMA_MODEL", ""))
+        creds["HELIX_TELEGRAM_TOKEN"] = cfg.get("telegram_token", creds.get("HELIX_TELEGRAM_TOKEN", ""))
+        creds["TELEGRAM_OWNER_ID"] = cfg.get("telegram_owner_id", creds.get("TELEGRAM_OWNER_ID", ""))
+        creds["HELIX_DISCORD_TOKEN"] = cfg.get("discord_token", creds.get("HELIX_DISCORD_TOKEN", ""))
+        creds["HELIX_PROVIDER"] = cfg.get("llm_provider", "gemini")
+        creds["HELIX_MODEL"] = cfg.get("llm_model", creds.get("HELIX_MODEL", ""))
+        creds["HELIX_VISION_PROVIDER"] = cfg.get("vision_provider", "local")
 
         # Comms channels
         channels = ["dashboard"]
-        if self.config.get("telegram_enabled") and creds.get("HELIX_TELEGRAM_TOKEN"):
+        if cfg.get("telegram_enabled") and creds.get("HELIX_TELEGRAM_TOKEN"):
             channels.append("telegram")
-        if self.config.get("discord_enabled") and creds.get("HELIX_DISCORD_TOKEN"):
+        if cfg.get("discord_enabled") and creds.get("HELIX_DISCORD_TOKEN"):
             channels.append("discord")
         creds["HELIX_COMMS_CHANNELS"] = ",".join(channels)
 
@@ -784,18 +770,8 @@ class HelixApp(QMainWindow):
         agent_name = self.config.get("agent_name", "Helix")
         creator_name = self.config.get("creator_name", "User")
 
-        cmd = [
-            sys.executable, str(BASE_DIR / "setup.py"),
-            "--non-interactive",
-            f"--agent-name={agent_name}",
-            f"--creator-name={creator_name}",
-            f"--profile={profile}",
-            f"--personality={personality}",
-            f"--composition={self.config.get('composition', 'mindscape')}",
-            f"--archetype={self.config.get('agent_archetype', 'balanced')}",
-            f"--primary-channel={self.config.get('primary_channel', 'dashboard')}",
-            f"--data-dir={self.config['data_dir']}",
-        ]
+        from wizard.configuration import bootstrap_command
+        cmd = bootstrap_command(self.config, BASE_DIR, sys.executable)
         try:
             (BASE_DIR / "logs").mkdir(exist_ok=True)
             with (BASE_DIR / "logs/bootstrap.log").open("a") as bootstrap_log:
@@ -1245,7 +1221,11 @@ def main():
     palette.setColor(QPalette.ColorRole.Highlight, QColor(Theme.ACCENT))
     app.setPalette(palette)
 
-    window = HelixApp(force_wizard=args.wizard)
+    try:
+        window = HelixApp(force_wizard=args.wizard)
+    except (OSError, ValueError) as error:
+        QMessageBox.critical(None, "Configuration unavailable", str(error))
+        return 1
     window.show()
     sys.exit(app.exec())
 

@@ -8,6 +8,7 @@ directly from the running settings dashboard. Updates credentials.env on save.
 import os
 from pathlib import Path
 from core.credentials import read_credentials
+from wizard.configuration import supported_providers, select_provider, canonical_provider
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
     QComboBox, QGroupBox, QLineEdit, QScrollArea, QFormLayout,
@@ -55,7 +56,7 @@ class ModelsTab(QWidget):
         provider_form.setSpacing(12)
 
         self.provider_combo = QComboBox()
-        self.provider_combo.addItems(["codex_cli", "gemini", "anthropic", "openai", "alibaba", "ollama", "llama_cpp"])
+        self.provider_combo.addItems(supported_providers(self.app.config.get("composition", "helix")))
         self.provider_combo.currentTextChanged.connect(self._on_provider_changed)
         provider_form.addRow("Active Provider:", self.provider_combo)
 
@@ -185,19 +186,19 @@ class ModelsTab(QWidget):
 
     def _update_provider_desc(self, provider: str):
         descs = {
+            "rwkv": "Local RWKV checkpoint and native body; language does not dispatch tools.",
+            "claude_cli": "Uses the installed Claude Code CLI and its existing login.",
             "codex_cli": "OpenAI Codex App Server — uses the local Codex CLI login and can use ChatGPT subscription access; no API key required.",
             "gemini": "Google Gemini — excellent tool use, free tier available. Recommended for most users.",
             "anthropic": "Anthropic Claude — strong reasoning and coding. Requires paid API key.",
-            "openai": "OpenAI GPT — widely supported, strong general performance. Requires paid API key.",
-            "alibaba": "Alibaba Qwen — competitive open-weight models via DashScope API.",
             "ollama": "Ollama (Local) — fully private, no API costs. Requires local GPU for best results.",
             "llama_cpp": "llama.cpp (Local) — run GGUF models directly on CPU/GPU without external services.",
         }
-        self.provider_desc.setText(descs.get(provider, ""))
+        self.provider_desc.setText(descs.get(provider, "No runtime adapter is available for this saved provider; choose a listed provider."))
 
     def _on_provider_changed(self, provider: str):
         self._update_provider_desc(provider)
-        is_local = provider in ("ollama", "llama_cpp")
+        is_local = provider in ("ollama", "llama_cpp") and self.app.config.get("composition", "helix") == "helix"
         self.local_mode_check.setEnabled(is_local)
         if not is_local and self.local_mode_check.isChecked():
             # Hosted providers call tools natively; orchestration would only
@@ -246,7 +247,7 @@ class ModelsTab(QWidget):
         creds = _load_existing_creds()
         config_model = self.app.config.get("llm_model") or creds.get("HELIX_MODEL", "")
         if config_model:
-            config_provider = self.app.config.get("llm_provider") or creds.get("HELIX_PROVIDER", "gemini")
+            config_provider = canonical_provider(self.app.config.get("llm_provider") or creds.get("HELIX_PROVIDER", "gemini"))
             if provider == config_provider:
                 self.model_combo.setEditText(config_model)
 
@@ -307,7 +308,9 @@ class ModelsTab(QWidget):
         self.alibaba_key.setText(creds.get("ALIBABA_API_KEY", ""))
         self.ollama_url.setText(creds.get("OLLAMA_URL", "http://localhost:11434"))
 
-        provider = creds.get("HELIX_PROVIDER", "gemini")
+        provider = canonical_provider(self.app.config.get("llm_provider") or self.app.config.get("local_provider") or creds.get("HELIX_PROVIDER", "gemini"))
+        if self.provider_combo.findText(provider) < 0:
+            self.provider_combo.addItem(provider)
         self.provider_combo.setCurrentText(provider)
 
         self.local_mode_check.setChecked(
@@ -325,15 +328,16 @@ class ModelsTab(QWidget):
         self._update_models_list()
 
     def _save_settings(self):
-        # Update app configuration dict
-        cfg = self.app.config
+        try:
+            cfg = select_provider(self.app.config, self.provider_combo.currentText(), self.model_combo.currentText())
+        except ValueError as error:
+            QMessageBox.warning(self, "Choose a supported provider", str(error))
+            return
         cfg["gemini_api_key"] = self.gemini_key.text().strip()
         cfg["anthropic_api_key"] = self.anthropic_key.text().strip()
         cfg["openai_api_key"] = self.openai_key.text().strip()
         cfg["alibaba_api_key"] = self.alibaba_key.text().strip()
         cfg["ollama_url"] = self.ollama_url.text().strip() or "http://localhost:11434"
-        cfg["llm_provider"] = self.provider_combo.currentText()
-        cfg["llm_model"] = self.model_combo.currentText().strip()
 
         previous_cli_agent = bool(cfg.get("cli_agent_mode", False))
         cli_agent_mode = (
@@ -361,11 +365,13 @@ class ModelsTab(QWidget):
 
         # Write credentials.env file
         try:
-            self.app._write_credentials()
+            self.app._write_credentials(config=cfg)
             # tool_format lives in config.json, which credentials.env does
             # not cover — the pulse loop reads it at session creation.
             from wizard.app import save_config
             save_config(cfg)
+            self.app.config.clear()
+            self.app.config.update(cfg)
             QMessageBox.information(self, "Saved", "Model settings saved and synchronized successfully!")
         except Exception as e:
             QMessageBox.critical(self, "Error Saving", f"Failed to write configuration: {e}")

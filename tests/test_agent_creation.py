@@ -170,7 +170,8 @@ class WizardCreationDiagnostics(unittest.TestCase):
             identity.agent_name.setText("UI Nova")
             identity.creator_name.setText("Morgan")
             identity.archetype_combo.setCurrentIndex(identity.archetype_combo.findData("deliberate"))
-            identity._save_and_next()
+            with patch("wizard.pages.agent_info.ROOT", Path(directory)):
+                identity._save_and_next()
             self.assertEqual(wizard.config["agent_archetype"], "deliberate")
             self.assertEqual(Path(wizard.config["mindscape"]["home"]).name, "UI Nova")
             with patch("wizard.pages.credentials._load_existing_creds", return_value={}):

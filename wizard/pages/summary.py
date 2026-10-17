@@ -119,7 +119,7 @@ class SummaryPage(QWidget):
         sections = [
             ("Mindscape", [
                 ("Composition", cfg.get("composition", "helix")),
-                ("Foreground model", cfg.get("local_model", "granite4.1:3b")),
+                ("Foreground model", cfg.get("llm_model") or cfg.get("local_model", "Account default")),
                 ("Memory", "MightyMem / Habitus + Context Loom + mRAG" if cfg.get("composition") == "mindscape" else "Helix"),
                 ("Startup", cfg.get("mindscape", {}).get("gestation", "if_missing")),
                 ("Agent home", cfg.get("mindscape", {}).get("home") or "Created from the agent name"),
@@ -224,6 +224,8 @@ class SummaryPage(QWidget):
 
         provider = cfg.get("llm_provider", "gemini")
         provider_labels = {
+            "rwkv": "Dual RWKV (Local)",
+            "claude_cli": "Claude Code CLI",
             "codex_cli": "Codex CLI (ChatGPT login)",
             "gemini": "Google Gemini",
             "anthropic": "Anthropic Claude",
@@ -238,6 +240,8 @@ class SummaryPage(QWidget):
         if provider == "codex_cli":
             rows.append(("Authentication", "Local `codex login`"))
             rows.append(("Model", cfg.get("llm_model", "") or "Account default"))
+        elif provider == "rwkv":
+            rows.append(("RWKV checkpoint", cfg.get("llm_model") or cfg.get("mindscape", {}).get("rwkv_model", "Not set")))
         elif provider == "ollama":
             rows.append(("Ollama URL", cfg.get("ollama_url", "http://localhost:11434")))
             rows.append(("Ollama Model", cfg.get("ollama_model", "") or "Not set"))
