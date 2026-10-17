@@ -1,7 +1,7 @@
 # Helix-AGI: careful cleanup and consolidation review
 
-Review date: October 17, 2026  
-Repository: [munch2u-a11y/Helix-AGI](https://github.com/munch2u-a11y/Helix-AGI)  
+Review date: October 17, 2026
+Repository: [munch2u-a11y/Helix-AGI](https://github.com/munch2u-a11y/Helix-AGI)
 Reviewed revision: [a43492e68c0e7413eca71cd34814c15910cc314e](https://github.com/munch2u-a11y/Helix-AGI/commit/a43492e68c0e7413eca71cd34814c15910cc314e)
 
 ## Assessment
@@ -276,4 +276,3 @@ All links below are pinned to the reviewed revision.
 - [Recorded native workflow and dependency-patch provenance](https://github.com/munch2u-a11y/Helix-AGI/blob/a43492e68c0e7413eca71cd34814c15910cc314e/documents/audits/2026-10-17-native-body-operational/README.md)
 - [Over-Agent scope](https://github.com/munch2u-a11y/Helix-AGI/blob/a43492e68c0e7413eca71cd34814c15910cc314e/Over_Agent_Design/README.md)
 - [Plugin package and evaluation boundary](https://github.com/munch2u-a11y/Helix-AGI/blob/a43492e68c0e7413eca71cd34814c15910cc314e/plugins/helix-agent-lab/README.md)
-
