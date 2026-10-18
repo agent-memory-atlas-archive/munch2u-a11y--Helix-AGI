@@ -229,10 +229,13 @@ def main():
         if args.composition == "helix":
             if args.data_dir:
                 updates["data_dir"] = str(Path(args.data_dir).resolve())
-            if provider_supplied:
-                updates.update(llm_provider=args.provider, llm_model=args.model)
-                if args.provider in {"ollama", "llama_cpp", "rwkv", "bicameral_rwkv"}:
-                    updates.update(local_provider=args.provider, local_model=args.model)
+            if provider_supplied or not existing.get("llm_provider"):
+                provider = args.provider if provider_supplied else existing.get("local_provider") or args.provider
+                model = args.model if provider_supplied else existing.get("llm_model", existing.get("local_model", args.model))
+                updates.update(llm_provider=provider, llm_model=model)
+                if provider in {"ollama", "llama_cpp", "rwkv", "bicameral_rwkv"}:
+                    updates.update(local_provider=provider, local_model=model,
+                                   local_context_window=args.local_context_window)
         if args.composition == "mindscape":
             updates = {**defaults(base_dir), **existing, **updates}
             updates["mindscape"] = {**defaults(base_dir)["mindscape"], **existing.get("mindscape", {})}

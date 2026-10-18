@@ -88,6 +88,7 @@ class WizardConfigurationTests(unittest.TestCase):
             self.assertTrue((target / "memory/cognitive_journal.jsonl").is_file())
             self.assertFalse((root / "data/memory").exists())
             self.assertIn("HELIX_PROVIDER=ollama", (credentials / "credentials.env").read_text())
+            self.assertIn("HELIX_COMMS_CHANNELS=dashboard", (credentials / "credentials.env").read_text())
 
     def test_composition_bootstrap_preserves_enabled_channels_and_adds_primary(self):
         import setup
@@ -107,3 +108,5 @@ class WizardConfigurationTests(unittest.TestCase):
             saved = read_credentials(path)
             self.assertEqual(saved["HELIX_COMMS_CHANNELS"], "dashboard,telegram,discord,webhook")
             self.assertEqual(saved["HELIX_TELEGRAM_TOKEN"], "diagnostic")
+            self.assertEqual(saved["HELIX_PROVIDER"], "gemini")
+            self.assertEqual(json.loads((root / "config/config.json").read_text())["llm_provider"], "gemini")
