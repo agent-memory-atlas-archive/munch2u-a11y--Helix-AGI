@@ -27,6 +27,7 @@ from datetime import datetime
 from typing import Optional, Callable
 
 import numpy as np
+from brain.stability_policy import operational_faults
 
 logger = logging.getLogger("helix.brain.sentinel")
 
@@ -104,6 +105,9 @@ class StabilitySentinel:
         }
 
         # ── Probe results ────────────────────────────────────────────
+        from brain.stability_policy import SeverityRecovery
+        self._severity_recovery = SeverityRecovery()
+        self._last_emitted_severity = self.ALL_CLEAR
         self._last_probe_results = {}
         self._probe_history = []
 
@@ -540,12 +544,12 @@ class StabilitySentinel:
                 # Initialize baselines from first observation
                 if self._h_raw_baseline is None:
                     self._h_raw_baseline = self._spatial_H if self._spatial_H > 0 else 1.0
-                else:
+                elif self._severity_recovery.level not in {self.WARNING, self.CRITICAL}:
                     self._h_raw_baseline = 0.95 * self._h_raw_baseline + 0.05 * self._spatial_H
 
                 if self._dkl_raw_baseline is None:
                     self._dkl_raw_baseline = self._spatial_D_KL if self._spatial_D_KL > 0 else 1.0
-                else:
+                elif self._severity_recovery.level not in {self.WARNING, self.CRITICAL}:
                     self._dkl_raw_baseline = 0.95 * self._dkl_raw_baseline + 0.05 * self._spatial_D_KL
 
                 # Normalize relative to running baseline (1.0 = average)
@@ -559,17 +563,14 @@ class StabilitySentinel:
 
                 # Apply friction damping if available
                 if self._friction_damper:
-                    damping_force = self._friction_damper.calculate_damping_force(
-                        raw_signal - self.s_total
-                    )
-                    self.s_total = raw_signal + damping_force * 0.1
+                    self.s_total = self._friction_damper.dampen_signal(self.s_total, raw_signal)
                 else:
                     self.s_total = raw_signal
 
                 # Update s_total baseline (EMA)
                 if self._s_total_baseline is None:
                     self._s_total_baseline = self.s_total
-                else:
+                elif self._instant_severity() == self.ALL_CLEAR:
                     self._s_total_baseline = 0.95 * self._s_total_baseline + 0.05 * self.s_total
 
                 return  # ← Real Lagrangian computed, skip fallback
@@ -585,10 +586,7 @@ class StabilitySentinel:
 
         if self._friction_damper:
             raw_signal = self.current_entropy + self.omega * d_kl
-            damping_force = self._friction_damper.calculate_damping_force(
-                raw_signal - self.s_total
-            )
-            self.s_total = raw_signal + damping_force * 0.1
+            self.s_total = self._friction_damper.dampen_signal(self.s_total, raw_signal)
         else:
             self.s_total = self.current_entropy + self.omega * d_kl
 
@@ -634,6 +632,7 @@ class StabilitySentinel:
         "user_engagement":       (+0.02,  "active engagement from user"),
 
         # Engagement drivers — cognitive activity modulates hedonic state
+        "verified_progress":     (+0.015, "matched outcome advanced the current work"),
         "productive_tool_use":   (+0.015, "active engagement with the environment"),
         "diverse_tool_use":      (+0.01,  "rich multi-tool cognitive activity"),
 
@@ -695,20 +694,24 @@ class StabilitySentinel:
         
         Events carry raw metrics — beliefs determine interpretation.
         """
-        severity = self.get_severity()
+        severity = self._severity_recovery.observe(self._instant_severity())
         triplet = self.health_triplet.copy()
+        changed = severity != self._last_emitted_severity
+        self._last_emitted_severity = severity
 
-        if severity == self.CRITICAL:
+        if changed and severity == self.ALL_CLEAR:
+            self._emit_event("stability_recovered", {"health_triplet": triplet})
+        if changed and severity == self.CRITICAL:
             self._emit_event("stability_critical", {
                 "s_total": round(self.s_total, 3),
                 "health_triplet": triplet,
             })
-        elif severity == self.WARNING:
+        elif changed and severity == self.WARNING:
             self._emit_event("stability_warning", {
                 "s_total": round(self.s_total, 3),
                 "health_triplet": triplet,
             })
-        elif severity == self.DRIFT:
+        elif changed and severity == self.DRIFT:
             self._emit_event("stability_drift", {
                 "s_total": round(self.s_total, 3),
                 "health_triplet": triplet,
@@ -720,7 +723,7 @@ class StabilitySentinel:
         else:
             self._consecutive_negative_readings = 0
 
-        if self._consecutive_negative_readings >= self._VIBE_COLLAPSE_THRESHOLD:
+        if self._consecutive_negative_readings == self._VIBE_COLLAPSE_THRESHOLD:
             logger.critical(
                 f"VIBE COLLAPSE: {self._consecutive_negative_readings} consecutive "
                 f"negative readings. S_total={self.s_total:.3f}"
@@ -732,6 +735,17 @@ class StabilitySentinel:
             })
 
     def get_severity(self) -> str:
+        from brain.stability_policy import maximum_severity
+        held = getattr(self, "_severity_recovery", None)
+        return maximum_severity(self._instant_severity(), held.level if held else self.ALL_CLEAR)
+
+    def _instant_severity(self) -> str:
+        from brain.stability_policy import operational_faults, maximum_severity
+        faults = operational_faults(getattr(self, "_last_probe_results", {}))
+        raw = self._spatial_severity()
+        return maximum_severity(raw, *faults.values())
+
+    def _spatial_severity(self) -> str:
         """Get current severity level.
 
         Self-calibrating. Compares s_total against its own running
@@ -849,6 +863,7 @@ class StabilitySentinel:
             "health_triplet": {
                 k: round(v, 3) for k, v in self.health_triplet.items()
             },
+            "operational_faults": operational_faults(self._last_probe_results),
             "feeling": self._generate_feeling(),
             "context_clarity_pct": round(self.get_context_clarity(), 1),
             "context_usage_pct": round(self.get_context_usage(), 1),
@@ -1082,6 +1097,7 @@ class StabilitySentinel:
             "health_triplet": {
                 k: round(v, 3) for k, v in self.health_triplet.items()
             },
+            "operational_faults": operational_faults(self._last_probe_results),
             "firing_mode": self.get_generation_params()["mode"],
             "timestamp": datetime.now().isoformat(),
             "attention_position_8d": self._get_attention_position(),

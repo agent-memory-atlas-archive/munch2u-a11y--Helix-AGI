@@ -17,7 +17,7 @@ from core.context_focus import ContextFocus, infer_focus
 _TIMESTAMP = re.compile(r"^\[\d{2}:\d{2}:\d{2}\]\s*")
 _MESSAGE = re.compile(r"^[^\n]+? is talking to me via [^\n]+?\. They said:")
 _TOOL_RESULT = re.compile(r"^(?:Tool|Native action) \[[^\]\n]+\] returned:")
-_INTERNAL = re.compile(r"^\[(?:system|context_awareness|stability_drift|context reset)\]")
+_INTERNAL = re.compile(r"^\[(?:system|context_awareness|stability_(?:drift|warning|critical|recovered)|context reset)\]")
 
 SECTION_TITLES = {
     "messages": "What was said to me now",
