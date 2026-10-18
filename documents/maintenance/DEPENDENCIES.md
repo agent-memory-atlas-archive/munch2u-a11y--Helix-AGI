@@ -36,7 +36,8 @@ retain the selected checkpoint; configuration takes precedence over stale
 provider values in credentials. Model edits retain existing private channel
 credentials. Bootstrap receives the chosen provider, model, data directory and
 native source/home paths rather than resetting them through mode selection.
-Saved legacy configurations without a composition retain Helix behavior.
+Bootstrap retains all enabled channels instead of reducing them to the primary
+channel. Saved legacy configurations without a composition retain Helix behavior.
 
 On Linux without a display, or when Qt cannot be imported, `python -m wizard`
 forwards arguments to CLI setup and returns its exit status. For direct CLI setup

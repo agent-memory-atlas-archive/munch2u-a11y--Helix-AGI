@@ -285,6 +285,14 @@ def main():
         if not apply_config_updates(base_dir, updates):
             raise SystemExit("Composition configuration was not saved")
         if args.composition_only:
+            from core.credentials import read_credentials
+            cred_dir = Path(os.path.expanduser("~/.config/helix"))
+            cred_path = cred_dir / "credentials.env"
+            enabled = read_credentials(cred_path).get("HELIX_COMMS_CHANNELS", "").split(",")
+            channels = list(dict.fromkeys([
+                "dashboard", *(item.strip() for item in enabled if item.strip()),
+                args.primary_channel,
+            ]))
             target_data_dir = Path(updates.get("data_dir") or (base_dir / "data"))
             bootstrap_context = BootstrapContext(
                 agent_name=updates.get("agent_name", args.agent_name),
@@ -293,16 +301,14 @@ def main():
                 personality=args.personality,
                 wake_time="08:00",
                 sleep_time="23:00",
-                channels=["dashboard"],
+                channels=channels,
             )
             write_seed_data(target_data_dir, bootstrap_context, overwrite=False)
-            cred_dir = Path(os.path.expanduser("~/.config/helix"))
             cred_dir.mkdir(parents=True, exist_ok=True)
-            cred_path = cred_dir / "credentials.env"
             upsert_env_values(cred_path, {
                 "HELIX_PROVIDER": updates.get("llm_provider", existing.get("llm_provider", "rwkv")),
                 "HELIX_MODEL": updates.get("llm_model", existing.get("llm_model", "")),
-                "HELIX_COMMS_CHANNELS": updates.get("primary_channel", "dashboard"),
+                "HELIX_COMMS_CHANNELS": ",".join(channels),
             })
             print(f"Configured {args.composition}. Verify actual loading with: venv/bin/python main.py --check-setup")
             return

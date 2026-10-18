@@ -44,7 +44,8 @@ separate from main and is presented in draft PR #10.
   RWKV is retained instead of silently switching to Ollama or a stale provider.
   Users can select the separate Helix composition; unimplemented primary
   providers are blocked. Explicit data/source/home/model choices reach bootstrap.
-  Existing channel credentials survive model edits, public JSON excludes token
+  Existing channel credentials survive model edits and bootstrap retains the full
+  enabled channel list while adding the selected primary. Public JSON excludes token
   fields, and invalid saved configuration is retained with an error.
 - Headless or unavailable-Qt launches forward to CLI setup with arguments and
   exit status preserved. The dependency progress timer remains owned until

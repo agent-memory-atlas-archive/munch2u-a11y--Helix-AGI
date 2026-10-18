@@ -88,3 +88,22 @@ class WizardConfigurationTests(unittest.TestCase):
             self.assertTrue((target / "memory/cognitive_journal.jsonl").is_file())
             self.assertFalse((root / "data/memory").exists())
             self.assertIn("HELIX_PROVIDER=ollama", (credentials / "credentials.env").read_text())
+
+    def test_composition_bootstrap_preserves_enabled_channels_and_adds_primary(self):
+        import setup
+        from core.credentials import read_credentials
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            credentials = root / "credentials"
+            credentials.mkdir()
+            path = credentials / "credentials.env"
+            path.write_text("HELIX_COMMS_CHANNELS=dashboard,telegram,discord\nHELIX_TELEGRAM_TOKEN=diagnostic\n")
+            args = ["setup.py", "--non-interactive", "--composition=helix", "--composition-only",
+                    "--primary-channel=webhook", "--data-dir=" + str(root / "selected")]
+            with patch.object(setup, "__file__", str(root / "setup.py")), patch.object(sys, "argv", args), \
+                 patch("setup.os.path.expanduser", return_value=str(credentials)):
+                setup.main()
+                setup.main()  # A repeated bootstrap must not duplicate or drop channels.
+            saved = read_credentials(path)
+            self.assertEqual(saved["HELIX_COMMS_CHANNELS"], "dashboard,telegram,discord,webhook")
+            self.assertEqual(saved["HELIX_TELEGRAM_TOKEN"], "diagnostic")
