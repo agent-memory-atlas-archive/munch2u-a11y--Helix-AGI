@@ -156,14 +156,15 @@ def engagement_hook(ctx) -> None:
 
     # Outcomes come from the executor/native owner, not model call names.
     progress = getattr(ctx, "progress", {}) or {}
+    # Keep failures visible even when other work advanced in the same pulse.
+    failures = progress.get("failures", 0)
+    if failures:
+        _sentinel.nudge_omega_from_event("tool_failure")
     if progress.get("advanced", 0) > 0:
         _sentinel.nudge_omega_from_event("verified_progress")
         _stagnation_counter = 0
         _update_window(thought)
         return
-    failures = progress.get("failures", 0)
-    if failures:
-        _sentinel.nudge_omega_from_event("tool_failure")
     # Attempts without new verified evidence are not productive engagement.
     unproductive = bool(tool_calls or progress.get("attempts", 0))
     if len(thought) < 20 and not unproductive:

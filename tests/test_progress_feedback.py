@@ -45,8 +45,10 @@ class ProgressFeedbackTests(unittest.TestCase):
                 engagement.engagement_hook(ctx)
             self.assertEqual(engagement._stagnation_counter, 3)
             self.assertFalse(any(call.args == ("verified_progress",) for call in sentinel.nudge_omega_from_event.call_args_list))
-            ctx.progress = {"advanced": 1}
+            sentinel.reset_mock()
+            ctx.progress = {"advanced": 1, "failures": 1}
             engagement.engagement_hook(ctx)
+            sentinel.nudge_omega_from_event.assert_any_call("tool_failure")
             self.assertEqual(engagement._stagnation_counter, 0)
             sentinel.nudge_omega_from_event.assert_called_with("verified_progress")
 
