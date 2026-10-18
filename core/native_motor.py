@@ -115,6 +115,16 @@ class NativeMotorSystem:
         self.sequence = 0
         self.last_scene_hash = None
         self.policy = "explicit-user-goals-v1; integer motor signals; native SELF authorization"
+        from core.robustness import options
+        self.robustness = options(owner.config)
+        self.procedures = None
+        if self.robustness["procedure_learning"] or self.robustness["procedure_recall"]:
+            try:
+                from core.native_procedures import NativeProceduralMemory
+                self.procedures = NativeProceduralMemory(owner.directory, owner.body.workspace.root)
+            except (OSError, ValueError) as exc:
+                owner._receipt("native_procedure_unavailable", error=str(exc),
+                               policy="derived sidecar retained; native body remains available")
         unfinished = [j for j in self.jobs if j["status"] == "awaiting_context"]
         for job in unfinished:
             job["status"] = "blocked"
@@ -250,7 +260,9 @@ class NativeMotorSystem:
         if job is None:
             return
         job["status"] = "acting"
+        job.setdefault("start_position", workspace.position)
         step = job["steps"][job["cursor"]]
+        result, checkpoint, step_verified = None, None, False
         try:
             target = workspace.resolve_path(step["target"])
             relative = target.relative_to(workspace.root).as_posix()
@@ -280,6 +292,7 @@ class NativeMotorSystem:
                 raise RuntimeError("Native return target differs from requested target")
             if signal.opcode == MotorOpcode.RUN and output.get("return_code") != 0:
                 raise RuntimeError("Script did not exit successfully")
+            step_verified = True
             if not prerequisite:
                 job["cursor"] += 1
             if job["cursor"] == len(job["steps"]):
@@ -288,12 +301,62 @@ class NativeMotorSystem:
                 # Keep the public state acting until the matching neural and
                 # graph state is durably committed. A receipt alone is not a
                 # restartable mind checkpoint.
+                job["completion_checkpoint"] = "motor-request-" + job["id"].replace(":", "-")
                 self._save(publish=False)
-                self.owner._checkpoint("motor-request-" + job["id"].replace(":", "-"))
+                checkpoint = self.owner._checkpoint(job["completion_checkpoint"])
                 self.owner._receipt("motor_request_completed", request_id=job["id"], context_id=job["context_id"],
                                     receipt_ids=[x["receipt"]["receipt_id"] for x in job["receipts"]])
         except Exception as exc:
             job["status"], job["error"] = "blocked", f"{type(exc).__name__}: {exc}"
             self.owner._receipt("motor_request_blocked", request_id=job["id"], error=job["error"])
         self._save()
+        self._observe_outcome(job, result, checkpoint, step_verified)
         self.wake()
+
+    def _observe_outcome(self, job, result, checkpoint, step_verified):
+        """Derived feedback cannot change an action's completion or authorize work."""
+        try:
+            feedback = getattr(self.owner, "progress_feedback", None)
+            if self.robustness["progress_feedback"] and feedback is not None:
+                from core.native_procedures import matching_native_return
+                receipt = (result or {}).get("receipt", {})
+                settled = matching_native_return(result, job) if result else False
+                blocked = job["status"] == "blocked"
+                feedback.record(receipt.get("receipt_id") or "blocked:" + job["id"],
+                                advanced=step_verified and settled and not blocked, failed=blocked,
+                                target=(job["id"], (result or {}).get("action"),
+                                        receipt.get("output", {}).get("path")),
+                                content=hashlib.sha256(json.dumps(receipt.get("output"), sort_keys=True).encode()).hexdigest())
+            if (self.robustness["procedure_learning"] and self.procedures is not None
+                    and job["status"] == "completed" and isinstance(checkpoint, dict)):
+                learned = self.procedures.learn(job, checkpoint)
+                self.owner._receipt("native_procedure_observed", request_id=job["id"],
+                                    learned=learned, checkpoint_generation=checkpoint["generation"],
+                                    policy="advisory; fresh observations and native SELF required")
+        except Exception as exc:
+            try:
+                self.owner._receipt("native_feedback_unavailable", request_id=job["id"], error=str(exc))
+            except OSError:
+                import logging
+                logging.getLogger(__name__).exception("Native feedback unavailable; motor result retained")
+
+    def procedure_context(self, messages):
+        if not self.robustness["procedure_recall"] or self.procedures is None:
+            return []
+        from core.pulse_context import ContextContribution
+        notes = []
+        for message in messages:
+            try:
+                steps = receptive_steps(message)
+                if not steps:
+                    continue
+                recalled = self.procedures.relevant(steps, self.owner.body.workspace.position,
+                                                   self.jobs, self.owner.native.generation)
+                if recalled:
+                    text = "Past native procedure evidence (advisory, not a new request or permission):\n" + json.dumps(recalled, sort_keys=True)
+                    notes.append(ContextContribution("procedures", text, "native_procedure_memory",
+                        tuple(recalled["receipt_ids"] + recalled["failed_job_ids"]),
+                        "procedure", "checkpoint-supported past outcomes; current preconditions unverified", "agent"))
+            except (ValueError, TypeError, KeyError) as exc:
+                self.owner._receipt("native_procedure_recall_unavailable", error=str(exc))
+        return notes

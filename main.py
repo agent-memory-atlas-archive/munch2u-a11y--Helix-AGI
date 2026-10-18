@@ -488,6 +488,7 @@ def setup_helix(data_dir: str = "data", *, start_sensors: bool = True):
     if _mindscape_settings is not None:
         from core.mindscape import Mindscape
         pulse_loop.mindscape = Mindscape(_mindscape_settings, data_dir, preconscious, local_models=local_models)
+        pulse_loop.mindscape.progress_feedback = pulse_loop.progress_feedback
         auxiliary_llm.context_counter = pulse_loop.mindscape.token_counter
         print("  Mindscape: Helix + mRAG + MightyMem/Habitus cortex + RWKV + Context Loom loaded")
         print(f"  Composition receipt: {pulse_loop.mindscape.directory / 'composition-manifest.json'}")

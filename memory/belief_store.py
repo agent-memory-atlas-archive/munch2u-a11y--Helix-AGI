@@ -538,6 +538,7 @@ class BeliefStore:
             "verifications", "stability_index", "position_8d",
             "mass", "last_accessed", "access_count",
             "encoding_lagrangian", "tags", "tool_bindings",
+            "successful_uses", "last_successful_use",
         }
 
         for category in BELIEF_CATEGORIES:

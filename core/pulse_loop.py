@@ -115,6 +115,8 @@ class PulseLoop:
         self.tool_executor = tool_executor
         self.channel_router = channel_router
         self.sensory_cortex = sensory_cortex
+        from core.progress_feedback import ProgressFeedback
+        self.progress_feedback = ProgressFeedback()
         self.mindscape = None  # Attached by the authoritative setup_helix composition.
 
         # Legacy local-text schema catalog. Native providers use ToolRegistry;
@@ -736,6 +738,20 @@ class PulseLoop:
                         )
                         self._provider_config.model = _FALLBACK
 
+            # Optional idle generation yields under overload. Received input,
+            # unfinished interactions and the independent body retain priority.
+            if self.mindscape is not None and self.sentinel is not None:
+                from core.robustness import defer_idle, options
+                with self._event_lock:
+                    queued = bool(self._event_queue)
+                if defer_idle(enabled=options(self.config)["idle_backpressure"],
+                              severity=self.sentinel.get_severity(), queued_events=queued,
+                              pending_interaction=bool(self.mindscape.continuation.get("pending"))):
+                    self._state = "RESTING"
+                    self._wake_event.wait(timeout=self.sentinel.probe_interval)
+                    self._wake_event.clear()
+                    continue
+
             # ── Pulse Execution ──────────────────────────────────
             if not codex_parked:
                 try:
@@ -1130,12 +1146,17 @@ class PulseLoop:
                         {'text': event, 'producer': 'native_action_return'} for event in events
                         if event.startswith('Native action [receipt:')]
 
-        # 4. Send to LLM
-        thought = (
-            self._send_office_pulse(pulse_message)
-            if office_capsule is not None
-            else self._send_pulse(pulse_message)
-        )
+        # Bind exact foreground exposure to this generation's execution context.
+        # Other focus threads do not inherit this attribution scope.
+        from core.progress_feedback import lesson_context
+        scope_id = f"{self._memory_session_id}:{self._pulse_count}"
+        exposed_ids = injected_belief_ids if self.mindscape is None else ()
+        with lesson_context(scope_id, exposed_ids):
+            thought = (
+                self._send_office_pulse(pulse_message)
+                if office_capsule is not None
+                else self._send_pulse(pulse_message)
+            )
 
         if self.mindscape is not None:
             provider_receipt = getattr(self._chat, "last_context_receipt", None)
@@ -1607,6 +1628,7 @@ class PulseLoop:
                 lagrangian_before=lagrangian_before or {},
                 lagrangian_after=lagrangian_after or {},
                 injected_belief_ids=injected_belief_ids,
+                progress=self.progress_feedback.snapshot(),
             )
             run_hooks(hook_ctx)
         except Exception as e:

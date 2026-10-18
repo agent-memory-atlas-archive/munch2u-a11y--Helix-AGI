@@ -1652,7 +1652,7 @@ class Preconscious:
 
         annotations = []
         injected_ids = []
-        lesson_items = []  # for verification loop reporting
+        lesson_items = []  # for successful-exposure attribution
         for s in selected:
             # Format as italic first-person parentheticals for inline event weaving
             annotations.append(f"*({s['content'].strip()})*")
@@ -1661,7 +1661,7 @@ class Preconscious:
             self._tool_belief_blacklist[hash(s["content"])] = self._pulse_number
             # Collect for verification loop: the tracker needs to know
             # which belief was injected and which tools it covers, so
-            # subsequent tool successes can bump the lesson's stability.
+            # a matched outcome can be recorded without verifying its claim.
             bindings = s.get("tool_bindings", [])
             if s["id"] and bindings:
                 lesson_items.append({
@@ -1669,10 +1669,9 @@ class Preconscious:
                     "tools": bindings,
                 })
 
-        # Report injected lessons to the verification loop.
-        # A success on any bound tool within the TTL window bumps
-        # the lesson's verifications and stability — closing the
-        # capture → inject → verify feedback loop.
+        # Report exposure candidates. The executor also requires the lesson's
+        # source ID in its current context and an actual verified outcome.
+        # Temporal proximity alone does not establish lesson truth/usefulness.
         if lesson_items:
             try:
                 from core.tool_lesson_tracker import note_lessons_injected

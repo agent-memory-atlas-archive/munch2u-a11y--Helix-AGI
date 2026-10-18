@@ -38,6 +38,7 @@ def defaults(root=ROOT):
             "context_focus_profiles": {},
             "action_intent_source": "native_motor",
             "sensory_interval_seconds": 1.0,
+            "robustness": {},
         },
     }
 
@@ -78,6 +79,8 @@ def resolve(config, root=ROOT):
         raise ValueError("sensory_interval_seconds must be finite and positive (filesystem observation cadence)")
     if int(result["local_context_window"]) <= 0:
         raise ValueError("local_context_window must be positive")
+    from core.robustness import options
+    options(result)
     from core.context_focus import resolve_profiles
     resolve_profiles(result["mindscape"]["context_focus_profiles"])
     for key in ("package_path", "rwkv_model", "workspace", "home"):

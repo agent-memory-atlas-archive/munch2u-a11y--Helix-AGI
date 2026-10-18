@@ -185,6 +185,8 @@ class Mindscape:
         self.native = None
         self.loom = None
         self.session_id = uuid.uuid4().hex
+        from core.progress_feedback import ProgressFeedback
+        self.progress_feedback = ProgressFeedback()
         self._receipt_lock = threading.Lock()
         self.manifest = {
             "schema": "helix-mindscape-composition-v1",
@@ -643,6 +645,7 @@ class Mindscape:
             weights = dict(focus.weights)
             weights["module" if self.body.workspace.active_module() else "environment"] = 1.0
             context = replace(context, focus=ContextFocus(weights, focus.source + "+home_interface"))
+        context = context.extend(*self.motor.procedure_context(current_messages or pending.get("messages", [])))
         packet = self.loom.compiler.compile_pulse(context, scope="helix", input_allowance=input_allowance,
                                                  covered_source_hashes=covered_source_hashes)
         frame = self._current_topic_frame
@@ -928,6 +931,7 @@ class Mindscape:
         manifest = self.native.save(label=label)
         self._receipt("joint_checkpoint", label=label, generation=manifest["generation"],
                       numeric_state_sha256=manifest["numeric_state_sha256"], files=manifest["files"])
+        return manifest
 
     def _release(self):
         if self.loom is not None:
