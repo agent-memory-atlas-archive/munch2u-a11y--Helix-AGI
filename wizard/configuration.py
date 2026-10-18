@@ -64,9 +64,12 @@ def load_wizard_config(path, defaults, credentials=None):
     saved = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
     if not isinstance(saved, dict):
         raise ValueError("Saved wizard configuration must be a JSON object")
+    saved_native = saved.get("mindscape", {})
+    if not isinstance(saved_native, dict):
+        raise ValueError("Saved mindscape configuration must be a JSON object")
     result = deepcopy(defaults)
     result.update(saved)
-    result["mindscape"] = {**deepcopy(defaults.get("mindscape", {})), **saved.get("mindscape", {})}
+    result["mindscape"] = {**deepcopy(defaults.get("mindscape", {})), **saved_native}
     credentials = credentials or {}
     if path.exists() and "composition" not in saved:
         result["composition"] = "helix"

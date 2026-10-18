@@ -52,10 +52,12 @@ class WizardConfigurationTests(unittest.TestCase):
             first = load_wizard_config(path, original)
             first["mindscape"]["home"] = "changed"
             self.assertNotEqual(load_wizard_config(path, original)["mindscape"]["home"], "changed")
-            path.write_text("[]")
-            with self.assertRaises(ValueError):
-                load_wizard_config(path, original)
-            self.assertEqual(path.read_text(), "[]")
+            for invalid in ("[]", '{"mindscape": null}', '{"mindscape": []}'):
+                with self.subTest(invalid=invalid):
+                    path.write_text(invalid)
+                    with self.assertRaises(ValueError):
+                        load_wizard_config(path, original)
+                    self.assertEqual(path.read_text(), invalid)
 
     def test_bootstrap_forwards_selected_provider_model_paths_and_no_secrets(self):
         config = defaults()

@@ -34,6 +34,27 @@ The read-only installation preflight is `python scripts/run_health_check.py`
 (or add `--json` for machine output). Required failures return nonzero; passing
 this offline check does not establish live service availability or launch success.
 
+## Wizard and dashboard UI checks
+
+The offline group includes selected-data canvas, module API and desktop-widget
+bridge checks. File-writing fixtures use temporary directories. The dashboard
+request functions are exercised separately with Node (no npm install):
+
+```bash
+node --test tests/dashboard_routes.test.cjs
+```
+
+For the offscreen wizard regression gate used in CI:
+
+```bash
+python -m pip install -r requirements-dev.txt -r requirements-wizard.txt
+QT_QPA_PLATFORM=offscreen python -m pytest -q tests/test_wizard_routes.py tests/test_agent_creation.py::WizardCreationDiagnostics
+```
+
+Linux also needs Qt system libraries such as libEGL, OpenGL and xkbcommon; CI
+installs them explicitly. These are mocked/offscreen implementation diagnostics,
+not a visible-desktop, full-installer or live-provider certification.
+
 ## Evidence boundary
 
 Unit, fixture, provider, simulator and retrieval-only checks are implementation

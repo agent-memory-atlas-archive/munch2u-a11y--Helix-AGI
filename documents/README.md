@@ -71,6 +71,8 @@ Preserve historical evidence and distinguish it from current behavior.
 ## Maintenance
 
 The [cleanup branch status](maintenance/CLEANUP_STATUS.md) records implemented
-consolidation, local validation and the remaining native/GUI gates. The
+consolidation, local/CI validation and the remaining native/manual gates. The
+[dependency profile guide](maintenance/DEPENDENCIES.md) explains the shared
+requirements and wizard installation stages. The
 [initial cleanup review](maintenance/CLEANUP_REVIEW.md) preserves its baseline
 findings and proposed sequence. Frozen audits remain historical evidence.

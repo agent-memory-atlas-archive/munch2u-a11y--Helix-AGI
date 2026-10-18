@@ -56,7 +56,13 @@ claimed by this cleanup.
 
 ## Guided creation
 
-Run `./install.sh` for the PyQt6 wizard. Choose an agent name, creator,
+Run `./install.sh` for the PyQt6 wizard. The launcher installs a lighter UI
+profile first; the wizard installs the chosen composition before bootstrap.
+Select native Mindscape for RWKV/Ollama, or Helix for the separate hosted/CLI
+provider composition. See [dependency profiles](maintenance/DEPENDENCIES.md)
+for installation scope and limits.
+
+For Mindscape, choose an agent name, creator,
 archetype, starter memory depth/voice, local RWKV model and MightyMem paths,
 primary communication channel, credentials, tools and schedule.
 
