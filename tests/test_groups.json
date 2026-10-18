@@ -28,7 +28,11 @@
         "tests/test_wizard_configuration.py",
         "tests/test_desktop_widget.py",
         "tests/test_ui_canvas_tool.py",
-        "tests/test_dashboard_routes.py"
+        "tests/test_dashboard_routes.py",
+        "tests/test_stability_policy.py",
+        "tests/test_progress_feedback.py",
+        "tests/test_native_robustness.py",
+        "tests/test_context_office.py"
       ]
     },
     "integration": {
@@ -45,7 +49,6 @@
         "tests/test_codex_cli_provider.py",
         "tests/test_computer_interface.py",
         "tests/test_context_focus.py",
-        "tests/test_context_office.py",
         "tests/test_crash_reporter.py",
         "tests/test_dashboard_comms.py",
         "tests/test_dashboard_enhancements.py",

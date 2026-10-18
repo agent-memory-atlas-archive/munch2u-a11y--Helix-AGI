@@ -245,3 +245,13 @@ identity, position and completed goals. Thought/speech separation and delivery
 routing are implemented and have focused checks; general conversation quality
 and learned independent action selection remain separate evaluation targets.
 Older failure reports retain their original source/date scope.
+
+## Experimental robustness branch
+
+`feature/native-robustness` layers outcome-based engagement, checkpoint-supported
+advisory procedures, corrected damping and probe-cycle health recovery onto this
+ownership model. Optional idle backpressure yields to received events and
+unfinished interactions. Context Office, mRAG, lateral ordering and all nine
+Loom lanes retain their roles; the native owner still authorizes every action.
+See [controls and PC acceptance](maintenance/NATIVE_ROBUSTNESS.md). These changes
+have component diagnostics, not a new live native result.
