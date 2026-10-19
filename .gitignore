@@ -1,5 +1,6 @@
 # Runtime data
 data/
+sandbox/
 private_presets/
 *.db
 *.sqlite3

@@ -72,7 +72,10 @@ class BicameralRWKVSession(ChatSession):
             coupling_gain=float(self.options.get('coupling_gain', 0.15)),
             membrane_state=self.options.get('membrane_state'),
             membrane_gain=float(self.options.get('membrane_gain', 0.0)),
-            repetition_penalty=float(self.options.get('repetition_penalty', 1.15)))
+            repetition_penalty=float(self.options.get('repetition_penalty', 1.15)),
+            on_boundary=self.options.get('on_boundary', 'raise'),
+            stop_sequences=self.options.get('stop_sequences', ("<|endoftext|>", "\nUser:", "\n\nAssistant:", "\n\n[Pulse")))
+
         generation = dict(getattr(self.system, 'last_generation_receipt', {}) or {})
         if 'prompt_tokens' not in generation:
             raise RuntimeError('RWKV returned without actual generation accounting; no receipt can be inferred')

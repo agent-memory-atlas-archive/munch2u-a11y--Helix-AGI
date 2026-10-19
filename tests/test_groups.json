@@ -58,6 +58,8 @@
         "tests/test_emc2_retrieval.py",
         "tests/test_first_person_context.py",
         "tests/test_fresh_clone_cognizance.py",
+        "tests/test_locomo_deep_memory_sandbox.py",
+        "tests/test_locomo_factual_tracking.py",
         "tests/test_integration.py",
         "tests/test_longmemeval_sandbox.py",
         "tests/test_memory_intake_office.py",
@@ -129,6 +131,7 @@
       "description": "Model/service experiments. Review prerequisites and side effects before explicit execution.",
       "paths": [
         "tests/test_agent_adaptation_bench.py",
+        "tests/test_agent_to_agent_coherence.py",
         "tests/test_autonomous_pulse_chain.py",
         "tests/test_helix_early_memories.py",
         "tests/test_live_adversarial_coherence.py",
@@ -138,5 +141,6 @@
         "tests/test_zero_system_organic_coherence.py"
       ]
     }
+
   }
 }

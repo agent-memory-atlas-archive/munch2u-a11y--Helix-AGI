@@ -186,6 +186,7 @@ class BicameralRWKV:
         # must never invent another received message, including after a date.
         stop_sequences: tuple[str, ...] = ("<|endoftext|>", "\nUser:", "\n\nAssistant:", "\n\n[Pulse"),
         reset_state: bool = True,
+        on_boundary: str = "raise",
     ) -> str:
         """Autoregressively generate language tokens, steered by sensory continuous state and vocabulary membrane."""
         if reset_state:
@@ -214,7 +215,12 @@ class BicameralRWKV:
                 raise RuntimeError('RWKV generation cancelled; unfinished output withheld')
             if max_new_tokens is not None and len(generated_ids) >= max_new_tokens:
                 self.last_generation_receipt.update(done_reason='configured_output_boundary', generated_tokens=len(generated_ids))
-                raise RuntimeError('RWKV reached the configured output boundary; incomplete generation withheld')
+                if on_boundary == 'raise':
+                    raise RuntimeError('RWKV reached the configured output boundary; incomplete generation withheld')
+                else:
+                    stopped = True
+                    break
+
             effective_logits = logits.copy()
             if membrane_bias is not None:
                 effective_logits = effective_logits + float(membrane_gain) * membrane_bias
