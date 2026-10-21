@@ -2694,7 +2694,9 @@ class Preconscious:
                 type_str = "related"
             else:
                 type_str = "faint"
+            mem_id = n.get("point_id") or n.get("id") or n.get("memory_id", "")
             memories.append({
+                "id": mem_id,
                 "type": type_str,
                 "content": n.get("content", ""),
                 "relevance": round(rel, 2)
@@ -2704,6 +2706,7 @@ class Preconscious:
         belief_list = []
         for b in beliefs:
             belief_list.append({
+                "id": b.get("id", ""),
                 "content": b.get("content", ""),
                 "category": b.get("category", ""),
                 "gravity": round(b.get("gravity", 0.0), 2),
@@ -2746,6 +2749,8 @@ class Preconscious:
             "concepts": concepts,
             "memories": memories,
             "beliefs": belief_list,
+            "active_belief_ids": [b.get("id") for b in beliefs if b.get("id")],
+            "active_memory_ids": [n.get("point_id") or n.get("id") for n in neighbors if (n.get("point_id") or n.get("id"))],
             "somatic": somatic,
             "affect": affect,
             "timestamp": datetime.now().strftime("%H:%M:%S"),

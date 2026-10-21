@@ -739,6 +739,18 @@ class StabilitySentinel:
         held = getattr(self, "_severity_recovery", None)
         return maximum_severity(self._instant_severity(), held.level if held else self.ALL_CLEAR)
 
+    def get_resource_severity(self) -> str:
+        """Backpressure follows actual resource/store probes, not learned focus.
+
+        The historical consciousness_alive probe measures spatial coherence;
+        parking cognition on that value prevents the mind from adapting.
+        """
+        from brain.stability_policy import operational_faults, maximum_severity
+        probes = getattr(self, "_last_probe_results", {})
+        resources = {key: probes[key] for key in
+                     ("memory_pressure", "disk_space", "memory_db_health") if key in probes}
+        return maximum_severity(self.ALL_CLEAR, *operational_faults(resources).values())
+
     def _instant_severity(self) -> str:
         from brain.stability_policy import operational_faults, maximum_severity
         faults = operational_faults(getattr(self, "_last_probe_results", {}))
@@ -908,7 +920,7 @@ class StabilitySentinel:
             return {
                 "mode": "burst",
                 "temperature": 0.1,
-                "max_tokens": 256,
+                "max_tokens": None,
                 "context_restriction_pct": 50.0,
                 "reason": self._generate_feeling(),
             }
@@ -917,7 +929,7 @@ class StabilitySentinel:
             return {
                 "mode": "guarded",
                 "temperature": 0.3,
-                "max_tokens": 512,
+                "max_tokens": None,
                 "context_restriction_pct": 75.0,
                 "reason": self._generate_feeling(),
             }
@@ -929,7 +941,7 @@ class StabilitySentinel:
         base_temp = 0.3 + 0.5 * self.omega
 
         temp_mod = 0.0
-        max_tokens = 8192
+        max_tokens = None
         ctx_pct = 100.0
 
         # Entropy modulation (H ratio vs self-calibrating baseline)
@@ -941,12 +953,10 @@ class StabilitySentinel:
         if h_ratio > 1.6:
             # Very scattered — force convergence hard
             temp_mod -= 0.2
-            max_tokens = 1024
             ctx_pct = 80.0
         elif h_ratio > 1.3:
             # Scattered — moderate constraint
             temp_mod -= 0.1
-            max_tokens = 2048
             ctx_pct = 90.0
         elif h_ratio < 0.7:
             # Very focused — allow creativity
@@ -961,12 +971,10 @@ class StabilitySentinel:
         if dkl_ratio > 2.0:
             # Very far from identity — tighten hard
             temp_mod -= 0.15
-            max_tokens = min(max_tokens, 1024)
             ctx_pct = min(ctx_pct, 80.0)
         elif dkl_ratio > 1.5:
             # Drifting from identity — moderate pull
             temp_mod -= 0.08
-            max_tokens = min(max_tokens, 2048)
 
         # Final temperature: clamped to [0.1, 1.0]
         temperature = max(0.1, min(1.0, base_temp + temp_mod))

@@ -242,7 +242,7 @@ and dirty source paths are recorded before the run.
 
 ```bash
 venv/bin/python tests/ragoffice_parity_sandbox.py \
-  --ragoffice-root /home/nemo/RAGOffice \
+  --ragoffice-root /path/to/RAGOffice \
   --model granite4.1:8b \
   --context-office on \
   --resume

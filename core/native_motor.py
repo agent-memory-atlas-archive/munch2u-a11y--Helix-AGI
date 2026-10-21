@@ -114,7 +114,7 @@ class NativeMotorSystem:
         self.wake = lambda: None
         self.sequence = 0
         self.last_scene_hash = None
-        self.policy = "explicit-user-goals-v1; integer motor signals; native SELF authorization"
+        self.policy = "autonomous-and-receptive-v1; integer motor signals; native SELF authorization"
         from core.robustness import options
         self.robustness = options(owner.config)
         self.procedures = None
@@ -151,29 +151,130 @@ class NativeMotorSystem:
 
     def admit(self, messages, pulse):
         ids = []
+        op_map = {"move": MotorOpcode.MOVE, "sense": MotorOpcode.SENSE,
+                  "open": MotorOpcode.OPEN, "run": MotorOpcode.RUN, "read": MotorOpcode.OPEN}
         for index, message in enumerate(messages):
-            if not re.match(r"^(?:\[[^\]]+\]\s*)?[\w .'-]+ is talking to me via \w+\. They said:", message):
-                continue
-            key = f"{self.owner.session_id}:{pulse}:{index}"
-            if any(j["input_id"] == key for j in self.jobs):
-                continue
-            try:
-                steps = receptive_steps(message)
-                if steps is None:
+            # 1. Internal cognitive intention represented as a dictionary
+            if isinstance(message, dict) and "action" in message:
+                act = message.get("action")
+                if act not in op_map:
                     continue
-                error = None
-            except ValueError as exc:
-                steps, error = [], str(exc)
-            job = {"id": "motor:" + uuid.uuid4().hex, "input_id": key,
-                   "message": message, "steps": steps, "cursor": 0, "receipts": [],
-                   "status": "blocked" if error else "awaiting_context", "error": error,
-                   "context_id": None, "created_at": time.time()}
-            self.jobs.append(job)
-            ids.append(job["id"])
-            self.owner._receipt("motor_request_admitted", **job, policy=self.policy)
+                args = message.get("arguments") or {}
+                target = args.get("path") or args.get("target") or "."
+                steps = [{"opcode": int(op_map[act]), "target": str(target)}]
+                key = f"subconscious:{self.owner.session_id}:{pulse}:{index}"
+                if any(j["input_id"] == key for j in self.jobs):
+                    continue
+                job = {
+                    "id": "motor:" + uuid.uuid4().hex,
+                    "input_id": key,
+                    "message": json.dumps(message),
+                    "steps": steps,
+                    "cursor": 0,
+                    "receipts": [],
+                    "status": "ready",
+                    "error": None,
+                    "context_id": f"subconscious:{self.sequence}:{time.time()}",
+                    "created_at": time.time(),
+                }
+                self.jobs.append(job)
+                ids.append(job["id"])
+                self.owner._receipt("motor_request_admitted", **job, policy=self.policy)
+                continue
+
+            # 2. String messages: user messages or internal cognitive/receptive command strings
+            if not isinstance(message, str):
+                continue
+
+            # Skip action observation returns / receipts / notices
+            if re.match(r"^(?:\[[^\]]+\]\s*)?(?:Native action|The proposed native action|Action returned)\b", message):
+                continue
+
+            is_user_msg = bool(re.match(r"^(?:\[[^\]]+\]\s*)?[\w .'-]+ is talking to me via \w+\. They said:", message))
+
+            if is_user_msg:
+                key = f"{self.owner.session_id}:{pulse}:{index}"
+                if any(j["input_id"] == key for j in self.jobs):
+                    continue
+                try:
+                    steps = receptive_steps(message)
+                    if steps is None:
+                        continue
+                    error = None
+                except ValueError as exc:
+                    steps, error = [], str(exc)
+                job = {"id": "motor:" + uuid.uuid4().hex, "input_id": key,
+                       "message": message, "steps": steps, "cursor": 0, "receipts": [],
+                       "status": "blocked" if error else "awaiting_context", "error": error,
+                       "context_id": None, "created_at": time.time()}
+                self.jobs.append(job)
+                ids.append(job["id"])
+                self.owner._receipt("motor_request_admitted", **job, policy=self.policy)
+            else:
+                key = f"internal:{self.owner.session_id}:{pulse}:{index}"
+                if any(j["input_id"] == key for j in self.jobs):
+                    continue
+                steps = None
+                try:
+                    steps = receptive_steps(message)
+                except ValueError:
+                    steps = None
+
+                if steps is None:
+                    from core.mindscape_intention import parse_natural_or_wire_intention
+                    parsed = parse_natural_or_wire_intention(message)
+                    if parsed and isinstance(parsed, dict) and parsed.get("action") in op_map:
+                        act = parsed["action"]
+                        args = parsed.get("arguments") or {}
+                        target = args.get("path") or args.get("target") or "."
+                        steps = [{"opcode": int(op_map[act]), "target": str(target)}]
+
+                if steps is not None:
+                    job = {
+                        "id": "motor:" + uuid.uuid4().hex,
+                        "input_id": key,
+                        "message": message,
+                        "steps": steps,
+                        "cursor": 0,
+                        "receipts": [],
+                        "status": "ready",
+                        "error": None,
+                        "context_id": f"internal:{self.sequence}:{time.time()}",
+                        "created_at": time.time(),
+                    }
+                    self.jobs.append(job)
+                    ids.append(job["id"])
+                    self.owner._receipt("motor_request_admitted", **job, policy=self.policy)
+
         if ids:
             self._save()
         return ids
+
+    def submit_action(self, action: str, target: str, context_id: str | None = None) -> str:
+        """Submit an autonomous or self-directed motor action directly."""
+        op_map = {"move": MotorOpcode.MOVE, "sense": MotorOpcode.SENSE,
+                  "open": MotorOpcode.OPEN, "run": MotorOpcode.RUN}
+        if action not in op_map:
+            raise ValueError(f"Unsupported action: {action}. Choose from {list(op_map.keys())}")
+        step = {"opcode": int(op_map[action]), "target": target}
+        job_id = "motor:" + uuid.uuid4().hex
+        ctx_id = context_id or f"autonomous:{self.sequence}:{time.time()}"
+        job = {
+            "id": job_id,
+            "input_id": f"self-directed:{time.time()}",
+            "message": f"Autonomous {action} on {target}",
+            "steps": [step],
+            "cursor": 0,
+            "receipts": [],
+            "status": "ready",
+            "error": None,
+            "context_id": ctx_id,
+            "created_at": time.time(),
+        }
+        self.jobs.append(job)
+        self._save()
+        self.owner._receipt("motor_action_submitted", **job, policy=self.policy)
+        return job_id
 
     def link_context(self, ids, context_id):
         for job in self.jobs:
@@ -258,7 +359,12 @@ class NativeMotorSystem:
             return
         job = next((j for j in self.jobs if j["status"] in {"ready", "acting"}), None)
         if job is None:
-            return
+            decide = getattr(self.owner, "_autonomous_motor_step", None)
+            if decide is not None:
+                decide()
+            job = next((j for j in self.jobs if j["status"] in {"ready", "acting"}), None)
+            if job is None:
+                return
         job["status"] = "acting"
         job.setdefault("start_position", workspace.position)
         step = job["steps"][job["cursor"]]

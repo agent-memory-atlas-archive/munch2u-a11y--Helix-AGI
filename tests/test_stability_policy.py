@@ -70,6 +70,14 @@ class StabilityPolicyTests(unittest.TestCase):
         self.sentinel._last_probe_results = {"process_health": 0.3}
         self.assertEqual(self.sentinel.get_severity(), "all_clear")
 
+    def test_cognitive_warning_does_not_park_native_thinking(self):
+        self.sentinel.s_total = 3.0
+        self.sentinel._last_probe_results = {"consciousness_alive": 0.2, "memory_pressure": 1.0}
+        self.assertEqual(self.sentinel.get_severity(), "critical")
+        self.assertEqual(self.sentinel.get_resource_severity(), "all_clear")
+        self.sentinel._last_probe_results["memory_pressure"] = 0.2
+        self.assertEqual(self.sentinel.get_resource_severity(), "critical")
+
     def test_backpressure_yields_to_messages_and_unfinished_work(self):
         for severity in ("warning", "critical"):
             self.assertTrue(defer_idle(enabled=True, severity=severity, queued_events=False, pending_interaction=False))
